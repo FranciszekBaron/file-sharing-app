@@ -1,0 +1,74 @@
+.modernButton {
+  display: flex;
+  flex-direction: row;
+  gap: 14px;
+  height: 60px;
+  width: auto;  /* ← ZMIEŃ z 110px na auto */
+  min-width: 114px;  
+  /* ← DODAJ minimum (dla samej ikony) */
+  border-radius: 16px;
+  border: 0.1px solid rgba(0,0,0,0.01);
+  background: white;
+  color: rgb(40, 40, 40);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  box-shadow: 0px 1px 2px rgb(146, 146, 146);
+  transition: background 0.15s ease,
+              box-shadow 0.15s ease,
+              transform 0.1s ease;
+  align-items: center;
+  justify-content: center;  /* ← DODAJ wycentrowanie */
+}
+
+
+.modernButton:hover {
+  background: rgba(66, 21, 21, 0.03);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
+}
+
+.modernButton:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+
+.icon{
+  display: flex;
+  align-items: center;
+  justify-content:center;
+  font-weight: 800;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.iconOnly {
+  width: 45px;  /* stała szerokość dla kółka */
+  min-width: 45px;
+  height: 45px;
+  padding: 0;
+  border-radius: 50%;
+  box-shadow: 0px 0px 0px rgb(146, 146, 146);
+  transition: background 0.15s ease,
+              box-shadow 0.15s ease,
+              transform 0.1s ease;
+  background-color: var(--background);
+  border: 0px solid rgba(0,0,0,0.15);
+  align-items: center;
+  justify-content: center;
+  padding-left: 6px;
+}
+
+.iconOnly:hover {
+  background: rgba(0, 0, 0, 0.121);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+  transform: translateY(-1px);
+}
+

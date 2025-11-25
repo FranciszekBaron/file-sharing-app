@@ -1,0 +1,88 @@
+.searchbar {
+  display: flex;
+  align-items: center;
+  background-color: #eaeef5;
+  border-radius: 30px;
+  padding: 10px 16px;
+  width: auto;  /* ← ZMIEŃ z 100% na auto */
+  height: 52px;
+  min-width: 400px;  /* ← ZWIĘKSZ minimum */
+  max-width: 720px;
+  flex: 1;  /* ← DODAJ TO - elastyczna szerokość */
+  transition: background-color 0.2s, box-shadow 0.2s;
+  gap: 12px;
+}
+
+/* ZMIEŃ TO: */
+.active {
+  background-color: white !important;  /* przebija hover */
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28) !important;
+}
+
+/* Usuń hover gdy aktywny */
+.active:hover {
+  background-color: white;
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+}
+
+
+
+
+.searchbar:hover {
+  background-color: #e8eaed;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.1);
+}
+
+
+.searchbar.focused {
+  background-color: white;
+  box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
+}
+
+.searchIcon {
+  color: #5f6368;
+  flex-shrink: 0;
+}
+
+.searchInput {
+  border: none;
+  background: transparent;
+  outline: none;
+  flex: 1;
+  font-size: 16px;
+  font-weight: 00;
+  color: #202124;
+  align-items: center; 
+}
+
+.searchInput::placeholder {
+  color: #5f6368;
+}
+
+.clearButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #5f6368;
+  padding: 4px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  transition: background-color 0.2s;
+}
+
+.clearButton:hover {
+  background-color: rgba(95, 99, 104, 0.1);
+}
+
+.searchIcon svg{
+  font-weight: 600;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 500;
+  align-items: center;
+}

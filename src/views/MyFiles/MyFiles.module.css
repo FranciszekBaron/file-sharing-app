@@ -1,0 +1,63 @@
+.contentWrapper {
+  width: 100%;
+  height: 100%;
+  background-color: aquamarine;
+  /* to sprawi że nie “przykleja się” do krawędzi */
+  border-radius: 16px;       
+  /* odstęp od krawędzi całego contentu */
+  box-sizing: border-box;
+}
+
+.topbarWrapper{
+    height: 100px;
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.titleButtonWrapper,
+.filtersWrapper {
+    display: flex;
+    justify-content: space-between;  /* jeden na lewo, drugi na prawo */
+    align-items: center;              /* pionowo wycentrowane */
+    height: 50px;
+    background-color: #ffffff;
+    border-radius: 16px;  /* bezpieczeństwo dla tekstu */    
+    font-size: 14px;
+    font-weight: 300;
+}
+
+.title {
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: 300;
+  color: black;
+  display: inline-flex;      /* ważne: żeby tekst się nie łamał */
+  align-items: center;
+  padding: 4px 10px;         /* stały "obszar" kliknięcia */
+  border-radius: 16px;       /* żeby hover był równy */
+}
+
+.title:hover {
+  background-color: #e8eaed;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.1);
+}
+
+
+
+.fileList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+
+
+.label {
+  font-size: 24px;
+  font-weight: 400;
+  color: black;
+}
+

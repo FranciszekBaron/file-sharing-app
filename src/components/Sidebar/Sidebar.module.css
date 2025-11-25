@@ -1,0 +1,99 @@
+.sidebarContent {
+  display: flex;
+  flex-direction: column;
+
+}
+
+.sidebarAddFile{
+  height: 80px;
+  padding-top: 5px;
+  background-color: var(--background);
+  padding-left: 8px;
+  gap: 6px;
+}
+
+.sidebarOptions{
+  display: flex;
+  flex-direction: column;
+  gap: 4px; /* było 4px - większy odstęp */
+  padding-left: 18px;
+  background-color: var(--background);
+  align-items: flex-start;
+}
+
+
+.boxSelected,
+.boxActivated,
+.box {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding: 8px 12px; /* było 8px 12px */
+  border-radius: 20px; /* było 20px */
+  color: rgb(42, 42, 42);
+  cursor: pointer;
+  width: 100%;
+  height: 30px; /* było 30px */
+  gap: 12px; /* było 8-9px */
+  text-align: left;
+  white-space: nowrap;
+}
+
+.boxSelected {
+  background-color: var(--border);
+}
+
+.boxActivated{
+  background-color: #c9e6fd;
+}
+
+
+.icon {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: 100;
+}
+
+.icon {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: bold;
+  color: black; 
+}
+
+.iconActivated {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  font-weight: bold;  /* kontur */
+  color: #1d4973;
+}
+
+.label {
+  font-size: 14px;
+  font-weight: 300;
+  color: black;
+}
+
+.labelActived {
+  font-size: 14px;
+  font-weight: 398;
+  color: #1d4973;
+}
+
+/* odstęp między grupami */
+.groupSpacer {
+  height: 25px;
+}
+/* /*jesli group jest null, to sie zrobi  */

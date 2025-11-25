@@ -1,0 +1,9 @@
+.profile {
+    height: 40px; /* <-- stała wysokość buttona */
+    width: 40px;
+    border-radius: 50%;
+    border: 0.3px solid rgba(0,0,0,0.15);
+    background: white;
+    background-color: var(--text-secondary);
+}
+

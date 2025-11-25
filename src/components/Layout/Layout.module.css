@@ -1,0 +1,67 @@
+/* Layout.module.css */
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;  /* DOKŁADNIE wysokość ekranu, nie min-height */
+  width: 100%;
+  min-width: 1000px;  /* DODAJ - minimalna szerokość całej strony */
+  overflow-x: auto;   /* scroll poziomy */
+  overflow-y: hidden; 
+  background-color:var(--background);
+}
+
+/* Topbar */
+.topbarWrapper {
+  height: 64px;
+  width: 100%;
+  flex-shrink: 0; /* zapobiega zmniejszaniu się topbara */
+}
+
+/* Content area - Sidebar + Main */
+.contentWrapper {
+  display: flex;
+  flex: 1; /* zajmuje resztę miejsca po topbarze */ 
+  overflow: hidden;/* zapobiega scrollowaniu contentwrappera */
+}
+
+/* Sidebar */
+.sidebarWrapper {
+  position: relative;
+  width: 200px;  /* lub dynamiczne z state */
+  padding: 4px 8px;
+  flex-shrink: 0;
+  background-color: var(--background);
+}
+
+.resizeHandle {
+  position: absolute;
+  top: 0;
+  right: -2px;  /* ZMIANA: przesuń o połowę szerokości (4px / 2) */
+  width: 4px;
+  height: 100%;
+  cursor: ew-resize;
+  z-index: 10;
+  background-color: transparent;  /* niewidoczny domyślnie */
+}
+
+
+/* Main content */
+.main {
+  flex: 1; /* zajmuje całą resztę szerokości */
+  min-width: 600px;
+  padding: 8px;
+  background-color: var(--surface);
+  border-radius: 14px;
+}
+
+
+.pointerWrapper {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    background-color: coral;
+}
+
+.rightbarWrapper {
+    width: 50px;
+}

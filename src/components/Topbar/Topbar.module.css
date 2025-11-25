@@ -1,0 +1,30 @@
+.contentWrapper {
+  display: flex;  /* ← DODAJ TO */
+  flex-direction: row;  /* elementy obok siebie */
+  align-items: center;  /* wycentruj w pionie */
+  justify-content: center;
+  gap: 16px;  /* odstęp między searchbar a profile */
+  padding-left: 270px;
+  padding-top: 4px;
+  background-color: var(--background);
+}
+
+.buttonProfile {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+}
+
+.button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+}
+
+
+
+
