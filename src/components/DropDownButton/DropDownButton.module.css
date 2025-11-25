@@ -1,0 +1,120 @@
+.wrapper {
+  position: relative; /* ważne: menu będzie pod tym */
+  display: inline-block;
+}
+
+.button {
+    cursor: pointer;
+    font-size: 24px;
+    font-weight: 320;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 12px;
+    border-radius: 12px;
+    background: transparent;
+    border: none;
+    height: 40px;
+    border-radius: 40px;
+}
+
+.button.icon { 
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
+    height: 58px;
+    width: auto; 
+    min-width: 112px;  
+    border-radius: 16px;
+    border: 0.1px solid rgba(0,0,0,0.01);
+    background: white;
+    color: rgb(40, 40, 40);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    box-shadow: 0px 1px 2px rgb(146, 146, 146);
+    transition: background 0.15s ease,
+                box-shadow 0.15s ease,
+                transform 0.1s ease;
+    align-items: center;
+    justify-content: center; 
+}
+
+.button.filters {
+    display: flex;
+    flex-direction: row;
+    gap: 14px;
+    width: auto; 
+    height: 32px;
+    min-width: 112px;  
+    border-radius: 8px;
+    border: 0.1px solid rgba(0, 0, 0, 0.425);
+    background: rgb(255, 255, 255);
+    color: rgb(60, 60, 60);
+    font-size: 14px;
+    font-weight: 400;
+    cursor: pointer;
+    transition: background 0.15s ease,
+                box-shadow 0.15s ease,
+                transform 0.1s ease;
+    align-items: center;
+    justify-content: space-between;
+    padding-left:16px;
+    gap:10px;
+}
+
+.button.filters:hover {
+    background-color: #e8eaed;
+}
+
+.button.icon:hover { 
+    background-color: #e8eaed;
+}
+
+.button:hover {
+    background-color: #e8eaed;
+}
+
+.iconOpen {
+  transform: rotate(180deg);
+  transition: 0.2s ease;
+}
+
+.menu {
+  position: absolute;
+  top: 45px;
+  left: 0;
+  background: white;
+  border-radius: 12px;
+  padding: 8px 0;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 160px;
+  z-index: 20;
+}
+
+
+/*-----WARIANTY MENY------*/
+
+.dropdown .menu {
+  top: 45px;      /* tak jak miałeś */
+  left: 0;
+}
+
+/* menu NAD przyciskiem */
+.overlap .menu {
+  top: 0;
+  left: 0;
+  transform: translateY(0%);
+}
+
+/* Sposob na manipulowanie rodzajem wyśwetlania tak troche jak "przez rodzica" czy cos  */
+
+.item {
+  padding: 10px 16px;
+  cursor: pointer;
+  font-size: 15px;
+}
+
+.item:hover {
+  background-color: #f1f1f1;
+}

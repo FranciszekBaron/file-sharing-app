@@ -5,7 +5,7 @@
   border-radius: 30px;
   padding: 10px 16px;
   width: auto;  /* ← ZMIEŃ z 100% na auto */
-  height: 52px;
+  height: 48px;
   min-width: 400px;  /* ← ZWIĘKSZ minimum */
   max-width: 720px;
   flex: 1;  /* ← DODAJ TO - elastyczna szerokość */
@@ -24,9 +24,6 @@
   background-color: white;
   box-shadow: 0 1px 6px rgba(32, 33, 36, 0.28);
 }
-
-
-
 
 .searchbar:hover {
   background-color: #e8eaed;

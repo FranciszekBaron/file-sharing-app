@@ -3,6 +3,7 @@ import styles from "..//MyFiles/MyFiles.module.css"
 import { mockFiles } from "../../data/mockFiles";
 import type { FileItem as FileItemType} from "../../types/FileItem";
 import FileItem from "../../components/FileItem/FileItem";
+import DropDownButton from "../../components/DropDownButton/DropDownButton";
 
 
 
@@ -17,11 +18,15 @@ const MyFiles = () => {
     <div className={styles.contentWrapper}>
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
-            <h1 className={styles.title}>Moje pliki ▾</h1>
+            <DropDownButton label="Mój dysk"></DropDownButton>
             <h1 className={styles.label}>Opcje widoku</h1>
         </div>
         <div className={styles.filtersWrapper}>
-        <h1 className={styles.label}>Filters</h1>
+          <DropDownButton label="Typ elementu" textSize={14} variant="filters"></DropDownButton>
+          <DropDownButton label="Osoby" textSize={14} variant="filters"></DropDownButton>
+          <DropDownButton label="Zmodyfikowano" textSize={14} variant="filters"></DropDownButton>
+          <DropDownButton label="Źródło" textSize={14} variant="filters"></DropDownButton>
+          
         </div>
       </div>
       <div className={styles.main}>

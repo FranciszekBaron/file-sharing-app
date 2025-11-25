@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import {Button} from "../Common/Button";
+import DropDownButton from "../DropDownButton/DropDownButton";
 
 
 const Sidebar = ({ 
@@ -30,25 +31,23 @@ const Sidebar = ({
     const [activeIndex,setActiveIndex] = useState<number | null>(null);
 
     const items = [
-    { icon: <Home/>, label: "Strona główna" },
-    { icon: <FolderOpen />, label: "Moje Pliki" },
+    { icon: <Home strokeWidth={2.5}/>, label: "Strona główna"  },
+    { icon: <FolderOpen strokeWidth={2.5}/>, label: "Moje Pliki" },
     null, // odstęp między grupami
-    { icon: <Share2 />, label: "Udostępnione dla mnie" },
-    { icon: <Clock />, label: "Ostatnie" },
-    { icon: <Star />, label: "Oznaczone gwiazdką" },
+    { icon: <Share2 strokeWidth={2.5}/>, label: "Udostępnione dla mnie" },
+    { icon: <Clock strokeWidth={2.5}/>, label: "Ostatnie" },
+    { icon: <Star strokeWidth={2.5}/>, label: "Oznaczone gwiazdką" },
     null, 
-    { icon: <CircleAlert />, label: "Spam" },
-    { icon: <Trash2 />, label: "Kosz" },
+    { icon: <CircleAlert strokeWidth={2.5}/>, label: "Spam" },
+    { icon: <Trash2 strokeWidth={2.5}/>, label: "Kosz" },
   ];
 
-  const addItem = {icon: <Plus strokeWidth={2.7} size={25}/>,label: "Nowy"}
+  const addItem = <Plus strokeWidth={2.7} size={25}/>;
 
   return (
     <div className={styles.sidebarContent}>
         <div className={styles.sidebarAddFile}>
-          <Button icon={addItem.icon}>
-            {addItem.label}
-          </Button>
+          <DropDownButton icon={addItem} label="Nowy" variant="icon"></DropDownButton>
         </div>
         <div className={styles.sidebarOptions}>
             {items.map((item,index) => 

@@ -1,9 +1,22 @@
 .profile {
-    height: 40px; /* <-- stała wysokość buttona */
-    width: 40px;
-    border-radius: 50%;
-    border: 0.3px solid rgba(0,0,0,0.15);
-    background: white;
-    background-color: var(--text-secondary);
+  width: 30px;   /* dopasowane do innych buttonów */
+  height: 30px;  /* dopasowane do innych buttonów */
+  border-radius: 50%;
+  border: 0.3px solid rgba(0, 0, 0, 0.15);
+  background-color: var(--text-secondary);
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
+.profile:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.profile:active {
+  transform: translateY(0);
+}

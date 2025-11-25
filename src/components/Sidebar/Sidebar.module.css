@@ -6,10 +6,10 @@
 
 .sidebarAddFile{
   height: 80px;
-  padding-top: 5px;
   background-color: var(--background);
   padding-left: 8px;
-  gap: 6px;
+  padding-top: 2px;
+  gap: 4px;
 }
 
 .sidebarOptions{
