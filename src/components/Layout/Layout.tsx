@@ -17,12 +17,12 @@ const Layout = ({
     setActiveView: (index: number) => void
 }) => {
 
-    const [sidebarWidth, setSidebarWidth] = useState(270); // ustawia domyślną szerokość
+    const [sidebarWidth, setSidebarWidth] = useState(260); // ustawia domyślną szerokość
 
     const [pos,setPos] = useState({x:0,y:0}); // do ustawiania zmiennych kursora
     const [offset,setOffset] = useState({x:0,y:0});
     
-    const MIN_SIDEBAR_WIDTH = 270;
+    const MIN_SIDEBAR_WIDTH = 260;
     const MAX_SIDEBAR_WIDTH = 500;
 
 

@@ -22,12 +22,14 @@ const MyFiles = () => {
         </div>
         <div className={styles.filtersWrapper}>
         <h1 className={styles.label}>Filters</h1>
+        </div>
       </div>
-      </div>
-  
+      <div className={styles.main}>
         <div className={styles.fileList}>
           <FileItem file={file}></FileItem>
         </div>
+      </div>
+
     </div>
   );
 };
