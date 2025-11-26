@@ -1,5 +1,5 @@
 import Layout from "../../components/Layout/Layout";
-import Home from "../../views/Home";
+import Home from "../../views/Home/Home";
 import MyFiles from "../../views/MyFiles/MyFiles";
 import Shared from "../../views/Shared"
 import Recent from "../../views/Recent";

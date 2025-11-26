@@ -10,11 +10,20 @@ import {
   CircleAlert, 
   Trash2,
   Plus,
-  icons
+  icons,
+  FolderPlus, 
+  Upload, 
+  FileUp,
+  MenuIcon,
+  AlertCircle
 } from "lucide-react";
+
 import { useState } from "react";
 import {Button} from "../Common/Button";
 import DropDownButton from "../DropDownButton/DropDownButton";
+import IconText from "../Common/MenuItem/MenuItem";
+import MenuDivider from "../Common/MenuDivider/MenuDivider";
+import MenuItem from "../Common/MenuItem/MenuItem";
 
 
 const Sidebar = ({ 
@@ -42,12 +51,24 @@ const Sidebar = ({
     { icon: <Trash2 strokeWidth={2.5}/>, label: "Kosz" },
   ];
 
+  const addFileIcon = <FolderPlus size={20}/>
+  const uploadFileIcon = <Upload size={20}/>
+  const FileUpIcon = <FileUp size={20}/>
+  const alertIcon = <AlertCircle size = {20}/>
+
   const addItem = <Plus strokeWidth={2.7} size={25}/>;
 
   return (
     <div className={styles.sidebarContent}>
         <div className={styles.sidebarAddFile}>
-          <DropDownButton icon={addItem} label="Nowy" variant="icon"></DropDownButton>
+          <DropDownButton icon={addItem} label="Nowy" variant="icon">
+            <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={20} variant="operations"/>
+                <MenuDivider/>
+                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik"gap={20} variant="operations"/>
+                <MenuItem icon = {FileUpIcon} label= "Prześlij Folder"gap={20} variant="operations"/> 
+                <MenuDivider/>
+                <MenuItem icon = {alertIcon} label= "..."gap={20} variant="operations"/>
+          </DropDownButton>
         </div>
         <div className={styles.sidebarOptions}>
             {items.map((item,index) => 

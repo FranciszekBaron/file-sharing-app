@@ -1,8 +1,8 @@
 const MyFiles = () => {
   return (
     <div>
-      <h1>Trash</h1>
-      <p>SMietniki...</p>
+       <h1>Ups...</h1>
+      <p>Ta opcja jest jeszcze niedostępna.</p>
     </div>
   );
 };  

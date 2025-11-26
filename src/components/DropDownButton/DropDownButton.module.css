@@ -81,15 +81,46 @@
 }
 
 .menu {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 45px;
+    left: 0;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    width: 300px;
+    z-index: 20;
+    padding-top: 6px;
+    padding-bottom: 6px;
+}
+
+.menu.operations {
   position: absolute;
   top: 45px;
   left: 0;
   background: white;
-  border-radius: 12px;
-  padding: 8px 0;
+  border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   min-width: 160px;
   z-index: 20;
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.menu.elements {
+  position: absolute;
+  top: -20px;
+  left: 0;
+  background: rgb(255, 255, 255);
+  box-shadow: 1px 1px 2px rgb(0, 0, 0);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  width: 200px;
+  z-index: 20;
+  transform: translateY(-10%);
+  padding-top: 4px;
+  padding-bottom: 4px;
 }
 
 

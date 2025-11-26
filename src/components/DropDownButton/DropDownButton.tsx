@@ -4,10 +4,12 @@ import { ChevronDown } from "lucide-react";
 
 
 interface Props {
+    children?: React.ReactNode;
     icon?: ReactNode;
     label: string;
     textSize?: number;
     variant?: "default" | "filters" | "icon"; 
+    menuVariant?: "default" | "operations" | "elements";
 }
 
 //to samo co ({children} : {children:React.ReactNode}) tylko inaczej zapisane
@@ -15,13 +17,13 @@ interface Props {
 
 
 //Propsy niemutowalne -> to znaczy ze nie mozna im przypisac pozniej wartosci w innym miejscu niz Props
-const DropDownButton = ({icon,label,textSize=24,variant}: Props) => {
+const DropDownButton = ({children, icon,label,textSize=24,variant,menuVariant}: Props) => {
 
     const [open,setOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
 
     const hasIcon = icon;
-
+    
 
     const handleClickOutside = (e:MouseEvent) => 
     {
@@ -51,10 +53,8 @@ const DropDownButton = ({icon,label,textSize=24,variant}: Props) => {
             }
 
             {open && (
-                <div className={styles.menu}>
-                    <div className={styles.item}>Nowy folder</div>
-                    <div className={styles.item}>Prześlij pik</div>
-                    <div className={styles.item}>Prześlij folder</div>
+                <div className={`${styles.menu} ${menuVariant ? styles[menuVariant] : ''}`}>
+                    {children}
                 </div>
             )}
         </div>

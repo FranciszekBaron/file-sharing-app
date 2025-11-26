@@ -1,0 +1,22 @@
+.wrapper {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 300;
+  cursor: pointer;
+  padding: 18px;
+  height: 40px;
+}
+
+.wrapper:hover {
+   background-color: var(--border);
+}
+
+.wrapper.operations {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 300;
+  cursor: pointer;
+  padding: 14px;
+  height: 32px;
+}
+
