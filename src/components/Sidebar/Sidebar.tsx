@@ -62,12 +62,13 @@ const Sidebar = ({
     <div className={styles.sidebarContent}>
         <div className={styles.sidebarAddFile}>
           <DropDownButton icon={addItem} label="Nowy" variant="icon">
-            <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={20} variant="operations"/>
+            <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations"/>
                 <MenuDivider/>
-                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik"gap={20} variant="operations"/>
-                <MenuItem icon = {FileUpIcon} label= "Prześlij Folder"gap={20} variant="operations"/> 
+                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations"/>
+                <MenuItem icon = {FileUpIcon} label= "Prześlij Folder" gap={14} size={14} variant="operations"/> 
                 <MenuDivider/>
-                <MenuItem icon = {alertIcon} label= "..."gap={20} variant="operations"/>
+                <MenuItem icon = {alertIcon} label= "..."gap={20} variant="operations"
+                style={{color:"lightgray",cursor:"not-allowed",pointerEvents: "none"}}/>
           </DropDownButton>
         </div>
         <div className={styles.sidebarOptions}>

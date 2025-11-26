@@ -25,12 +25,13 @@ const MyFiles = () => {
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
             <DropDownButton label="Mój dysk" menuVariant="operations">
-                <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={20} variant="operations"/>
+                <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations"/>
                 <MenuDivider/>
-                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik"gap={20} variant="operations"/>
-                <MenuItem icon = {FileUpIcon} label= "Prześlij Folder"gap={20} variant="operations"/> 
+                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations"/>
+                <MenuItem icon = {FileUpIcon} label= "Prześlij Folder" gap={14} size={14} variant="operations"/> 
                 <MenuDivider/>
-                <MenuItem icon = {alertIcon} label= "..."gap={20} variant="operations"/> 
+                <MenuItem icon = {alertIcon} label= "..." gap={14} size={14} variant="operations" 
+                style={{color:"lightgray", cursor:"not-allowed",pointerEvents:"none"}}/> 
             </DropDownButton>
             <h1 className={styles.label}>Opcje widoku</h1>
         </div>

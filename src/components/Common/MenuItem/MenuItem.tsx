@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 import styles from "..//MenuItem/MenuItem.module.css";
 
@@ -8,11 +8,12 @@ interface Props {
     size?: number;
     gap?: number;
     variant?: "default" | "operations" | "elements"
+    style?: CSSProperties
 }
 
-const MenuItem = ({icon,label,size=16,gap=8,variant} : Props) => {
+const MenuItem = ({icon,label,size=16,gap=8,variant,style} : Props) => {
     return (
-        <div className={`${styles.wrapper} ${variant ? styles[variant] : ''}`} style={{gap,fontSize:size}}>
+        <div className={`${styles.wrapper} ${variant ? styles[variant] : ''}`} style={{gap,fontSize:size,...style}}>
             {icon}
             <span>{label}</span>
         </div>

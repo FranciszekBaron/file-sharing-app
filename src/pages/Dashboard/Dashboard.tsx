@@ -7,6 +7,7 @@ import Starred from "../../views/Starred";
 import Spam from '../../views/Spam';
 import Trash from '../../views/Trash';
 import { useState } from "react";
+import useGlobalShortcut from "../../hooks/useGlobalShortcut";
 
 
 const Dashboard = () => {
@@ -25,14 +26,30 @@ const Dashboard = () => {
     <Trash />,         // index 8
   ];
 
+  let lastClicked = "";
+
   const renderView = () => {
     return viewMap[activeView] || <Home />;
   };
 
-    return (
-        <Layout activeView={activeView} setActiveView={setActiveView}>
-            {renderView()}
-        </Layout>
-    );
+  const handleKey = (e:KeyboardEvent) =>{
+    if (e.ctrlKey && e.key === "c"){
+      lastClicked = "ctrl + c";
+      console.log("ControlC");
+    }
+
+    if(e.key === "f" && lastClicked==="ctrl + c"){
+      console.log("Nowy Folder");
+      lastClicked="";
+    }
+  }
+  
+  useGlobalShortcut(handleKey)//dodaje listenera do tej funkcji
+
+  return (
+      <Layout activeView={activeView} setActiveView={setActiveView}>
+          {renderView()}
+      </Layout>
+  );
 };
 export default Dashboard;
