@@ -3,6 +3,7 @@ import { Profile } from "../Common/Profile";
 import {Searchbar} from "../Searchbar/Searchbar";
 import styles from "./Topbar.module.css";
 import buttonStyles from "../Common/Button.module.css"
+import { mockFiles } from "../../data/mockFiles";
 
 import { Settings,Sliders, HelpCircle} from "lucide-react";
 
@@ -17,7 +18,7 @@ const Topbar = ({activeView} : {activeView: number}) => {
         
         {/* Lewa strona - Searchbar */}
         <div className={styles.leftSection}>
-          {activeView === 1 && <Searchbar />}
+          {activeView === 1 && <Searchbar items={mockFiles}/>}
         </div>
         
         {/* Prawa strona - Buttony (zawsze przyklejone do prawej) */}

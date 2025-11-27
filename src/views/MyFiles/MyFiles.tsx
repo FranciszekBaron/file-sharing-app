@@ -9,6 +9,10 @@ import { FolderPlus, Upload, FileUp , Folder, FileText , AlertCircle} from "luci
 import MenuDivider from "../../components/Common/MenuDivider/MenuDivider";
 
 
+interface Props{
+  items: FileItemType[]
+}
+
 const MyFiles = () => {
 
   const [files,setFiles] = useState<FileItemType[]>(mockFiles);

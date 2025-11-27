@@ -13,7 +13,8 @@ interface Props {
 
 const MenuItem = ({icon,label,size=16,gap=8,variant,style} : Props) => {
     return (
-        <div className={`${styles.wrapper} ${variant ? styles[variant] : ''}`} style={{gap,fontSize:size,...style}}>
+        <div className={`${styles.wrapper} ${variant ? styles[variant] : ''}`} 
+        style={{gap,fontSize:size,...style}}>
             {icon}
             <span>{label}</span>
         </div>

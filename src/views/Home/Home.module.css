@@ -11,6 +11,10 @@
   flex-direction: column;
 }
 
+.contentWrapper.active {
+  background-color: aquamarine;
+}
+
 
 
 .label {

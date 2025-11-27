@@ -1,30 +1,80 @@
 import { useState } from "react";
 import styles from "./Searchbar.module.css";
-import { Search, X } from 'lucide-react';
+import { Search } from 'lucide-react';
+import type { FileItem } from "../../types/FileItem";
 
-export const Searchbar = () => {
+interface Props {
+  items: FileItem[];
+}
+
+export const Searchbar = ({items}: Props) => {
   const [isActive, setToActive] = useState(false);
+  const [query, SetQuery] = useState("");
+  const isSearching = query.length > 0;
+  const [foundedItems,SetFoundItems] = useState<FileItem[]>([]);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value.toLowerCase();
+    SetQuery(value);
+    
+    if(value === "") {
+      console.log("No longer searching");
+      return;
+    }
+    
+    console.log("Searching..");
+    const foundItems = items.filter(
+      item => item.name.toLowerCase().startsWith(value)
+    );
 
-  // Debug - zobacz co zwraca styles.active
-  console.log('styles.active:', styles.searchbarActive);
-  console.log('Pełny className:', `${isActive ? styles.searchbarActive : styles.searchbar}`);
-  
+    SetFoundItems(foundItems);
+    
+    if (foundItems.length > 0) {
+      foundItems.forEach(item => {
+        console.log("Znaleziono", item.name);
+      });
+    } else {
+      console.log("Nie znaleziono");
+    }
+  }
+
   return (
-   <div className={`${styles.searchbar} ${isActive ? styles.active : ''}`}>
-      <Search className={styles.searchIcon} size={20}/>
-      <input 
-        placeholder="Szukaj w plikach"
-        className={styles.searchInput}
-        onFocus={() => {
-          console.log('Kliknięto w input!');  // ← DODAJ TO
-          setToActive(true);
-        }}
-        onBlur={() => {
-          console.log('Kliknięto poza input');  // ← DODAJ TO
-          setToActive(false);
-        }}
-      />
+    <div className={styles.searchbarWrapper}>
+      {/* Górna część - input */}
+      <div className={`
+        ${styles.searchbar} 
+        ${isSearching ? styles.searching : isActive ? styles.active : ''}
+        ${isSearching ? styles.searchbarExpanded : ''}
+      `}>
+        <Search className={styles.searchIcon} size={20} strokeWidth={2}/>
+        <input 
+          placeholder="Szukaj w plikach"
+          className={styles.searchInput}
+          value={query}
+          onFocus={() => {
+            console.log('Focus!');
+            setToActive(true);
+          }}
+          onBlur={() => {
+            console.log('Blur!');
+            if(query.length === 0) {
+              setToActive(false);
+            }
+          }}
+          onChange={handleChange}
+        />
+      </div>
+      
+      {/* Menu - rozwijane w dół */}
+      {isSearching && (
+        <div className={styles.menu}>
+          <div className={styles.menuContent}>
+            {foundedItems.map(item => (
+              <div>{item.name}</div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 };

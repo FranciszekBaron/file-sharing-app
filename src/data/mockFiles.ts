@@ -17,6 +17,14 @@ export const mockFiles: FileItem[] = [
   },
   {
     id: '2',
+    name: 'Projekty 2025',
+    type: 'folder',
+    modifiedDate: new Date('2024-11-20'),
+    owner: 'Ty',
+    starred: true
+  },
+  {
+    id: '2',
     name: 'Raport.pdf',
     type: 'pdf',
     size: 2048576,
