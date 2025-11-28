@@ -12,41 +12,37 @@
 }
 
 .topbarWrapper{
-    height: 100px;
-    background-color: rgb(255, 255, 255);
-    display: flex;
-    border-radius: 16px;
-    flex-direction: column;
-    margin-top: 6px;
-    gap: 2px;
+  height: 100px;
+  background-color: rgb(255, 255, 255);
+  display: flex;
+  border-radius: 16px;
+  flex-direction: column;
+  margin-top: 6px;
+  gap: 2px;
 }
 
-.main {
-  flex: 1; /* ← magia! zajmuje CAŁĄ pozostałą przestrzeń */
-  background-color: rgb(255, 255, 255);
-}
 
 .titleButtonWrapper{
-    display: flex;
-    justify-content: space-between;  /* jeden na lewo, drugi na prawo */
-    align-items: center;              /* pionowo wycentrowane */
-    height: 50px;
-    background-color: #ffffff;
-    border-radius: 16px;  /* bezpieczeństwo dla tekstu */    
-    font-size: 14px;
-    font-weight: 300;
-    padding: 2px;
+  display: flex;
+  justify-content: space-between;  /* jeden na lewo, drugi na prawo */
+  align-items: center;              /* pionowo wycentrowane */
+  height: 50px;
+  background-color: #ffffff;
+  border-radius: 16px;  /* bezpieczeństwo dla tekstu */    
+  font-size: 14px;
+  font-weight: 300;
+  padding: 2px;
 }
 
 .filtersWrapper {
-    display: flex;
-    flex-direction: row;
-    height: 50px;
-    background-color: #ffffff;
-    border-radius: 16px;  /* bezpieczeństwo dla tekstu */    
-    padding: 10px;
-    padding-left: 14px;
-    gap: 8px;
+  display: flex;
+  flex-direction: row;
+  height: 50px;
+  background-color: #ffffff;
+  border-radius: 16px;  /* bezpieczeństwo dla tekstu */    
+  padding: 10px;
+  padding-left: 14px;
+  gap: 8px;
 }
 
 .title {
@@ -66,15 +62,65 @@
 }
 
 
+.main {
+  flex: 1; /* magia! */
+  background-color: rgb(255, 255, 255);
+  display: flex;        /* żeby mainContent też flexowo się rozciągało */
+  flex-direction: column;
+  padding: 0px 10px 0px 14px;
+}
+
+/* 5️⃣ MainContent rozciąga się w dół całego main */
+.mainContent {
+  flex: 1; 
+  background-color: aliceblue;
+  display: flex;        /* jeśli chcesz, żeby w środku też flex */
+  flex-direction: column;
+  border-radius: 12px;
+}
+
+.mainContentTopbar {
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  background-color: rgb(255, 255, 255);
+}
+
+.mainContentTopbarColumn {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  background-color: rgb(255, 255, 255);
+  cursor: pointer;
+  border-radius: 8px 8px 0 0; /* jeśli chcesz jakieś ogólne */
+  transition: background-color 0.2s;
+  padding-left: 8px;
+}
+
+/* hover dla wszystkich */
+.mainContentTopbarColumn:hover {
+  background-color: #e8eaed;
+}
+
+.mainContentTopbarName { flex: 10 1 0; }
+.mainContentTopbarDate { flex: 3 1 0; display: none; }
+.mainContentTopbarOptions { flex: 1 1 0; }
+
+.mainContentTopbarOptions:hover { background-color: #ffffff;}
+
+
+@media (max-width: 800px) {
+  .mainContentTopbarDate {
+    display: flex;
+  }
+}
+
 
 .fileList {
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  margin-top: 20px;
+  background-color: rgb(255, 255, 255);
 }
-
-
 
 .label {
   font-size: 24px;

@@ -9,14 +9,20 @@ import Trash from '../../views/Trash';
 import { useState } from "react";
 import useGlobalShortcut from "../../hooks/useGlobalShortcut";
 
+import type { FileItem } from "../../types/FileItem";
 
-const Dashboard = () => {
+interface Props {
+  items: FileItem[]
+}
+
+
+const Dashboard = ({items}:Props) => {
 
     const [activeView,setActiveView] = useState(0);
 
     const viewMap = [
-    <Home />,          // index 0
-    <MyFiles />,       // index 1
+    <Home />,          // in  dex 0
+    <MyFiles items={items}/>,       // index 1
     null,              // index 2 (spacer - nie renderuj nic)
     <Shared />,        // index 3
     <Recent />,        // index 4

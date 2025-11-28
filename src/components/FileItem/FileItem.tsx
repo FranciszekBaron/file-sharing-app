@@ -3,7 +3,7 @@ import type { FileItem as FileItemType } from "../../types/FileItem";
 
 
 interface Props {
-    file: FileItemType
+    file: FileItemType //troche jak generics , ze to jest typ tego pliku ktory sobie przekazemy
 }
 
 export const FileItem = ({file} : Props) => {

@@ -70,7 +70,7 @@ export const Searchbar = ({items}: Props) => {
         <div className={styles.menu}>
           <div className={styles.menuContent}>
             {foundedItems.map(item => (
-              <div>{item.name}</div>
+              <div key={item.id}>{item.name}</div>
             ))}
           </div>
         </div>

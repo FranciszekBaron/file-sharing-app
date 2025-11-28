@@ -24,7 +24,7 @@ export const mockFiles: FileItem[] = [
     starred: true
   },
   {
-    id: '2',
+    id: '3',
     name: 'Raport.pdf',
     type: 'pdf',
     size: 2048576,
@@ -33,7 +33,7 @@ export const mockFiles: FileItem[] = [
     shared: true
   },
   {
-    id: '3',
+    id: '4',
     name: 'Wakacje',
     type: 'folder',
     modifiedDate: new Date('2024-10-01'),

@@ -56,10 +56,8 @@
   padding: 0;
   border-radius: 50%;
   box-shadow: 0px 0px 0px rgb(146, 146, 146);
-  background-color: var(--background);
+  background:transparent;
   border: 0px solid rgba(0,0,0,0.15);
-  
-
   display: flex;           /* ✅ włącza flexbox */
   align-items: center;     /* ✅ wycentrowanie w pionie */
   justify-content: center; 

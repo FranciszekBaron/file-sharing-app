@@ -1,0 +1,39 @@
+.fileItemListWrapper {
+    display: flex;
+    flex-direction: row;
+    font-weight: 400;
+    color: #333;
+    height: 46px;
+    align-items: center
+}
+
+.fileItemListWrapper:hover{
+    background-color: #e8eaed; ;
+}
+
+.fileItemListColumn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+
+.fileItemListName {flex: 10 1 0;
+    gap: 18px;
+    padding-left: 18px;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.fileItemListDate {flex: 3 1 0;
+    font-size: 14px;
+    font-weight: 300;
+    display: none;}
+
+.fileItemListOptions { flex: 1 1 0;}
+
+@media (max-width: 800px) {
+  .fileItemListDate {
+    display: flex;
+  }
+}
