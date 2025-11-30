@@ -11,6 +11,8 @@
    background-color: var(--border);
 }
 
+
+
 .wrapper.operations {
   display: inline-flex;
   align-items: center;
@@ -18,5 +20,20 @@
   cursor: pointer;
   padding: 14px;
   height: 32px;
+}
+
+
+.clicked {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 300;
+  cursor: pointer;
+  padding: 18px;
+  height: 40px;
+  background-color: rgb(214, 226, 251);
+}
+
+.clicked:hover{
+  background-color: var(--border);
 }
 

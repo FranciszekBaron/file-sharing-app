@@ -11,12 +11,6 @@
   flex-direction: column;
 }
 
-.contentWrapper.active {
-  background-color: aquamarine;
-}
-
-
-
 .label {
   font-size: 24px;
   font-weight: 300;

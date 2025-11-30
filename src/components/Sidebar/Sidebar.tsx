@@ -40,15 +40,15 @@ const Sidebar = ({
     const [activeIndex,setActiveIndex] = useState<number | null>(null);
 
     const items = [
-    { icon: <Home strokeWidth={2.5}/>, label: "Strona główna"  },
-    { icon: <FolderOpen strokeWidth={2.5}/>, label: "Moje Pliki" },
+    { icon: <Home strokeWidth={1}/>, label: "Strona główna"  },
+    { icon: <FolderOpen strokeWidth={1}/>, label: "Moje Pliki" },
     null, // odstęp między grupami
-    { icon: <Share2 strokeWidth={2.5}/>, label: "Udostępnione dla mnie" },
-    { icon: <Clock strokeWidth={2.5}/>, label: "Ostatnie" },
-    { icon: <Star strokeWidth={2.5}/>, label: "Oznaczone gwiazdką" },
+    { icon: <Share2 strokeWidth={1}/>, label: "Udostępnione dla mnie" },
+    { icon: <Clock strokeWidth={1}/>, label: "Ostatnie" },
+    { icon: <Star strokeWidth={1}/>, label: "Oznaczone gwiazdką" },
     null, 
-    { icon: <CircleAlert strokeWidth={2.5}/>, label: "Spam" },
-    { icon: <Trash2 strokeWidth={2.5}/>, label: "Kosz" },
+    { icon: <CircleAlert strokeWidth={1}/>, label: "Spam" },
+    { icon: <Trash2 strokeWidth={1}/>, label: "Kosz" },
   ];
 
   const addFileIcon = <FolderPlus size={20}/>

@@ -19,7 +19,7 @@ export const mockFiles: FileItem[] = [
     id: '2',
     name: 'Projekty 2025',
     type: 'folder',
-    modifiedDate: new Date('2024-11-20'),
+    modifiedDate: new Date('2025-11-20'),
     owner: 'Ty',
     starred: true
   },
@@ -36,7 +36,16 @@ export const mockFiles: FileItem[] = [
     id: '4',
     name: 'Wakacje',
     type: 'folder',
-    modifiedDate: new Date('2024-10-01'),
+    modifiedDate: new Date('2023-10-01'),
     owner: 'Ty'
+  },
+  {
+    id: '5',
+    name: 'MojaNotatka.txt',
+    type: 'doc',
+    size: 2048576,
+    modifiedDate: new Date('2024-11-15'),
+    owner: 'Ty',
+    shared: true
   }
 ]

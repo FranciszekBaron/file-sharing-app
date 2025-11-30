@@ -38,7 +38,7 @@ const Dashboard = ({items}:Props) => {
     return viewMap[activeView] || <Home />;
   };
 
-  const handleKey = (e:KeyboardEvent) =>{
+  const handleNewFileKey = (e:KeyboardEvent) =>{
     if (e.ctrlKey && e.key === "c"){
       lastClicked = "ctrl + c";
       console.log("ControlC");
@@ -49,8 +49,35 @@ const Dashboard = ({items}:Props) => {
       lastClicked="";
     }
   }
+
+  const handleUploadFileKey = (e:KeyboardEvent) =>{
+    if (e.ctrlKey && e.key === "c"){
+      lastClicked = "ctrl + c";
+      console.log("ControlC");
+    }
+
+    if(e.key === "u" && lastClicked==="ctrl + c"){
+      console.log("Prześlij Plik");
+      lastClicked="";
+    }
+  }
+
+  const handleUploadFolderKey = (e:KeyboardEvent) =>{
+    if (e.ctrlKey && e.key === "c"){
+      lastClicked = "ctrl + c";
+      console.log("ControlC");
+    }
+
+    if(e.key === "i" && lastClicked==="ctrl + c"){
+      console.log("Prześlij Folder");
+      lastClicked="";
+    }
+  }
   
-  useGlobalShortcut(handleKey)//dodaje listenera do tej funkcji
+  useGlobalShortcut(handleNewFileKey);//dodaje listenera do tej funkcji
+  useGlobalShortcut(handleUploadFileKey);
+  useGlobalShortcut(handleUploadFolderKey);
+  
 
   return (
       <Layout activeView={activeView} setActiveView={setActiveView}>

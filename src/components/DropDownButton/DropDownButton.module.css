@@ -1,21 +1,24 @@
 .wrapper {
   position: relative; /* ważne: menu będzie pod tym */
   display: inline-block;
+  display: flex;
+  align-items: center;
+  gap:1px;
 }
 
 .button {
-    cursor: pointer;
-    font-size: 24px;
-    font-weight: 320;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 10px 12px;
-    border-radius: 12px;
-    background: transparent;
-    border: none;
-    height: 40px;
-    border-radius: 40px;
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: 320;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  height: 40px;
+  border-radius: 40px;
 }
 
 .button.icon { 
@@ -43,12 +46,10 @@
 .button.filters {
     display: flex;
     flex-direction: row;
-    gap: 14px;
-    width: auto; 
     height: 32px;
-    min-width: 112px;  
+    gap: 18px; 
     border-radius: 8px;
-    border: 0.1px solid rgba(0, 0, 0, 0.425);
+    border: 0.1px solid rgba(17, 17, 17, 0.425);
     background: rgb(255, 255, 255);
     color: rgb(60, 60, 60);
     font-size: 14px;
@@ -59,8 +60,42 @@
                 transform 0.1s ease;
     align-items: center;
     justify-content: space-between;
-    padding-left:16px;
+    padding: 0 16px;
     gap:10px;
+}
+
+
+
+.button.filters.clicked {
+    justify-content: center;
+    background-color:rgb(201,230,253);              /* mniejszy padding = mniejsza szerokość */
+    max-width: fit-content; 
+    border:none;
+    color: rgb(41,83,125);
+    min-width: fit-content;
+    border-radius: 8px 0px 0px 8px;
+    gap:8px;
+    padding: 0 6px 0 16px;
+}
+
+.button.filters.clicked:hover{
+    background-color:rgb(170, 216, 253);
+}
+
+.clearBtn {
+  height: 32px;
+  width: 32px;
+  border-radius: 0px 8px 8px 0px;
+  border:none;
+  background-color:rgb(201,230,253);
+  color: rgb(41,83,125);;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.clearBtn:hover{
+  background-color:rgb(170, 216, 253);
 }
 
 .button.filters:hover {

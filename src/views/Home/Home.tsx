@@ -8,8 +8,7 @@ const MyFiles = () => {
 
 
   return (
-    <div className={`${styles.contentWrapper} ${active ? styles.active : ''}`}
-    onClick={()=>setToActive(true)}>
+    <div className={`${styles.contentWrapper} ${active ? styles.active : ''}`}>
       <label className={styles.label}>Witamy</label>
     </div>
   );

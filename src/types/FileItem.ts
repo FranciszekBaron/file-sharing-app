@@ -1,7 +1,7 @@
 export interface FileItem {
     id: string;
     name: string;
-    type: 'folder' | 'pdf' | 'doc' | 'image' | 'other';
+    type: 'folder' | 'pdf' | 'doc' | 'image' | 'other' | 'txt';
     size?: number;
     modifiedDate: Date;
     owner?: string;

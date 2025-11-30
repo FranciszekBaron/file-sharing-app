@@ -95,6 +95,11 @@
   border-radius: 8px 8px 0 0; /* jeśli chcesz jakieś ogólne */
   transition: background-color 0.2s;
   padding-left: 8px;
+
+  user-select: none;
+  -webkit-user-select: none;  /* Safari */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* IE/Edge */
 }
 
 /* hover dla wszystkich */
@@ -102,8 +107,15 @@
   background-color: #e8eaed;
 }
 
-.mainContentTopbarName { flex: 10 1 0; }
-.mainContentTopbarDate { flex: 3 1 0; display: none; }
+.mainContentTopbarName { 
+  flex: 10 1 0; 
+  gap:4px;
+}
+.mainContentTopbarDate { flex: 3 1 0; display: none;
+  white-space: nowrap;       /* nie łamie wiersza */
+  overflow: hidden;  
+  text-overflow: ellipsis; 
+}
 .mainContentTopbarOptions { flex: 1 1 0; }
 
 .mainContentTopbarOptions:hover { background-color: #ffffff;}
@@ -112,6 +124,10 @@
 @media (max-width: 800px) {
   .mainContentTopbarDate {
     display: flex;
+    white-space: nowrap;       /* nie łamie wiersza */
+    overflow: hidden;  
+    text-overflow: ellipsis; 
+    
   }
 }
 
@@ -128,6 +144,13 @@
   color: black;
 }
 
+.iconOpen {
+
+}
+
+.iconReversed {
+  transform: rotate(180deg);
+}
 
 
 
