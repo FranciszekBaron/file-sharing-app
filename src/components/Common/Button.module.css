@@ -23,9 +23,8 @@
 
 
 .modernButton:hover {
-  background: rgba(66, 21, 21, 0.03);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-  transform: translateY(-1px);
+  background: rgba(111, 111, 111, 0.03);
+ 
 }
 
 .modernButton:active {
@@ -61,18 +60,11 @@
   display: flex;           /* ✅ włącza flexbox */
   align-items: center;     /* ✅ wycentrowanie w pionie */
   justify-content: center; 
-
   align-items: center;
   justify-content: center;
-
-  transition: background 0.15s ease,
-              box-shadow 0.15s ease,
-              transform 0.1s ease;
 }
 
 .iconOnly:hover {
-  background: rgba(0, 0, 0, 0.121);
-  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
-  transform: translateY(-1px);
+  background: rgba(100, 100, 100, 0.121);
 }
 

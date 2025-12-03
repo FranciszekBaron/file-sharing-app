@@ -24,9 +24,11 @@ const MenuItem = ({icon,label,size=16,gap=8,variant,style,onActivate,clicked} : 
         `}
         style={{gap,fontSize:size,...style}} 
         onClick={onActivate}>
-            {clicked ? <Check size={size} color="blue"></Check> : icon}
+            {clicked ? <Check size={size*1.5} color="blue"></Check> : icon}
             <span>{label}</span>
         </div>
     );
 }
 export default MenuItem
+
+//Brzydko zrobiony css, nie auomatyczny tylko padding nie elegancki

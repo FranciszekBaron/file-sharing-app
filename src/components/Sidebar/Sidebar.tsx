@@ -61,7 +61,7 @@ const Sidebar = ({
   return (
     <div className={styles.sidebarContent}>
         <div className={styles.sidebarAddFile}>
-          <DropDownButton icon={addItem} label="Nowy" variant="icon">
+          <DropDownButton icon={addItem} label="Nowy" variant="icon" position="on">
             <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations"/>
                 <MenuDivider/>
                 <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations"/>

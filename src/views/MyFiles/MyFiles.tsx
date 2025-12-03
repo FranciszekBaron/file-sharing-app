@@ -19,6 +19,7 @@ import { ArrowCircled } from "..//..//icons//ArrowCircled";
 
 
 import { filterLabels } from "../../types/FilterType";
+import Modal from "../../components/Modal/Modal";
 
 interface Props{
   items: FileItemType[]
@@ -26,9 +27,15 @@ interface Props{
 
 const MyFiles = ({items}:Props) => {
 
-  const [files,SetFiles] = useState<FileItemType[]>([...items].sort((a,b)=>a.name.localeCompare(b.name)));
+  const [allFiles,SetAllFiles] = useState<FileItemType[]>([...items].sort((a,b)=>a.name.localeCompare(b.name)));
+  const [displayedFiles,SetDisplayedFiles] = useState<FileItemType[]>([...items].sort((a,b)=>a.name.localeCompare(b.name)))
+
+
   const [acitveIndexFileItems,SetActiveIndexFileItems] = useState<string| null>()
   const [activeIndexFiltersItems,SetActiveIndexFiltersItems] = useState<string | null>()
+  const [addFileOpen,SetAddFileOpen] = useState(false);
+
+  const [fileName,SetFileName] = useState("");
 
   const addFileIcon = <FolderPlus size={20}/>
   const uploadFileIcon = <Upload size={20}/>
@@ -36,7 +43,30 @@ const MyFiles = ({items}:Props) => {
   const alertIcon = <AlertCircle size={20}/>
 
   
-  const handleAdd = () => {} // TODO!!!!!
+  const handleAdd = (name: string) => {
+      const newItem:FileItemType = {
+        id: (allFiles.length+1).toString(),
+        name: name,
+        type: 'folder',
+        modifiedDate: new Date()
+      }
+
+      const updatedFiles = [...allFiles,newItem];
+      SetAllFiles(updatedFiles);
+
+
+      
+      if(activeFilter!=='none'){
+        SetDisplayedFiles(updatedFiles.filter(e=>e.type==activeFilter));
+      }else{
+        SetDisplayedFiles(updatedFiles)
+      }
+      
+      SetFileName("");
+    } // TODO!!!!!
+
+
+
   const handleUploadFile = () => {} //TODO!!!!
   const handleUploadFolder = () => {} //TODO!!!!
 
@@ -49,14 +79,14 @@ const MyFiles = ({items}:Props) => {
   const handleSort= (type:'name'|'date') => {
     if(type === 'name'){
        setNameSortActive(!nameSortActive);
-       SetFiles([...files].sort((a, b) => 
+       SetDisplayedFiles([...displayedFiles].sort((a, b) => 
         !nameSortActive 
           ? a.name.localeCompare(b.name)   // A→Z
           : b.name.localeCompare(a.name)   // Z→A
       ));
     }else if(type==='date'){
        setDateSortActive(!dateSortActive);
-       SetFiles([...files].sort((a, b) => {
+       SetDisplayedFiles([...displayedFiles].sort((a, b) => {
           const diff = new Date(a.modifiedDate).getTime() - new Date(b.modifiedDate).getTime();
           return !dateSortActive ? diff : -diff;
        }));
@@ -70,12 +100,12 @@ const MyFiles = ({items}:Props) => {
 
   const handleFilter = (filter:Exclude<FilterType,'none'>) => {
       SetActiveFilter(filter)
-      SetFiles([...items].filter(e=>e.type==filter));
+      SetDisplayedFiles([...allFiles].filter(e=>e.type==filter));
   }
 
   const handleClearFilter = () => {
     SetActiveFilter('none');
-    SetFiles([...items].sort((a,b)=>a.name.localeCompare(b.name)));
+    SetDisplayedFiles([...allFiles].sort((a,b)=>a.name.localeCompare(b.name)));
   }
 
   const filterItems = [
@@ -86,10 +116,25 @@ const MyFiles = ({items}:Props) => {
   
   return (
     <div className={styles.contentWrapper}>
+      {
+      <Modal open={addFileOpen} onClose={()=>SetAddFileOpen(false)}>
+        <label className={styles.modalLabel}>Nowy Folder</label>
+        <input value={fileName} placeholder="Folder bez nazwy" className={styles.modalInput} onChange={(e)=> SetFileName(e.target.value)}></input>
+        <div className={styles.modalButtons}>
+          <button className={styles.modalButton} onClick={()=>SetAddFileOpen(false)}>Anuluj</button>
+          <button className={styles.modalButton} onClick={()=>{
+            handleAdd(fileName)
+            SetAddFileOpen(false)
+            }}>
+            Zapisz
+          </button>
+        </div>
+      </Modal>
+      }
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
             <DropDownButton label="Mój dysk" menuVariant="operations">
-                <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations" onActivate={handleAdd} />
+                <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations" onActivate={()=>{SetAddFileOpen(true)}} />
                 <MenuDivider/>
                 <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations" onActivate={handleUploadFile}/>
                 <MenuItem icon = {FileUpIcon} label= "Prześlij Folder" gap={14} size={14} variant="operations" onActivate={handleUploadFolder}/> 
@@ -105,7 +150,7 @@ const MyFiles = ({items}:Props) => {
                 <React.Fragment key={item.id}>
                   <MenuItem icon={item.icon} label={item.label} size={14} gap={14} clicked={activeFilter===item.id} onActivate={
                     ()=>{
-                      SetActiveFilter('none');
+                      handleClearFilter()
                       handleFilter(item.id as Exclude<FilterType,'none'>)
                     }}>
                   </MenuItem>
@@ -155,7 +200,7 @@ const MyFiles = ({items}:Props) => {
           </div>
           <FileItemDivider/>
           <div className={styles.fileList}>
-            {files.map(item=>(
+            {displayedFiles.map(item=>(
               <div key={item.id}>
                 <FileItemList file={item} isActive={acitveIndexFileItems === item.id} onActivate={()=>{SetActiveIndexFileItems(item.id)}}/>
                 <FileItemDivider/>

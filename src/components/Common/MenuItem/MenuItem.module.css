@@ -29,11 +29,19 @@
   font-weight: 300;
   cursor: pointer;
   padding: 18px;
+  padding-left: 17px;
   height: 40px;
   background-color: rgb(214, 226, 251);
 }
 
+
 .clicked:hover{
   background-color: var(--border);
+}
+
+
+.checkmark {
+  margin-left: auto;
+  color: blue;
 }
 

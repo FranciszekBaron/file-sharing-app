@@ -1,11 +1,19 @@
 import styles from "./Button.module.css";
 import type {ReactNode} from "react";
 
-export const Button = ({icon,children,className} : {icon?: ReactNode,children?:ReactNode,className?:string}) => {
+
+interface Props {
+  icon: ReactNode,
+  children?: ReactNode,
+  className?: string,
+  onClick?: () => void;
+}
+
+export const Button = ({icon,children,className,onClick}:Props) => {
 
   const isIconOnly = icon && !children;
 
-  return <button className={`${styles.modernButton} ${className || ''}`}>
+  return <button className={`${styles.modernButton} ${className || ''}`} onClick={onClick}>
     {/* Jeśli tylko ikona - renderuj BEZ span */}
       {isIconOnly ? icon : (
         <>

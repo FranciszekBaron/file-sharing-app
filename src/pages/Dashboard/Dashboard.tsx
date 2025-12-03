@@ -20,6 +20,11 @@ const Dashboard = ({items}:Props) => {
 
     const [activeView,setActiveView] = useState(0);
 
+    const [allFiles,SetActiveFiles] = useState([...items].sort((a,b)=>a.name.localeCompare(b.name)));
+    const [displayedFiles,SetDisplayedFiles] = useState([...items].sort((a,b)=>a.name.localeCompare(b.name)));
+
+    
+
     const viewMap = [
     <Home />,          // in  dex 0
     <MyFiles items={items}/>,       // index 1

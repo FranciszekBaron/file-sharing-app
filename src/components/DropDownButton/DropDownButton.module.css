@@ -21,6 +21,11 @@
   border-radius: 40px;
 }
 
+.button:hover {
+  background-color: rebeccapurple;
+}
+
+
 .button.icon { 
     display: flex;
     flex-direction: row;
@@ -107,13 +112,38 @@
 }
 
 .button:hover {
-    background-color: #e8eaed;
+   background-color: rgba(0,0,0,0.1);
 }
 
 .iconOpen {
   transform: rotate(180deg);
   transition: 0.2s ease;
 }
+
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: scaleY(0.95) translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: scaleY(1) translateY(0);
+  }
+}
+
+@keyframes scaleFromTop {
+  from {
+    opacity: 0;
+    transform: translateY(-10%) scaleY(0.3);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(-10%) scaleY(1);
+  }
+}
+
+
 
 .menu {
     display: flex;
@@ -128,12 +158,14 @@
     z-index: 20;
     padding-top: 6px;
     padding-bottom: 6px;
+    animation: slideDown 0.2s ease-out;
+    transform-origin: top;
 }
 
 .menu.operations {
   position: absolute;
-  top: 45px;
-  left: 0;
+  top: 100px;
+  left: 100px;
   background: white;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -145,17 +177,16 @@
 
 .menu.elements {
   position: absolute;
-  top: -20px;
-  left: 0;
   background: rgb(255, 255, 255);
   box-shadow: 1px 1px 2px rgb(0, 0, 0);
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   width: 200px;
-  z-index: 20;
   transform: translateY(-10%);
   padding-top: 4px;
   padding-bottom: 4px;
+  animation: scaleFromTop 0.15s ease-out; /* krótsza, szybsza animacja */
+  transform-origin: top;
 }
 
 
@@ -183,4 +214,48 @@
 
 .item:hover {
   background-color: #f1f1f1;
+}
+
+
+/* POZYCJONOWANIE - dodaj te selektory */
+.posBelow .menu {
+  top: 45px;
+  left: 0;
+}
+
+.posAbove .menu {
+  bottom: 45px;
+  top: auto;
+  left: 0;
+}
+
+.posLeft .menu {
+  top: 0;
+  right: calc(100% + 8px); /* 8px = odstęp od buttona */
+  left: auto;
+}
+
+.posRight .menu {
+  top: 0;
+  left: calc(100% + 8px);
+}
+
+.on .menu {
+  top: 0;
+  left: 0;
+  transform: translateY(0%);
+}
+
+/* Możesz też nadpisać dla konkretnych wariantów menu */
+.posLeft .menu.operations {
+  top: 0;
+  right: calc(100% + 8px);
+  left: auto;
+}
+
+.posLeft .menu.elements {
+  top: 0;
+  right: calc(100% + 8px);
+  left: auto;
+  transform: none; /* wyłącz transform dla left position */
 }
