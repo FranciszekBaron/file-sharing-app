@@ -4,19 +4,22 @@ import {FileText,Folder,EllipsisVertical} from "lucide-react";
 import type React from "react";
 import { PdfIcon } from "..//..//../icons//PdfIcon";
 import { DocumentIcon } from "..//..//../icons//DocumentIcon";
+import { use, useState } from "react";
 
 
 
 
-interface Props {
-    file: FileItemType //troche jak generics , ze to jest typ tego pliku ktory sobie przekazemy
+interface Props {//troche jak generics , ze to jest typ tego pliku ktory sobie przekazemy
+    file: FileItemType,
+    isActive: boolean,
+    onActivate: ()=>void // przekazujemy funkcje 
 }
 
-export const FileItemList = ({file} : Props) => {
+export const FileItemList = ({file,isActive,onActivate} : Props) => {
 
 
     const optionsIcon = <EllipsisVertical size={18} strokeWidth={1.5}/>
-
+    
 
     const handleIcon = (file: FileItemType) =>{
         switch (file.type){
@@ -34,7 +37,11 @@ export const FileItemList = ({file} : Props) => {
     
 
     return (
-        <div className={styles.fileItemListWrapper}>
+        <div className={`
+            ${styles.fileItemListWrapper}
+            ${isActive ? styles.active : ''}
+        `} 
+        onClick={onActivate}>
             <div className={`${styles.fileItemListColumn} ${styles.fileItemListName}`}>{icon} {file.name}</div>
             <div className={`${styles.fileItemListColumn} ${styles.fileItemListDate}`}>{file.modifiedDate.toLocaleDateString()}</div>
             <div className={`${styles.fileItemListColumn} ${styles.fileItemListOptions}`}>{optionsIcon}</div>

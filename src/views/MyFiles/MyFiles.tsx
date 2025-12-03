@@ -27,6 +27,8 @@ interface Props{
 const MyFiles = ({items}:Props) => {
 
   const [files,SetFiles] = useState<FileItemType[]>([...items].sort((a,b)=>a.name.localeCompare(b.name)));
+  const [acitveIndexFileItems,SetActiveIndexFileItems] = useState<string| null>()
+  const [activeIndexFiltersItems,SetActiveIndexFiltersItems] = useState<string | null>()
 
   const addFileIcon = <FolderPlus size={20}/>
   const uploadFileIcon = <Upload size={20}/>
@@ -68,7 +70,7 @@ const MyFiles = ({items}:Props) => {
 
   const handleFilter = (filter:Exclude<FilterType,'none'>) => {
       SetActiveFilter(filter)
-      SetFiles([...files].filter(e=>e.type==filter));
+      SetFiles([...items].filter(e=>e.type==filter));
   }
 
   const handleClearFilter = () => {
@@ -76,17 +78,21 @@ const MyFiles = ({items}:Props) => {
     SetFiles([...items].sort((a,b)=>a.name.localeCompare(b.name)));
   }
 
-  
+  const filterItems = [
+    {id: 'folder', label: 'Foldery',icon: <Folder size={20}/>},
+    {id: 'doc',label: 'Dokumenty',icon: <SquareDocumentIcon size={20}/>},
+    {id: 'pdf',label: 'Pliki PDF',icon: <PdfIcon size={20}/>}
+  ] 
   
   return (
     <div className={styles.contentWrapper}>
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
             <DropDownButton label="Mój dysk" menuVariant="operations">
-                <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations" onClick={handleAdd} />
+                <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations" onActivate={handleAdd} />
                 <MenuDivider/>
-                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations" onClick={handleUploadFile}/>
-                <MenuItem icon = {FileUpIcon} label= "Prześlij Folder" gap={14} size={14} variant="operations" onClick={handleUploadFolder}/> 
+                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations" onActivate={handleUploadFile}/>
+                <MenuItem icon = {FileUpIcon} label= "Prześlij Folder" gap={14} size={14} variant="operations" onActivate={handleUploadFolder}/> 
                 <MenuDivider/>
                 <MenuItem icon = {alertIcon} label= "..." gap={14} size={14} variant="operations" 
                 style={{color:"lightgray", cursor:"not-allowed",pointerEvents:"none"}}/> 
@@ -94,24 +100,18 @@ const MyFiles = ({items}:Props) => {
             <h1 className={styles.label}>Opcje widoku</h1>
         </div>
         <div className={styles.filtersWrapper}>
-          {activeFilter !== 'none' ?
-            <DropDownButton label={filterLabels[activeFilter]} textSize={14} variant="filters" menuVariant="elements" selected={true} 
-            onClear={()=>
-              {SetActiveFilter("none")
-              handleClearFilter();
-            }}
-            >
-              <MenuItem icon = {<Folder size={20}/>} label="Foldery" size={14} gap={14} clicked={activeFilter === 'folder'}/> 
-              <MenuItem icon = {<SquareDocumentIcon size={20}/>} label="Dokumenty" size={14} gap={14} clicked={activeFilter === 'doc'}/>
-              <MenuItem icon = {<PdfIcon size={20}/>} label="Pliki PDF" size={14} gap={14} clicked={activeFilter === 'pdf'}/>
+            <DropDownButton label={activeFilter !=='none' ? filterLabels[activeFilter] : "Typ elementu"} textSize={14} variant="filters" menuVariant="elements" selected={activeFilter!=='none'} onClear={()=>handleClearFilter()}>
+              {filterItems.map((item) => (
+                <React.Fragment key={item.id}>
+                  <MenuItem icon={item.icon} label={item.label} size={14} gap={14} clicked={activeFilter===item.id} onActivate={
+                    ()=>{
+                      SetActiveFilter('none');
+                      handleFilter(item.id as Exclude<FilterType,'none'>)
+                    }}>
+                  </MenuItem>
+                </React.Fragment>
+              ))}
             </DropDownButton> 
-            :
-            <DropDownButton label="Typ elementu" textSize={14} variant="filters" menuVariant="elements">
-              <MenuItem icon = {<Folder size={20}/>} label="Foldery" size={14} gap={14} onClick={()=>{handleFilter('folder')}}/> 
-              <MenuItem icon = {<SquareDocumentIcon size={20}/>} label="Dokumenty" size={14} gap={14} onClick={()=>{handleFilter('doc')}}/>
-              <MenuItem icon = {<PdfIcon size={20}/>} label="Pliki PDF" size={14} gap={14} onClick={()=>{handleFilter('pdf')}}/>
-            </DropDownButton>
-          }
           
           <DropDownButton label="Osoby" textSize={14} variant="filters" menuVariant="elements"></DropDownButton> 
           <DropDownButton label="Zmodyfikowano" textSize={14} variant="filters" menuVariant="elements"></DropDownButton>
@@ -156,10 +156,10 @@ const MyFiles = ({items}:Props) => {
           <FileItemDivider/>
           <div className={styles.fileList}>
             {files.map(item=>(
-              <React.Fragment key={item.id}>
-                <FileItemList file={item}/>
+              <div key={item.id}>
+                <FileItemList file={item} isActive={acitveIndexFileItems === item.id} onActivate={()=>{SetActiveIndexFileItems(item.id)}}/>
                 <FileItemDivider/>
-              </React.Fragment>
+              </div>
             ))}
           </div>
         </div>

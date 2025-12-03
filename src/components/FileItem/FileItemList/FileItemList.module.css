@@ -11,6 +11,13 @@
     background-color: #e8eaed; ;
 }
 
+.fileItemListWrapper.active {
+    background-color: #c9e6fd;
+}
+.fileItemListWrapper.hover {
+    background-color: #c9e6fd;
+}
+
 .fileItemListColumn {
     display: flex;
     flex-direction: row;

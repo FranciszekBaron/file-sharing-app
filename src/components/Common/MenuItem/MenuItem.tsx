@@ -9,12 +9,12 @@ interface Props {
     gap?: number;
     variant?: "default" | "operations" | "elements";
     style?: CSSProperties;
-    onClick?: (event: React.MouseEvent<HTMLDivElement,MouseEvent>) => void;
+    onActivate?: ()=>void;
     clicked?:boolean;
 }
 
 
-const MenuItem = ({icon,label,size=16,gap=8,variant,style,onClick,clicked} : Props) => {
+const MenuItem = ({icon,label,size=16,gap=8,variant,style,onActivate,clicked} : Props) => {
     return (
 
         <div className={`
@@ -23,7 +23,7 @@ const MenuItem = ({icon,label,size=16,gap=8,variant,style,onClick,clicked} : Pro
             ${clicked ? styles.clicked : ''}
         `}
         style={{gap,fontSize:size,...style}} 
-        onClick={onClick}>
+        onClick={onActivate}>
             {clicked ? <Check size={size} color="blue"></Check> : icon}
             <span>{label}</span>
         </div>
