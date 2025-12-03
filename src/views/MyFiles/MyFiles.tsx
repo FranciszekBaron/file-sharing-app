@@ -20,15 +20,21 @@ import { ArrowCircled } from "..//..//icons//ArrowCircled";
 
 import { filterLabels } from "../../types/FilterType";
 import Modal from "../../components/Modal/Modal";
+import { useFiles } from "../../services/FilesContextType";
 
-interface Props{
-  items: FileItemType[]
-}
 
-const MyFiles = ({items}:Props) => {
 
-  const [allFiles,SetAllFiles] = useState<FileItemType[]>([...items].sort((a,b)=>a.name.localeCompare(b.name)));
-  const [displayedFiles,SetDisplayedFiles] = useState<FileItemType[]>([...items].sort((a,b)=>a.name.localeCompare(b.name)))
+const MyFiles = () => {
+
+  const {
+    displayedFiles,
+    loading,
+    activeFilter,
+    handleAdd,
+    handleFilter,
+    handleClearFilter,
+    handleSort
+  } = useFiles()
 
 
   const [acitveIndexFileItems,SetActiveIndexFileItems] = useState<string| null>()
@@ -43,70 +49,14 @@ const MyFiles = ({items}:Props) => {
   const alertIcon = <AlertCircle size={20}/>
 
   
-  const handleAdd = (name: string) => {
-      const newItem:FileItemType = {
-        id: (allFiles.length+1).toString(),
-        name: name,
-        type: 'folder',
-        modifiedDate: new Date()
-      }
-
-      const updatedFiles = [...allFiles,newItem];
-      SetAllFiles(updatedFiles);
-
-
-      
-      if(activeFilter!=='none'){
-        SetDisplayedFiles(updatedFiles.filter(e=>e.type==activeFilter));
-      }else{
-        SetDisplayedFiles(updatedFiles)
-      }
-      
-      SetFileName("");
-    } // TODO!!!!!
-
-
-
-  const handleUploadFile = () => {} //TODO!!!!
-  const handleUploadFolder = () => {} //TODO!!!!
-
-
   const [nameSortActive,setNameSortActive] = useState(true);
   const [dateSortActive,setDateSortActive] = useState(true);
   const [nameClicked,setNameClicked] = useState(true);
   const [dateClicked,setDateClicked] = useState(false);
 
-  const handleSort= (type:'name'|'date') => {
-    if(type === 'name'){
-       setNameSortActive(!nameSortActive);
-       SetDisplayedFiles([...displayedFiles].sort((a, b) => 
-        !nameSortActive 
-          ? a.name.localeCompare(b.name)   // A→Z
-          : b.name.localeCompare(a.name)   // Z→A
-      ));
-    }else if(type==='date'){
-       setDateSortActive(!dateSortActive);
-       SetDisplayedFiles([...displayedFiles].sort((a, b) => {
-          const diff = new Date(a.modifiedDate).getTime() - new Date(b.modifiedDate).getTime();
-          return !dateSortActive ? diff : -diff;
-       }));
-    }
-  }
-  
-  type FilterType = 'folder' | 'doc' | 'pdf' | 'none';
 
-
-  const [activeFilter,SetActiveFilter] = useState<FilterType>('none');
-
-  const handleFilter = (filter:Exclude<FilterType,'none'>) => {
-      SetActiveFilter(filter)
-      SetDisplayedFiles([...allFiles].filter(e=>e.type==filter));
-  }
-
-  const handleClearFilter = () => {
-    SetActiveFilter('none');
-    SetDisplayedFiles([...allFiles].sort((a,b)=>a.name.localeCompare(b.name)));
-  }
+  const handleUploadFile = () => {}; // TODO
+  const handleUploadFolder = () => {}; // TODO
 
   const filterItems = [
     {id: 'folder', label: 'Foldery',icon: <Folder size={20}/>},
@@ -123,7 +73,7 @@ const MyFiles = ({items}:Props) => {
         <div className={styles.modalButtons}>
           <button className={styles.modalButton} onClick={()=>SetAddFileOpen(false)}>Anuluj</button>
           <button className={styles.modalButton} onClick={()=>{
-            handleAdd(fileName)
+            handleAdd("",'folder')
             SetAddFileOpen(false)
             }}>
             Zapisz
@@ -151,7 +101,7 @@ const MyFiles = ({items}:Props) => {
                   <MenuItem icon={item.icon} label={item.label} size={14} gap={14} clicked={activeFilter===item.id} onActivate={
                     ()=>{
                       handleClearFilter()
-                      handleFilter(item.id as Exclude<FilterType,'none'>)
+                      handleFilter(item.id as 'folder' | 'doc' | 'pdf')
                     }}>
                   </MenuItem>
                 </React.Fragment>

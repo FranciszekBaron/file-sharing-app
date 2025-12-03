@@ -12,7 +12,7 @@ import useGlobalShortcut from "../../hooks/useGlobalShortcut";
 import type { FileItem } from "../../types/FileItem";
 
 interface Props {
-  items: FileItem[]
+  items?: FileItem[]
 }
 
 
@@ -20,14 +20,10 @@ const Dashboard = ({items}:Props) => {
 
     const [activeView,setActiveView] = useState(0);
 
-    const [allFiles,SetActiveFiles] = useState([...items].sort((a,b)=>a.name.localeCompare(b.name)));
-    const [displayedFiles,SetDisplayedFiles] = useState([...items].sort((a,b)=>a.name.localeCompare(b.name)));
-
-    
-
+  
     const viewMap = [
     <Home />,          // in  dex 0
-    <MyFiles items={items}/>,       // index 1
+    <MyFiles/>,       // index 1
     null,              // index 2 (spacer - nie renderuj nic)
     <Shared />,        // index 3
     <Recent />,        // index 4
