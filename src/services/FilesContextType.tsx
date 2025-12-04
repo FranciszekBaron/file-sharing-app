@@ -12,6 +12,8 @@ interface FilesContextType{
     displayedFiles: FileItem[];
     loading: boolean;
     activeFilter: FilterType;
+    sortBy: 'name'|'date' | null;
+    sortAscending: boolean;
 
     //Tutaj akcje czyli funkcje które będa zmieniać te state'y
     handleAdd: (name:string,type:FileItem['type']) =>Promise<void>;
@@ -19,7 +21,7 @@ interface FilesContextType{
     handleUpdate: (id:string,updates: Partial<FileItem>) => Promise<void>;
     handleFilter: (filter: Exclude<FilterType,'none'>) => void;
     handleClearFilter: () => void;
-    handleSort: (type:'name'|'date', asceding: boolean) => void;
+    handleSort: (type:'name'|'date') => void;
     refreshFiles: () => Promise<void>;
 }
 
@@ -33,6 +35,9 @@ export const FileProvider = ({children} : {children:React.ReactNode}) => {
     const [displayedFiles,setDisplayedFiles] = useState<FileItem[]>([]);// zwraca dane 
     const [loading,setLoading] = useState(true);// zwraca dane 
     const [activeFilter,setActiveFilter] = useState<FilterType>('none');// zwraca dane 
+
+    const [sortBy,setSortBy] = useState<'name' | 'date'>('name');
+    const [sortAscending,setSortAscening] = useState(true);
 
     useEffect(()=>{
         loadFiles();
@@ -111,19 +116,24 @@ export const FileProvider = ({children} : {children:React.ReactNode}) => {
         }
     }
     
-    const handleSort = (type:'name' | 'date',asceding:boolean) => {
+    const handleSort = (type:'name' | 'date')  => {
+        
+        setSortBy(type);
+
         const sorted = [...displayedFiles].sort((a,b)=>{
             if(type==='name'){
-                return asceding 
+                return !sortAscending 
                 ? a.name.localeCompare(b.name)
                 : b.name.localeCompare(a.name)
             }else {
                 const diff = new Date(a.modifiedDate).getTime() - new Date(b.modifiedDate).getTime()
-                return asceding
+                return !sortAscending
                 ? diff
                 : -diff;
             }
         })
+        
+        setSortAscening(!sortAscending);
         setDisplayedFiles(sorted);
     }
 
@@ -147,6 +157,8 @@ export const FileProvider = ({children} : {children:React.ReactNode}) => {
             displayedFiles,
             loading,
             activeFilter,
+            sortBy,
+            sortAscending,
             handleAdd,
             handleDelete,
             handleUpdate,

@@ -30,6 +30,8 @@ const MyFiles = () => {
     displayedFiles,
     loading,
     activeFilter,
+    sortBy,
+    sortAscending,
     handleAdd,
     handleFilter,
     handleClearFilter,
@@ -49,10 +51,21 @@ const MyFiles = () => {
   const alertIcon = <AlertCircle size={20}/>
 
   
-  const [nameSortActive,setNameSortActive] = useState(true);
-  const [dateSortActive,setDateSortActive] = useState(true);
-  const [nameClicked,setNameClicked] = useState(true);
-  const [dateClicked,setDateClicked] = useState(false);
+  const handleAddFolderClick = () => {
+      SetAddFileOpen(true);
+  }
+
+
+  const handleAddFolder = async () => {
+    try{
+      await handleAdd(fileName,'folder');
+      SetFileName("")
+      SetAddFileOpen(false);
+    }catch(err){
+      alert('nie udalo sie dodać folderu');
+    }
+  }
+
 
 
   const handleUploadFile = () => {}; // TODO
@@ -63,6 +76,10 @@ const MyFiles = () => {
     {id: 'doc',label: 'Dokumenty',icon: <SquareDocumentIcon size={20}/>},
     {id: 'pdf',label: 'Pliki PDF',icon: <PdfIcon size={20}/>}
   ] 
+
+  if (loading) {
+    return <div className={styles.contentWrapper}>Ładowanie...</div>;
+  }
   
   return (
     <div className={styles.contentWrapper}>
@@ -73,8 +90,7 @@ const MyFiles = () => {
         <div className={styles.modalButtons}>
           <button className={styles.modalButton} onClick={()=>SetAddFileOpen(false)}>Anuluj</button>
           <button className={styles.modalButton} onClick={()=>{
-            handleAdd("",'folder')
-            SetAddFileOpen(false)
+            handleAddFolder()
             }}>
             Zapisz
           </button>
@@ -84,9 +100,9 @@ const MyFiles = () => {
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
             <DropDownButton label="Mój dysk" menuVariant="operations">
-                <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations" onActivate={()=>{SetAddFileOpen(true)}} />
+                <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations" onActivate={()=>{handleAddFolderClick()}} />
                 <MenuDivider/>
-                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations" onActivate={handleUploadFile}/>
+                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations" onActivate={()=>SetAddFileOpen(true)}/>
                 <MenuItem icon = {FileUpIcon} label= "Prześlij Folder" gap={14} size={14} variant="operations" onActivate={handleUploadFolder}/> 
                 <MenuDivider/>
                 <MenuItem icon = {alertIcon} label= "..." gap={14} size={14} variant="operations" 
@@ -116,30 +132,23 @@ const MyFiles = () => {
       <div className={styles.main}>
         <div className={styles.mainContent}>
           <div className={styles.mainContentTopbar}>
-            <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarName}`} onClick={()=>{
-              setNameClicked(true);
-              setDateClicked(false);
-              handleSort("name")}}>
+            <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarName}`} onClick={()=>{handleSort('name')}}>
               <span className={styles.label} style={{fontSize:14, fontWeight:500,color:"#383838ff"}}>
                 Nazwa
               </span>
-              {nameClicked && 
-              <div className={nameSortActive ? styles.icon : styles.iconReversed}>
+              {sortBy==='name' && 
+              <div className={sortAscending ? styles.icon : styles.iconReversed}>
                 <ArrowCircled size={24}></ArrowCircled>
               </div>
               }
               
             </div>
             <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarDate}`}>
-              <span className={styles.label} style={{fontSize:14, fontWeight:500,color:"#636363ff"}} onClick={()=>{
-                setNameClicked(false);
-                setDateClicked(true);
-                handleSort("date");
-              }}>
+              <span className={styles.label} style={{fontSize:14, fontWeight:500,color:"#636363ff"}} onClick={()=>{handleSort('date')}}>
                 Data modyfikacji
               </span>
-              {dateClicked && 
-              <div className={dateSortActive ? styles.icon : styles.iconReversed}>
+              {sortBy==='date' && 
+              <div className={sortAscending ? styles.icon : styles.iconReversed}>
                 <ArrowCircled size={24}></ArrowCircled>
               </div>
               }           

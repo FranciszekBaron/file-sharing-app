@@ -24,6 +24,7 @@ import DropDownButton from "../DropDownButton/DropDownButton";
 import IconText from "../Common/MenuItem/MenuItem";
 import MenuDivider from "../Common/MenuDivider/MenuDivider";
 import MenuItem from "../Common/MenuItem/MenuItem";
+import { useFiles } from "../../services/FilesContextType";
 
 
 const Sidebar = ({ 
@@ -35,6 +36,11 @@ const Sidebar = ({
   activeView: number,
   setActiveView: (index: number) => void
 }) => {
+
+    const {handleAdd,
+      
+    } = useFiles()
+  
 
     const [hoveredIndex,setHoveredIndex] = useState<number | null>(null);
     const [activeIndex,setActiveIndex] = useState<number | null>(null);
