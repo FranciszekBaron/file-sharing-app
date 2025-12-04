@@ -1,7 +1,7 @@
 import styles from "./FileItemList.module.css";
 import type { FileItem as FileItemType} from "../../../types/FileItem";
 import {FileText,Folder,EllipsisVertical, HelpCircle} from "lucide-react";
-import type React from "react";
+import React from "react";
 import { PdfIcon } from "..//..//../icons//PdfIcon";
 import { DocumentIcon } from "..//..//../icons//DocumentIcon";
 import { use, useState } from "react";
@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import MenuItem from "../../Common/MenuItem/MenuItem";
 import MenuDivider from "../../Common/MenuDivider/MenuDivider";
+import { useFiles } from "../../../services/FilesContextType";
 
 
 
@@ -29,6 +30,9 @@ interface Props {//troche jak generics , ze to jest typ tego pliku ktory sobie p
 
 export const FileItemList = ({file,isActive,onActivate} : Props) => {
 
+    const  {
+        handleDelete
+    } = useFiles()
 
     const optionsIcon = <EllipsisVertical size={18} strokeWidth={1.5}/>
     
@@ -51,8 +55,19 @@ export const FileItemList = ({file,isActive,onActivate} : Props) => {
     const handleDownloadItem = () => {} //TODO!!!!
     const handleRename = () => {} //TODO!!!!
     const handleShare = () => {} //TODO!!!!
-    const handleMoreInfo = () => {} //TODO!!!!
-    const handleMoveToTrash = () => {} //TODO!!!!
+    const handleMoreInfo = () => {
+        console.log("DZIAŁAM")
+    } //TODO!!!!
+
+    const handleDeleteItem = async (id:string) => {
+
+        console.log("Robie handledlete item ")
+        try{
+        await handleDelete(id);
+        }catch(err){
+        alert('nie udało się usunąć folderu')
+        }
+    }
 
 
     const optionsItems = [
@@ -62,7 +77,7 @@ export const FileItemList = ({file,isActive,onActivate} : Props) => {
         {icon: <Share2/>, label: "Udostępnij", action: handleShare},
         {icon: <Info/>, label: "Informacje", action: handleMoreInfo},
         null,
-        {icon: <Trash/>, label: "Przenieś do kosza", action: handleMoveToTrash}
+        {icon: <Trash/>, label: "Przenieś do kosza", action: handleDeleteItem}
     ]
     
     return (
@@ -75,12 +90,22 @@ export const FileItemList = ({file,isActive,onActivate} : Props) => {
             <div className={`${styles.fileItemListColumn} ${styles.fileItemListDate}`}>{file.modifiedDate.toLocaleDateString()}</div>
             <div className={`${styles.fileItemListColumn} ${styles.fileItemListOptions}`}>
                 <DropDownButton icon={optionsIcon} menuVariant="operations" position="left">
-                    {optionsItems.map(item=>(
-                        item ?
-                        <MenuItem icon = {item?.icon} label={item?.label} gap={14} size={14} variant="operations" onActivate={item?.action} />
-                        :
-                        <MenuDivider/>
-                    ))}
+                    {optionsItems.map((item, index) => (
+                        <div key={index}>
+                            {item ? (
+                            <MenuItem 
+                                icon={item.icon} 
+                                label={item.label} 
+                                gap={14} 
+                                size={14} 
+                                variant="operations" 
+                                onActivate={()=>{item.action(file.id)}}  // ← bez (), przekaż funkcję
+                            />
+                            ) : (
+                            <MenuDivider />
+                            )}
+                        </div>
+                        ))}
                 </DropDownButton>
             </div>
         </div>

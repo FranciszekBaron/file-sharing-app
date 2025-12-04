@@ -25,6 +25,7 @@ import IconText from "../Common/MenuItem/MenuItem";
 import MenuDivider from "../Common/MenuDivider/MenuDivider";
 import MenuItem from "../Common/MenuItem/MenuItem";
 import { useFiles } from "../../services/FilesContextType";
+import Modal from "../Modal/Modal";
 
 
 const Sidebar = ({ 
@@ -37,13 +38,14 @@ const Sidebar = ({
   setActiveView: (index: number) => void
 }) => {
 
-    const {handleAdd,
-      
-    } = useFiles()
+    const {handleAdd} = useFiles()
   
 
     const [hoveredIndex,setHoveredIndex] = useState<number | null>(null);
     const [activeIndex,setActiveIndex] = useState<number | null>(null);
+
+    const [addFileOpen,SetAddFileOpen] = useState(false);
+    const [fileName,SetFileName] = useState("");
 
     const items = [
     { icon: <Home strokeWidth={1}/>, label: "Strona główna"  },
@@ -57,6 +59,22 @@ const Sidebar = ({
     { icon: <Trash2 strokeWidth={1}/>, label: "Kosz" },
   ];
 
+
+  const handleAddFolderClick = () => {
+      SetAddFileOpen(true);
+  }
+
+
+  const handleAddFolder = async () => {
+    try{
+      await handleAdd(fileName,'folder');
+      SetFileName("")
+      SetAddFileOpen(false);
+    }catch(err){
+      alert('nie udalo sie dodać folderu');
+    }
+  }
+
   const addFileIcon = <FolderPlus size={20}/>
   const uploadFileIcon = <Upload size={20}/>
   const FileUpIcon = <FileUp size={20}/>
@@ -65,10 +83,25 @@ const Sidebar = ({
   const addItem = <Plus strokeWidth={2.7} size={25}/>;
 
   return (
+    
     <div className={styles.sidebarContent}>
+      {
+      <Modal open={addFileOpen} onClose={()=>SetAddFileOpen(false)}>
+        <label className={styles.modalLabel}>Nowy Folder</label>
+        <input value={fileName} placeholder="Folder bez nazwy" className={styles.modalInput} onChange={(e)=> SetFileName(e.target.value)}></input>
+        <div className={styles.modalButtons}>
+          <button className={styles.modalButton} onClick={()=>SetAddFileOpen(false)}>
+            Anuluj
+          </button>
+          <button className={styles.modalButton} onClick={()=>{handleAddFolder()}}>
+            Zapisz
+          </button>
+        </div>
+      </Modal>
+      }
         <div className={styles.sidebarAddFile}>
-          <DropDownButton icon={addItem} label="Nowy" variant="icon" position="on">
-            <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations"/>
+          <DropDownButton icon={addItem} label="Nowy" variant="icon" position="on" >
+            <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations" onActivate={()=>handleAddFolderClick()}/>
                 <MenuDivider/>
                 <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations"/>
                 <MenuItem icon = {FileUpIcon} label= "Prześlij Folder" gap={14} size={14} variant="operations"/> 

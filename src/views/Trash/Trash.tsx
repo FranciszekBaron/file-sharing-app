@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "..//MyFiles//MyFiles.module.css"
+import styles from "./Trash.module.css"
 import type { FileItem as FileItemType} from "../../types/FileItem";
 import FileItem from "../../components/FileItem/FileItem";
 import DropDownButton from "../../components/DropDownButton/DropDownButton";
@@ -13,9 +13,9 @@ import FileItemDivider from "../../components/FileItem/FileItemDivider/FileItemD
 import FileItemList from "../../components/FileItem/FileItemList/FileItemList";
 import React from "react";
 
-import {SquareDocumentIcon} from "..//../icons//SquareDocumentIcon";
-import {PdfIcon} from "..//../icons//PdfIcon";
-import { ArrowCircled } from "..//..//icons//ArrowCircled";
+import {SquareDocumentIcon} from "../../icons/SquareDocumentIcon";
+import {PdfIcon} from "../../icons/PdfIcon";
+import { ArrowCircled } from "../../icons/ArrowCircled";
 
 
 import { filterLabels } from "../../types/FilterType";
@@ -28,12 +28,12 @@ const MyFiles = () => {
 
   const {
     displayedFiles,
+    deletedFiles,
     loading,
     activeFilter,
     sortBy,
     sortAscending,
     handleAdd,
-    handleDelete,
     handleFilter,
     handleClearFilter,
     handleSort
@@ -51,32 +51,6 @@ const MyFiles = () => {
   const FileUpIcon = <FileUp size={20}/>
   const alertIcon = <AlertCircle size={20}/>
 
-  
-  const handleAddFolderClick = () => {
-      SetAddFileOpen(true);
-  }
-
-
-  const handleAddFolder = async () => {
-    try{
-      await handleAdd(fileName,'folder');
-      SetFileName("")
-      SetAddFileOpen(false);
-    }catch(err){
-      alert('nie udalo sie dodać folderu');
-    }
-  }
-
-  const handleDeleteItem = async (id:string) => {
-    try{
-      await handleDelete(id);
-    }catch(err){
-      alert('nie udało się usunąć folderu')
-    }
-  }
-
-
-
   const handleUploadFile = () => {}; // TODO
   const handleUploadFolder = () => {}; // TODO
 
@@ -92,31 +66,9 @@ const MyFiles = () => {
   
   return (
     <div className={styles.contentWrapper}>
-      {
-      <Modal open={addFileOpen} onClose={()=>SetAddFileOpen(false)}>
-        <label className={styles.modalLabel}>Nowy Folder</label>
-        <input value={fileName} placeholder="Folder bez nazwy" className={styles.modalInput} onChange={(e)=> SetFileName(e.target.value)}></input>
-        <div className={styles.modalButtons}>
-          <button className={styles.modalButton} onClick={()=>SetAddFileOpen(false)}>Anuluj</button>
-          <button className={styles.modalButton} onClick={()=>{
-            handleAddFolder()
-            }}>
-            Zapisz
-          </button>
-        </div>
-      </Modal>
-      }
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
-            <DropDownButton label="Mój dysk" menuVariant="operations">
-                <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations" onActivate={()=>{handleAddFolderClick()}} />
-                <MenuDivider/>
-                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations" onActivate={()=>SetAddFileOpen(true)}/>
-                <MenuItem icon = {FileUpIcon} label= "Prześlij Folder" gap={14} size={14} variant="operations" onActivate={handleUploadFolder}/> 
-                <MenuDivider/>
-                <MenuItem icon = {alertIcon} label= "..." gap={14} size={14} variant="operations" 
-                style={{color:"lightgray", cursor:"not-allowed",pointerEvents:"none"}}/> 
-            </DropDownButton>
+            <h1 className={styles.label}>Kosz</h1>
             <h1 className={styles.label}>Opcje widoku</h1>
         </div>
         <div className={styles.filtersWrapper}>
@@ -132,8 +84,6 @@ const MyFiles = () => {
                 </React.Fragment>
               ))}
             </DropDownButton> 
-          
-          <DropDownButton label="Osoby" textSize={14} variant="filters" menuVariant="elements"></DropDownButton> 
           <DropDownButton label="Zmodyfikowano" textSize={14} variant="filters" menuVariant="elements"></DropDownButton>
           <DropDownButton label="Źródło" textSize={14} variant="filters" menuVariant="elements"></DropDownButton>
         </div>
@@ -168,7 +118,7 @@ const MyFiles = () => {
           </div>
           <FileItemDivider/>
           <div className={styles.fileList}>
-            {displayedFiles.map(item=>(
+            {deletedFiles.map(item=>(
               <div key={item.id}>
                 <FileItemList file={item} isActive={acitveIndexFileItems === item.id} onActivate={()=>{SetActiveIndexFileItems(item.id)}}/>
                 <FileItemDivider/>

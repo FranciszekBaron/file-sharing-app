@@ -1,0 +1,199 @@
+.contentWrapper {
+  width: 100%;
+  height: 100%;
+  background-color: rgb(255, 255, 255);
+  /* to sprawi że nie “przykleja się” do krawędzi */
+  border-radius: 16px;       
+  /* odstęp od krawędzi całego contentu */
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+}
+
+.topbarWrapper{
+  height: 100px;
+  background-color: rgb(255, 255, 255);
+  display: flex;
+  border-radius: 16px;
+  flex-direction: column;
+  margin-top: 6px;
+  gap: 2px;
+}
+
+
+.titleButtonWrapper{
+  display: flex;
+  justify-content: space-between;  /* jeden na lewo, drugi na prawo */
+  align-items: center;              /* pionowo wycentrowane */
+  height: 50px;
+  background-color: #ffffff;
+  border-radius: 16px;  /* bezpieczeństwo dla tekstu */    
+  font-size: 14px;
+  font-weight: 300;
+  padding: 2px;
+}
+
+.filtersWrapper {
+  display: flex;
+  flex-direction: row;
+  height: 50px;
+  background-color: #ffffff;
+  border-radius: 16px;  /* bezpieczeństwo dla tekstu */    
+  padding: 10px;
+  padding-left: 14px;
+  gap: 8px;
+}
+
+.title {
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: 300;
+  color: black;
+  display: inline-flex;      /* ważne: żeby tekst się nie łamał */
+  align-items: center;
+  padding: 4px 10px;         /* stały "obszar" kliknięcia */
+  border-radius: 16px;       /* żeby hover był równy */
+}
+
+.title:hover {
+  background-color: #e8eaed;
+  box-shadow: 0 1px 2px rgba(60, 64, 67, 0.1);
+}
+
+
+.main {
+  flex: 1; /* magia! */
+  background-color: rgb(255, 255, 255);
+  display: flex;        /* żeby mainContent też flexowo się rozciągało */
+  flex-direction: column;
+  padding: 0px 10px 0px 14px;
+}
+
+/* 5️⃣ MainContent rozciąga się w dół całego main */
+.mainContent {
+  flex: 1; 
+  background-color: aliceblue;
+  display: flex;        /* jeśli chcesz, żeby w środku też flex */
+  flex-direction: column;
+  border-radius: 12px;
+}
+
+.mainContentTopbar {
+  height: 50px;
+  display: flex;
+  flex-direction: row;
+  background-color: rgb(255, 255, 255);
+}
+
+.mainContentTopbarColumn {
+  display: flex;
+  align-items: center;
+  height: 50px;
+  background-color: rgb(255, 255, 255);
+  cursor: pointer;
+  border-radius: 8px 8px 0 0; /* jeśli chcesz jakieś ogólne */
+  transition: background-color 0.2s;
+  padding-left: 8px;
+
+  user-select: none;
+  -webkit-user-select: none;  /* Safari */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* IE/Edge */
+}
+
+/* hover dla wszystkich */
+.mainContentTopbarColumn:hover {
+  background-color: #e8eaed;
+}
+
+.mainContentTopbarName { 
+  flex: 10 1 0; 
+  gap:4px;
+}
+.mainContentTopbarDate { flex: 3 1 0; display: none;
+  white-space: nowrap;       /* nie łamie wiersza */
+  overflow: hidden;  
+  text-overflow: ellipsis; 
+}
+.mainContentTopbarOptions { flex: 1 1 0; }
+
+.mainContentTopbarOptions:hover { background-color: #ffffff;}
+
+
+@media (max-width: 800px) {
+  .mainContentTopbarDate {
+    display: flex;
+    white-space: nowrap;       /* nie łamie wiersza */
+    overflow: hidden;  
+    text-overflow: ellipsis; 
+    
+  }
+}
+
+
+.fileList {
+  display: flex;
+  flex-direction: column;
+  background-color: rgb(255, 255, 255);
+}
+
+.label {
+  font-size: 24px;
+  font-weight: 400;
+  color: black;
+}
+
+.iconOpen {
+
+}
+
+.iconReversed {
+  transform: rotate(180deg);
+}
+
+
+
+/*--------MODAL NOWY FOLDER---------*/
+.modalLabel{
+  font-size: 24px;
+  font-weight: 300;
+  color: black;
+}
+
+.modalInput {
+  border-radius: 2px;
+  border: 1px solid rgba(17, 17, 17, 0.865);
+  font-size: 16px;
+  height: 50px;
+  color: #000000;
+  padding: 12px;
+}
+
+.modalInput::placeholder{
+  font-weight: 300;
+  color: #000000;
+}
+
+.modalButtons{
+  display: flex;
+  justify-content: flex-end; /* elementy przy prawej krawędzi */
+  gap: 20px; /* odległość między przyciskami */
+  height: 50px;
+  padding-right: 10px;
+}
+
+.modalButton {
+  font-size: 12px;
+  width: 60px;
+  border-radius:16px ;
+  background-color: transparent;
+  border: none;
+  color:blue;
+}
+
+.modalButton:hover {
+  background-color: var(--background);
+}
+
+

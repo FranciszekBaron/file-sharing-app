@@ -88,3 +88,46 @@
   height: 25px;
 }
 /* /*jesli group jest null, to sie zrobi  */
+
+
+/*--------MODAL NOWY FOLDER---------*/
+.modalLabel{
+  font-size: 24px;
+  font-weight: 300;
+  color: black;
+}
+
+.modalInput {
+  border-radius: 2px;
+  border: 1px solid rgba(17, 17, 17, 0.865);
+  font-size: 16px;
+  height: 50px;
+  color: #000000;
+  padding: 12px;
+}
+
+.modalInput::placeholder{
+  font-weight: 300;
+  color: #000000;
+}
+
+.modalButtons{
+  display: flex;
+  justify-content: flex-end; /* elementy przy prawej krawędzi */
+  gap: 20px; /* odległość między przyciskami */
+  height: 50px;
+  padding-right: 10px;
+}
+
+.modalButton {
+  font-size: 12px;
+  width: 60px;
+  border-radius:16px ;
+  background-color: transparent;
+  border: none;
+  color:blue;
+}
+
+.modalButton:hover {
+  background-color: var(--background);
+}

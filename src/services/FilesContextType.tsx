@@ -10,6 +10,7 @@ interface FilesContextType{
     //Opisujemu State - Dane które będa sie zmieniać 
     allFiles: FileItem[];
     displayedFiles: FileItem[];
+    deletedFiles:FileItem[];
     loading: boolean;
     activeFilter: FilterType;
     sortBy: 'name'|'date' | null;
@@ -29,10 +30,12 @@ const FilesContext = createContext<FilesContextType | undefined>(undefined);
 //nie ma implements bo to funkcja 
 
 //2.Provider recznie wypelnia calosc 
-export const FileProvider = ({children} : {children:React.ReactNode}) => {
+export const FilesProvider = ({children} : {children:React.ReactNode}) => {
 
     const [allFiles,setAllFiles] = useState<FileItem[]>([]); // zwraca dane 
     const [displayedFiles,setDisplayedFiles] = useState<FileItem[]>([]);// zwraca dane 
+
+    const [deletedFiles,setDeletedFiles] = useState<FileItem[]>([]);
     const [loading,setLoading] = useState(true);// zwraca dane 
     const [activeFilter,setActiveFilter] = useState<FilterType>('none');// zwraca dane 
 
@@ -84,9 +87,19 @@ export const FileProvider = ({children} : {children:React.ReactNode}) => {
     const handleDelete = async (id:string) => {
         try{
             if(await filesService.delete(id)){
+                //Zapamietaj usuwany
+                const deletedFile = allFiles.find(e => e.id === id);
+      
+                //Przenies do usunietych
+                if (deletedFile) {  
+                    setDeletedFiles([...deletedFiles, deletedFile]);
+                }
+
+                //Usun z bazy/mocka i zaktualizuj AllFiles
                 const updatedFiles = allFiles.filter(e=>e.id !== id);
                 setAllFiles(updatedFiles);
-
+                
+                //Jeśli wyświetlamy co innego niz AllFiles, to zaktualizuj widok
                 if(activeFilter !=='none'){
                     setDisplayedFiles(updatedFiles.filter(e=>e.type===activeFilter))
                 }else{
@@ -155,6 +168,7 @@ export const FileProvider = ({children} : {children:React.ReactNode}) => {
         <FilesContext.Provider value={{
             allFiles,
             displayedFiles,
+            deletedFiles,
             loading,
             activeFilter,
             sortBy,

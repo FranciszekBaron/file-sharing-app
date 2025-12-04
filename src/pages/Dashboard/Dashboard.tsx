@@ -5,7 +5,7 @@ import Shared from "../../views/Shared"
 import Recent from "../../views/Recent";
 import Starred from "../../views/Starred";
 import Spam from '../../views/Spam';
-import Trash from '../../views/Trash';
+import Trash from '../../views/Trash/Trash';
 import { useState } from "react";
 import useGlobalShortcut from "../../hooks/useGlobalShortcut";
 
