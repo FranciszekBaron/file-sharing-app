@@ -4,7 +4,7 @@ import type { FileItem as FileItemType} from "../../types/FileItem";
 import FileItem from "../../components/FileItem/FileItem";
 import DropDownButton from "../../components/DropDownButton/DropDownButton";
 import MenuItem from "../../components/Common/MenuItem/MenuItem";
-import { FolderPlus, Upload, FileUp , Folder, FileText , AlertCircle, Key, TrendingUp} from "lucide-react";
+import { X,FolderPlus, Upload, FileUp , Folder, FileText , AlertCircle, Key, TrendingUp, Share2, Download, Star, Edit, Trash} from "lucide-react";
 import MenuDivider from "../../components/Common/MenuDivider/MenuDivider";
 import { Button } from "../../components/Common/Button";
 import buttonStyles from "../../components/Common/Button.module.css";
@@ -33,7 +33,8 @@ const MyFiles = () => {
     sortBy,
     sortAscending,
     handleAdd,
-    handleDelete,
+    handleSoftDelete,
+    handleUpdate,
     handleFilter,
     handleClearFilter,
     handleSort
@@ -43,6 +44,8 @@ const MyFiles = () => {
   const [acitveIndexFileItems,SetActiveIndexFileItems] = useState<string| null>()
   const [activeIndexFiltersItems,SetActiveIndexFiltersItems] = useState<string | null>()
   const [addFileOpen,SetAddFileOpen] = useState(false);
+  const [isNameFilterActive,SetNameFilterActive] = useState(true);
+  const [isDateFilterActive,SetDateFilterActive] = useState(true);
 
   const [fileName,SetFileName] = useState("");
 
@@ -67,13 +70,7 @@ const MyFiles = () => {
     }
   }
 
-  const handleDeleteItem = async (id:string) => {
-    try{
-      await handleDelete(id);
-    }catch(err){
-      alert('nie udało się usunąć folderu')
-    }
-  }
+
 
 
 
@@ -119,6 +116,26 @@ const MyFiles = () => {
             </DropDownButton>
             <h1 className={styles.label}>Opcje widoku</h1>
         </div>
+        {acitveIndexFileItems ? 
+        <div className={styles.filtersWrapper}>
+            <div className={styles.ItemSelected}>
+                <div className={styles.hoverIcon} data-tooltip='Odznacz' onClick={()=>{SetActiveIndexFileItems("")}}>
+                    <X size={20} strokeWidth={1.6}/>
+                </div>
+                <span className={styles.ItemSelectedLabel}>wybrano {acitveIndexFileItems}</span>
+                <div className={styles.hoverIcon} data-tooltip='Udostępnij'>
+                    <Share2 size={14} strokeWidth={2}/>
+                </div>
+                <div className={styles.hoverIcon} data-tooltip='Pobierz'>
+                    <Download size={14}strokeWidth={2}/>
+                </div>
+                <div className={styles.hoverIcon} data-tooltip='Zmień nazwę' onClick={()=>{}}>
+                    <Trash size={14} strokeWidth={2}/>
+                </div>
+            
+            </div>
+        </div>
+        :
         <div className={styles.filtersWrapper}>
             <DropDownButton label={activeFilter !=='none' ? filterLabels[activeFilter] : "Typ elementu"} textSize={14} variant="filters" menuVariant="elements" selected={activeFilter!=='none'} onClear={()=>handleClearFilter()}>
               {filterItems.map((item) => (
@@ -137,33 +154,61 @@ const MyFiles = () => {
           <DropDownButton label="Zmodyfikowano" textSize={14} variant="filters" menuVariant="elements"></DropDownButton>
           <DropDownButton label="Źródło" textSize={14} variant="filters" menuVariant="elements"></DropDownButton>
         </div>
+        }
+        
       </div>
       <div className={styles.main}>
         <div className={styles.mainContent}>
           <div className={styles.mainContentTopbar}>
-            <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarName}`} onClick={()=>{handleSort('name')}}>
-              <span className={styles.label} style={{fontSize:14, fontWeight:500,color:"#383838ff"}}>
+            <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarName}`}
+            data-tooltip= {sortAscending ? 'Sortuj od Z do A' : 'Sortuj od A do Z'}
+             onClick={()=>{handleSort('name')
+              SetNameFilterActive(true);
+              SetDateFilterActive(false);
+             }}>
+              <span className={styles.label} style={isNameFilterActive ? {fontSize: 14, fontWeight: 500, color: "#393939ff"} : {fontSize: 14, fontWeight: 500, color: "#636363ff"}}>
                 Nazwa
               </span>
-              {sortBy==='name' && 
-              <div className={sortAscending ? styles.icon : styles.iconReversed}>
+              
+              <div 
+                className={sortAscending ? styles.icon : styles.iconReversed}
+                style={{ opacity: sortBy === 'name' ? 1 : 0 }} 
+              >
                 <ArrowCircled size={24}></ArrowCircled>
               </div>
-              }
-              
             </div>
-            <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarDate}`}>
+
+            <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarOwner}`}>
               <span className={styles.label} style={{fontSize:14, fontWeight:500,color:"#636363ff"}} onClick={()=>{handleSort('date')}}>
+                Właściciel
+              </span>           
+            </div>
+            <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarDate}`}
+            data-tooltip= {sortAscending ? 'Sortuj od Z do A' : 'Sortuj od A do Z'}
+            onClick={()=>{handleSort('date')
+              SetNameFilterActive(false);
+              SetDateFilterActive(true);
+            }}>
+              <span className={styles.label} style={isDateFilterActive ? {fontSize: 14, fontWeight: 500, color: "#393939ff"} : {fontSize: 14, fontWeight: 500, color: "#636363ff"}}>
                 Data modyfikacji
               </span>
-              {sortBy==='date' && 
-              <div className={sortAscending ? styles.icon : styles.iconReversed}>
+              <div 
+                className={sortAscending ? styles.icon : styles.iconReversed}
+                style={{ opacity: sortBy === 'date' ? 1 : 0   }} 
+              >
                 <ArrowCircled size={24}></ArrowCircled>
-              </div>
-              }           
+              </div>          
+            </div>
+            <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarSize}`}>
+              <span className={styles.label} style={{fontSize:14, fontWeight:500,color:"#636363ff"}} onClick={()=>{handleSort('date')}}>
+                Rozmiar pliku
+              </span>           
             </div>
             <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarOptions}`}>
-              <Button className={buttonStyles.iconOnly}icon={<SortIcon/>}></Button>
+              <button className={styles.button}>
+                <SortIcon size={18}/>
+                <span className={styles.label}>Sortuj</span>
+              </button>
             </div>
           </div>
           <FileItemDivider/>

@@ -112,7 +112,7 @@
 }
 
 .button:hover {
-   background-color: rgba(0,0,0,0.1);
+   background-color: rgba(0,0,0,0.1); /* dobre do mienia transparent backgroundu i jednoczesnie przyciemniania*/
 }
 
 .iconOpen {
@@ -230,7 +230,7 @@
 }
 
 .posLeft .menu {
-  top: 0;
+  top: 150px;
   right: calc(100% + 8px); /* 8px = odstęp od buttona */
   left: auto;
 }

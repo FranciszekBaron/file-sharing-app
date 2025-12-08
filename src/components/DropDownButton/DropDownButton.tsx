@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import styles from "../DropDownButton/DropDownButton.module.css"
 import { ChevronDown, X } from "lucide-react";
 
@@ -12,6 +12,7 @@ interface Props {
   position?: "below" | "above" | "left" | "right" | "on";
   selected?: boolean;
   onClear?: () => void;
+  style?: CSSProperties;
 }
 
 const DropDownButton = ({
@@ -23,6 +24,7 @@ const DropDownButton = ({
   menuVariant,
   position = "below",
   selected,
+  style,
   onClear
 }: Props) => {
   const [open, setOpen] = useState(false);
@@ -56,7 +58,8 @@ const DropDownButton = ({
     >
       {hasIcon ? (
         <button 
-          className={`${styles.button} ${variant ? styles[variant] : ''}`}
+          className={`${styles.button}  ${variant ? styles[variant] : ''}`}
+          style={{...style}}
           onClick={() => setOpen(!open)}
         >
           {icon}

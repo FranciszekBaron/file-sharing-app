@@ -1,4 +1,4 @@
-import { act, createContext, useContext, useEffect, useState } from "react";
+import { act, createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { FileItem } from "../types/FileItem";
 import { filesService } from ".";
 
@@ -11,6 +11,7 @@ interface FilesContextType{
     allFiles: FileItem[];
     displayedFiles: FileItem[];
     deletedFiles:FileItem[];
+    starredFiles:FileItem[];
     loading: boolean;
     activeFilter: FilterType;
     sortBy: 'name'|'date' | null;
@@ -18,7 +19,7 @@ interface FilesContextType{
 
     //Tutaj akcje czyli funkcje które będa zmieniać te state'y
     handleAdd: (name:string,type:FileItem['type']) =>Promise<void>;
-    handleDelete: (id:string) => Promise<void>;
+    handleSoftDelete: (id:string) => Promise<void>;
     handleUpdate: (id:string,updates: Partial<FileItem>) => Promise<void>;
     handleFilter: (filter: Exclude<FilterType,'none'>) => void;
     handleClearFilter: () => void;
@@ -31,11 +32,13 @@ const FilesContext = createContext<FilesContextType | undefined>(undefined);
 
 //2.Provider recznie wypelnia calosc 
 export const FilesProvider = ({children} : {children:React.ReactNode}) => {
-
+    console.log("Robie re-render" + this);
     const [allFiles,setAllFiles] = useState<FileItem[]>([]); // zwraca dane 
     const [displayedFiles,setDisplayedFiles] = useState<FileItem[]>([]);// zwraca dane 
 
-    const [deletedFiles,setDeletedFiles] = useState<FileItem[]>([]);
+    const deletedFiles = useMemo(() => allFiles.filter(f=>f.deleted),[allFiles])
+    const starredFiles = useMemo(()=>allFiles.filter(f=>!f.deleted && f.starred),[allFiles])
+
     const [loading,setLoading] = useState(true);// zwraca dane 
     const [activeFilter,setActiveFilter] = useState<FilterType>('none');// zwraca dane 
 
@@ -50,9 +53,11 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
         try{
             setLoading(true);
             const data = await filesService.getAll();
-            setAllFiles(data);
-            setDisplayedFiles(data);
 
+
+            setAllFiles(data);
+            const toDisplay = data.filter(f=>!f.deleted)
+            setDisplayedFiles(toDisplay);
         }catch(err){
             console.error('Error loading files',err)
         }finally{
@@ -69,14 +74,13 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
                 modifiedDate: new Date()
             });
             //w tym miejscu juz utworzysz nowy plik w bazie lub w mocku, ale trzeba jeszcze zrobic tak zeby sie poprawnie wyswietlalo
-
-            const updatedFiles = [...allFiles,newFile];
-            setAllFiles(updatedFiles);
+            
+            setAllFiles(prev=> [...prev,newFile]);
 
             if(activeFilter!=='none'){
-                setDisplayedFiles(updatedFiles.filter(e=>e.type===activeFilter));
+                setDisplayedFiles(prev=>[...prev,newFile].filter(e=>e.type===activeFilter));
             } else {
-                setDisplayedFiles(updatedFiles);
+                setDisplayedFiles(prev => [...prev,newFile]);
             }
         }catch(err){
             console.error('Error adding file: ',err);
@@ -84,30 +88,29 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
         }
     }
 
-    const handleDelete = async (id:string) => {
+    const handleSoftDelete = async (id:string) => {
         try{
-            if(await filesService.delete(id)){
-                //Zapamietaj usuwany
-                const deletedFile = allFiles.find(e => e.id === id);
-      
-                //Przenies do usunietych
-                if (deletedFile) {  
-                    setDeletedFiles([...deletedFiles, deletedFile]);
-                }
 
-                //Usun z bazy/mocka i zaktualizuj AllFiles
-                const updatedFiles = allFiles.filter(e=>e.id !== id);
-                setAllFiles(updatedFiles);
-                
-                //Jeśli wyświetlamy co innego niz AllFiles, to zaktualizuj widok
-                if(activeFilter !=='none'){
-                    setDisplayedFiles(updatedFiles.filter(e=>e.type===activeFilter))
-                }else{
-                    setDisplayedFiles(updatedFiles);
-                }
+            await filesService.update(id,{deleted: true, deletedAt: new Date()})
+            //Zapamietaj usuwany
+            setAllFiles(prev=> {
+            
+            //Usun z bazy/mocka i zaktualizuj AllFiles
+            const updatedFiles = prev.map(f=>f.id === id
+                ? {...f,deleted:true,deletedAt: new Date()}
+                : f
+            );
+            
+            //Jeśli wyświetlamy co innego niz AllFiles, to zaktualizuj widok
+            if(activeFilter !=='none'){
+                setDisplayedFiles(updatedFiles.filter(f=>f.type===activeFilter && !f.deleted))
+            }else{
+                setDisplayedFiles(updatedFiles.filter(f=>!f.deleted));
             }
+            return updatedFiles;
+            }); 
         }catch(err){
-            console.error('Error adding file: ',err);
+            console.error('Error deleting file: ',err);
             throw err;
         }
     }
@@ -116,24 +119,30 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
         try{
             const updateFile = await filesService.update(id,updates);
             
-            const updatedFiles = allFiles.map(e=>e.id===id ? updateFile : e)
-            
-            setAllFiles(updatedFiles)
-            if(activeFilter !=='none'){
-                setDisplayedFiles(updatedFiles.filter(e=>e.type===activeFilter));
-            }else{
-                setDisplayedFiles(updatedFiles);
-            }
+            setAllFiles(prev => { 
+                const updatedFiles = prev.map(e=>e.id===id ? updateFile : e)
+
+                if(activeFilter !=='none'){
+                    setDisplayedFiles(updatedFiles.filter(f=>f.type===activeFilter && !f.deleted));
+                }else{
+                    setDisplayedFiles(updatedFiles.filter(f=>!f.deleted));
+                }
+                return updatedFiles;
+            });
         }catch(err){
             console.log('Error updating file:',err)
         }
+    }
+
+    const handleStarred = async (id:string, updates: Partial<FileItem>) => {
+
     }
     
     const handleSort = (type:'name' | 'date')  => {
         
         setSortBy(type);
 
-        const sorted = [...displayedFiles].sort((a,b)=>{
+        const sorted = [...displayedFiles.filter(f=>!f.deleted)].sort((a,b)=>{
             if(type==='name'){
                 return !sortAscending 
                 ? a.name.localeCompare(b.name)
@@ -146,18 +155,18 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             }
         })
         
-        setSortAscening(!sortAscending);
+        setSortAscening(prev => !prev);
         setDisplayedFiles(sorted);
     }
 
     const handleFilter = (filter: Exclude<FilterType,'none'>) => { 
         setActiveFilter(filter);
-        setDisplayedFiles([...allFiles].filter(e=>e.type === filter))
+        setDisplayedFiles([...allFiles.filter(f=>!f.deleted)].filter(e=>e.type === filter))
     }
     
     const handleClearFilter = () => {
         setActiveFilter('none');
-        setDisplayedFiles([...allFiles])
+        setDisplayedFiles([...allFiles.filter(f=>!f.deleted)])
     }
 
     const refreshFiles = async () => { 
@@ -169,12 +178,13 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             allFiles,
             displayedFiles,
             deletedFiles,
+            starredFiles,
             loading,
             activeFilter,
             sortBy,
             sortAscending,
             handleAdd,
-            handleDelete,
+            handleSoftDelete,
             handleUpdate,
             handleFilter,
             handleClearFilter,

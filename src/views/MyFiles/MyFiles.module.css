@@ -2,16 +2,13 @@
   width: 100%;
   height: 100%;
   background-color: rgb(255, 255, 255);
-  /* to sprawi że nie “przykleja się” do krawędzi */
-  border-radius: 16px;       
-  /* odstęp od krawędzi całego contentu */
+  border-radius: 16px;
   box-sizing: border-box;
-
   display: flex;
   flex-direction: column;
 }
 
-.topbarWrapper{
+.topbarWrapper {
   height: 100px;
   background-color: rgb(255, 255, 255);
   display: flex;
@@ -21,14 +18,13 @@
   gap: 2px;
 }
 
-
-.titleButtonWrapper{
+.titleButtonWrapper {
   display: flex;
-  justify-content: space-between;  /* jeden na lewo, drugi na prawo */
-  align-items: center;              /* pionowo wycentrowane */
+  justify-content: space-between;
+  align-items: center;
   height: 50px;
   background-color: #ffffff;
-  border-radius: 16px;  /* bezpieczeństwo dla tekstu */    
+  border-radius: 16px;
   font-size: 14px;
   font-weight: 300;
   padding: 2px;
@@ -39,7 +35,7 @@
   flex-direction: row;
   height: 50px;
   background-color: #ffffff;
-  border-radius: 16px;  /* bezpieczeństwo dla tekstu */    
+  border-radius: 16px;
   padding: 10px;
   padding-left: 14px;
   gap: 8px;
@@ -50,10 +46,24 @@
   font-size: 24px;
   font-weight: 300;
   color: black;
-  display: inline-flex;      /* ważne: żeby tekst się nie łamał */
+  display: inline-flex;
   align-items: center;
-  padding: 4px 10px;         /* stały "obszar" kliknięcia */
-  border-radius: 16px;       /* żeby hover był równy */
+  padding: 4px 10px;
+  border-radius: 16px;
+}
+
+.ItemSelected {
+  flex:1;
+  display:flex;
+  flex-direction: row;
+  height: 38px;
+  border-radius: 24px;
+  background-color: #eaeef5a4;   
+  display: flex;
+  gap: 12px;
+  align-items: center;      
+  padding: 4px 8px;
+  border-radius: 20px;
 }
 
 .title:hover {
@@ -61,29 +71,30 @@
   box-shadow: 0 1px 2px rgba(60, 64, 67, 0.1);
 }
 
-
 .main {
-  flex: 1; /* magia! */
-  background-color: rgb(255, 255, 255);
-  display: flex;        /* żeby mainContent też flexowo się rozciągało */
+  flex: 1;
+  background-color: rgb(255, 2F55, 255);
+  display: flex;
   flex-direction: column;
   padding: 0px 10px 0px 14px;
 }
 
-/* 5️⃣ MainContent rozciąga się w dół całego main */
 .mainContent {
-  flex: 1; 
-  background-color: aliceblue;
-  display: flex;        /* jeśli chcesz, żeby w środku też flex */
+  flex: 1;
+  background-color: transparent;
+  display: flex;
   flex-direction: column;
   border-radius: 12px;
+  padding-top: 4px;
 }
 
+/* ----------- POPRAWIONY TOPBAR ------------ */
 .mainContentTopbar {
-  height: 50px;
   display: flex;
   flex-direction: row;
-  background-color: rgb(255, 255, 255);
+  width: 100%;
+  height: 50px;
+  background-color: #fff;
 }
 
 .mainContentTopbarColumn {
@@ -92,46 +103,235 @@
   height: 50px;
   background-color: rgb(255, 255, 255);
   cursor: pointer;
-  border-radius: 8px 8px 0 0; /* jeśli chcesz jakieś ogólne */
+  border-radius: 8px 8px 0 0;
   transition: background-color 0.2s;
-  padding-left: 8px;
-
   user-select: none;
-  -webkit-user-select: none;  /* Safari */
-  -moz-user-select: none;     /* Firefox */
-  -ms-user-select: none;      /* IE/Edge */
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
 }
 
-/* hover dla wszystkich */
+
 .mainContentTopbarColumn:hover {
   background-color: #e8eaed;
 }
 
-.mainContentTopbarName { 
-  flex: 10 1 0; 
+/* Name (lewa kolumna) - elastyczna */
+.mainContentTopbarName {
+  flex: 3;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding-left: 8px;
+  position: relative; /* DODANE - to jest kluczowe! */
+  background-color: aqua;
+}
+
+.mainContentTopbarName::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%); 
+  background: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  margin-bottom: 5px;
+}
+
+.mainContentTopbarName:hover::after {
+  opacity: 1; /* DODANE - pokazuje tooltip przy hover */
+}
+
+
+.mainContentTopbarOwner{
+  flex: 0 0 200px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  justify-content: flex-start;
+  padding-left: 8px;
+}
+
+.mainContentTopbarOwner:hover{
+  background-color: transparent;
+}
+
+/* Date (środkowa kolumna) - stała szerokość */
+.mainContentTopbarDate {
+  flex: 0 0 200px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  justify-content: flex-start;
+  padding-left: 8px;
+  position: relative;
   gap:4px;
 }
-.mainContentTopbarDate { flex: 3 1 0; display: none;
-  white-space: nowrap;       /* nie łamie wiersza */
-  overflow: hidden;  
-  text-overflow: ellipsis; 
+
+.mainContentTopbarDate::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%); 
+  background: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  margin-top: 5px;
 }
-.mainContentTopbarOptions { flex: 1 1 0; }
 
-.mainContentTopbarOptions:hover { background-color: #ffffff;}
+.mainContentTopbarDate:hover::after {
+  opacity: 1;
+}
+
+.mainContentTopbarSize{
+  flex: 0 0 200px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  justify-content: flex-start;
+  padding-left: 8px;
+}
+
+.mainContentTopbarSize:hover{
+  background-color: transparent;
+}
 
 
-@media (max-width: 800px) {
-  .mainContentTopbarDate {
-    display: flex;
-    white-space: nowrap;       /* nie łamie wiersza */
-    overflow: hidden;  
-    text-overflow: ellipsis; 
-    
+/* Options (prawa kolumna) - stała szerokość */
+.mainContentTopbarOptions {
+  flex: 0 0 150px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  justify-content: flex-end;
+  position:relative;
+}
+
+
+
+.mainContentTopbarOptions:hover {
+  background-color: #ffffff;
+}
+
+
+.mainContentTopbarOptions .label {
+  font-size: 14px;
+  font-weight: 400;
+  color: #383838ff;
+  white-space: nowrap;
+}
+
+.mainContentTopbarOptions .button {
+  display: flex;
+  height: 40px;
+  padding: 0 16px;
+  align-items: center;
+  gap: 8px;
+  border-radius: 20px;
+  background: transparent;
+  border: none;
+  justify-content: center;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.mainContentTopbarOptions .button::after{
+  content: "Wyświetl opcje sortowania";
+  position: absolute;
+  bottom: 100%; /* nad elementem */
+  left: 50%;
+  transform: translateX(-50%); /* DODANE - centruje tooltip */
+  background: #333;
+  color: white; /* ZMIENIONE - było rgb(128, 94, 94) */
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  margin-bottom: 5px;
+}
+
+.mainContentTopbarOptions .button:hover::after{
+   opacity: 1;
+}
+
+.mainContentTopbarOptions .button:hover {
+  background-color: rgb(226,230,239);
+}
+
+/* Media queries */
+@media (max-width: 1500px) {
+  .mainContentTopbarOwner{
+    flex: 0 0 130px;
+  }
+  .mainContentTopbarDate{
+    flex: 0 0 130px;
+    max-width: 130px;
+  }
+  .mainContentTopbarSize{
+    flex: 0 0 130px;
+  }
+
+
+  .mainContentTopbarOptions .label {
+    display: none;
+  }
+
+  .mainContentTopbarOptions .button {
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+  }
+  
+  .mainContentTopbarOptions {
+    flex: 0 0 50px;
   }
 }
 
 
+@media (max-width: 1200px) {
+  .mainContentTopbarSize {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .mainContentTopbarOwner {
+    display: none;
+  }
+}
+
+@media (max-width: 800px) {
+  .mainContentTopbarDate {
+    flex: 0 0 150px;
+    max-width: 150px;
+  }
+}
+
+
+/* --------- RESZTA TWOJEGO CSS --------- */
 .fileList {
   display: flex;
   flex-direction: column;
@@ -141,18 +341,34 @@
 .label {
   font-size: 24px;
   font-weight: 400;
-  color: black;
+  color: rgb(106, 106, 106);
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+}
+
+.sortHeader {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px; /* Odstęp między tekstem a strzałką */
+}
+
+.sortArrow {
+  display: flex;
+  align-items: center;
+  transition: opacity 0.2s, transform 0.2s;
+}
+
+.sortArrowReversed {
+  transform: rotate(180deg);
 }
 
 .iconOpen {
-
 }
 
 .iconReversed {
   transform: rotate(180deg);
 }
-
-
 
 /*--------MODAL NOWY FOLDER---------*/
 .modalLabel{
@@ -177,8 +393,8 @@
 
 .modalButtons{
   display: flex;
-  justify-content: flex-end; /* elementy przy prawej krawędzi */
-  gap: 20px; /* odległość między przyciskami */
+  justify-content: flex-end;
+  gap: 20px;
   height: 50px;
   padding-right: 10px;
 }
@@ -197,3 +413,49 @@
 }
 
 
+
+.hoverIcon {
+  cursor: pointer;
+  height: 30px;
+  width:30px;
+  color:#3a3a3a;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.hoverIcon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%); 
+  background: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  margin-top: 5px;
+}
+
+.hoverIcon:hover {
+  background-color: rgba(0, 0, 0, 0.1);;
+}
+
+.hoverIcon:hover::after{
+  opacity: 1;
+}
+
+.ItemSelectedLabel{
+  font-size: 14px;
+  font-weight: 400;
+  color: rgb(67, 67, 67);
+
+}

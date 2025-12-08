@@ -7,4 +7,6 @@ export interface FileItem {
     owner?: string;
     shared?: boolean;
     starred?: boolean;
+    deleted?:boolean;
+    deletedAt?: Date;
 }

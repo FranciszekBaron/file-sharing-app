@@ -27,7 +27,7 @@ export const mockFiles: FileItem[] = [
     id: '3',
     name: 'Raport.pdf',
     type: 'pdf',
-    size: 2048576,
+    size: 1908576,
     modifiedDate: new Date('2024-11-15'),
     owner: 'Ty',
     shared: true
@@ -43,9 +43,21 @@ export const mockFiles: FileItem[] = [
     id: '5',
     name: 'MojaNotatka.txt',
     type: 'doc',
-    size: 2048576,
+    size: 3068576,
     modifiedDate: new Date('2024-11-15'),
     owner: 'Ty',
-    shared: true
+    shared: true,
+    deleted:false
+  },
+  {
+    id: '6',
+    name: 'plikusuniety.txt',
+    type: 'doc',
+    size: 3068576,
+    modifiedDate: new Date('2024-11-15'),
+    owner: 'Ty',
+    shared: true,
+    deleted:true,
+    deletedAt:new Date('2024-12-12')
   }
 ]

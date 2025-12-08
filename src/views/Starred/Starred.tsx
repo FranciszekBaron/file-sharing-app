@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./Trash.module.css"
+import styles from "./Starred.module.css"
 import type { FileItem as FileItemType} from "../../types/FileItem";
 import FileItem from "../../components/FileItem/FileItem";
 import DropDownButton from "../../components/DropDownButton/DropDownButton";
@@ -24,11 +24,11 @@ import { useFiles } from "../../services/FilesContextType";
 
 
 
-const Trash = () => {
+const Starred = () => {
 
   const {
     displayedFiles,
-    deletedFiles,
+    starredFiles,
     loading,
     activeFilter,
     sortBy,
@@ -68,7 +68,7 @@ const Trash = () => {
     <div className={styles.contentWrapper}>
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
-            <h1 className={styles.label}>Kosz</h1>
+            <h1 className={styles.label}>Oznaczone gwiazdką</h1>
             <h1 className={styles.label}>Opcje widoku</h1>
         </div>
         <div className={styles.filtersWrapper}>
@@ -112,7 +112,7 @@ const Trash = () => {
             <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarDate}`}
             data-tooltip= {sortAscending ? 'Sortuj od Z do A' : 'Sortuj od A do Z'}>
               <span className={styles.label} style={{fontSize:14, fontWeight:500,color:"#636363ff"}} onClick={()=>{handleSort('date')}}>
-                Data usunięcia
+                Data modyfikacji
               </span>
               {sortBy==='date' && 
               <div className={sortAscending ? styles.icon : styles.iconReversed}>
@@ -134,7 +134,7 @@ const Trash = () => {
           </div>
           <FileItemDivider/>
           <div className={styles.fileList}>
-            {deletedFiles.map(item=>(
+            {starredFiles.map(item=>(
               <div key={item.id}>
                 <FileItemList file={item} isActive={acitveIndexFileItems === item.id} onActivate={()=>{SetActiveIndexFileItems(item.id)}}/>
                 <FileItemDivider/>
@@ -148,4 +148,4 @@ const Trash = () => {
   );
 };
 
-export default Trash;
+export default Starred;

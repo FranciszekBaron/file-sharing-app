@@ -18,6 +18,8 @@
   padding-left: 18px;
   background-color: var(--background);
   align-items: flex-start;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 

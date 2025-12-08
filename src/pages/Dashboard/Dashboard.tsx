@@ -3,7 +3,7 @@ import Home from "../../views/Home/Home";
 import MyFiles from "../../views/MyFiles/MyFiles";
 import Shared from "../../views/Shared"
 import Recent from "../../views/Recent";
-import Starred from "../../views/Starred";
+import Starred from "../../views/Starred/Starred";
 import Spam from '../../views/Spam';
 import Trash from '../../views/Trash/Trash';
 import { useState } from "react";
