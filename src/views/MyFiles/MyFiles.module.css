@@ -34,6 +34,14 @@
   padding: 2px;
 }
 
+.viewButtonWrapper {
+  display: flex;
+  flex: 0 0 180px;
+  height: 36px;
+  align-items: center;
+}
+
+
 .filtersWrapper {
   display: flex;
   flex-direction: row;
@@ -334,11 +342,19 @@
 }
 
 
-/* --------- RESZTA TWOJEGO CSS --------- */
+
 .fileList {
   display: flex;
   flex-direction: column;
   background-color: rgb(255, 255, 255);
+}
+
+.fileGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);  /* domyślnie 2 kolumny */
+  gap: 16px;
+  background-color: rgb(255, 255, 255);
+  padding: 16px;
 }
 
 .label {

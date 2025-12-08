@@ -42,7 +42,24 @@
   gap: 8px;
   align-items: center;
   justify-content: center;
-  transition: all 0.3s ease;  /* ← animacja */
+  transition: all 0.3s ease;
+  overflow-x: auto;           /* ← scroll poziomy gdy za szeroki */
+  overflow-y: hidden;         /* ← ukryj pionowy scroll */
+  white-space: nowrap;        /* ← zapobiega zawijaniu */
+}
+
+/* Opcjonalnie: ukryj scrollbar ale zostaw funkcjonalność */
+.contentFiltersWrapper::-webkit-scrollbar {
+  display: none;                /* Chrome/Safari */
+}
+
+.contentFiltersWrapper::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 4px;
+}
+
+.contentFiltersWrapper::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
 }
 
 
@@ -88,8 +105,9 @@
 }
 
 .labelRecommended {
+  color: var(--text-primary) ;
   font-size: 16px;
-  font-weight: 400;
+  font-weight: 500;
   white-space: nowrap;
 }
 

@@ -22,6 +22,7 @@ import { filterLabels } from "../../types/FilterType";
 import Modal from "../../components/Modal/Modal";
 import { useFiles } from "../../services/FilesContextType";
 import { useFileSelection } from "../../hooks/useFileSelection";
+import DoubleItemButton from "../../components/Common/DoubleItemButton/DoubleItemButton";
 
 
 
@@ -60,6 +61,7 @@ const MyFiles = () => {
   const [isDateFilterActive,SetDateFilterActive] = useState(true);
 
   const [fileName,SetFileName] = useState("");
+  const [layout,setLayout] = useState<'list'| 'grid'>('list');
 
   const addFileIcon = <FolderPlus size={20}/>
   const uploadFileIcon = <Upload size={20}/>
@@ -70,6 +72,8 @@ const MyFiles = () => {
   const handleAddFolderClick = () => {
       SetAddFileOpen(true);
   }
+
+  
 
 
   const handleAddFolder = async () => {
@@ -126,7 +130,9 @@ const MyFiles = () => {
                 <MenuItem icon = {alertIcon} label= "..." gap={14} size={14} variant="operations" 
                 style={{color:"lightgray", cursor:"not-allowed",pointerEvents:"none"}}/> 
             </DropDownButton>
-            <h1 className={styles.label}>Opcje widoku</h1>
+            <div className={styles.viewButtonWrapper}>
+                <DoubleItemButton size={32} activeLayout={layout} onActivateLeft={()=>{setLayout('list')}} onActivateRight={()=>{setLayout('grid')}}></DoubleItemButton>
+            </div>
         </div>
         {hasSelection ? 
         <div className={styles.filtersWrapper}>
@@ -169,6 +175,7 @@ const MyFiles = () => {
         }
         
       </div>
+      {layout === 'list' ? 
       <div className={styles.main}>
         <div className={styles.mainContent}>
           <div className={styles.mainContentTopbar}>
@@ -237,6 +244,19 @@ const MyFiles = () => {
           </div>
         </div>
       </div>
+      :
+      <div className={styles.fileGrid}>
+            {displayedFiles.map((item,index)=>(
+              <div key={index}>
+                <FileItemList file={item} isActive={selectedItems.has(index.toString())} 
+                onActivate={(e)=>{ 
+                  e.preventDefault();
+                  handleClickItem(item.id,index.toString(), e)}}/>
+                <FileItemDivider/>
+              </div>
+            ))}
+          </div>
+      }
 
     </div>
   );

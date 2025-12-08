@@ -155,7 +155,7 @@ const Starred = () => {
           </div>
           <FileItemDivider />
           <div className={styles.fileList}>
-            {displayedFiles.map((item, index) => (
+            {starredFiles.map((item, index) => (
               <div key={index}>
                 <FileItemList file={item} isActive={selectedItems.has(index.toString())}
                   onActivate={(e) => {
