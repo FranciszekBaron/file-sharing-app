@@ -1,18 +1,145 @@
 .contentWrapper {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   height: 100%;
-  background-color: rgb(255, 255, 255);
-  /* to sprawi że nie “przykleja się” do krawędzi */
   border-radius: 16px;       
   padding: 14px;
   padding-top: 16px;
   box-sizing: border-box;
+  transition: all 0.3s ease;  /* ← animacja paddingu */
+}
+
+.contentTitleWrapper {
   display: flex;
-  flex-direction: column;
+  height: 65px;
+  justify-content: center;
+  transition: all 0.3s ease;
+  align-items: center;
 }
 
 .label {
   font-size: 24px;
   font-weight: 300;
   color: black;
+  transition: all 0.3s ease;
+}
+
+.contentSearchbarWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding-left: 60px;
+  padding-right: 60px;
+  height: 70px;
+  transition: all 0.3s ease;  /* ← animacja paddingu */
+}
+
+.contentFiltersWrapper {
+  display: flex;
+  flex-direction: row;
+  height: 50px;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;  /* ← animacja */
+}
+
+
+.contentRecommendedWrapper {
+  display: flex;
+  flex-direction: column;   
+  align-items: flex-start;     
+  justify-content: flex-start;       
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  gap:10px
+}
+
+.recommendedButton {
+  display: flex;
+  flex-direction: row;     
+  align-items: center;     
+  border-radius: 20px;
+  gap: 8px;                
+  height: 30px; 
+  padding: 0 12px;         /* ← DODAJ - padding wewnętrzny */
+  background-color: transparent;
+}
+
+.recommendedButton:hover {
+  color:rgb(38,86,201);
+  background-color: #eaeef5;
+}
+
+.icon {         /* ← DODAJ */
+  align-items: center;     /* ← DODAJ */
+  justify-content: center; /* ← DODAJ */
+  width: 16px;             /* ← opcjonalnie: stała szerokość */
+  height: 16px;
+  transform: rotate(-90deg);
+}
+
+.iconOpen {
+  transform: rotate(0deg);
+  transition: 0.2s ease;
+}
+
+.labelRecommended {
+  font-size: 16px;
+  font-weight: 400;
+  white-space: nowrap;
+}
+
+.recommendedButton {
+  display: flex;
+  flex-direction: row;     
+  align-items: center;     
+  border-radius: 20px;
+  gap: 8px;                
+  height: 30px; 
+  padding: 0 12px;
+  background-color: transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.recommendedButton:hover {
+  color: rgb(38, 86, 201);
+  background-color: #eaeef5;
+  transform: scale(0.97);     /* ← lekko zmniejsza (3%) */
+}
+
+
+
+.label::after {
+  content: "Witamy na dysku";
+}
+
+@media (max-width: 1000px) {
+  .contentWrapper {
+    padding: 8px;  /* ← mniejszy padding */
+  }
+
+  .contentTitleWrapper {
+    justify-content: flex-start;  /* ← do lewej */
+    padding-left: 8px;  /* ← lekki padding od krawędzi */
+  }
+  
+  .contentSearchbarWrapper {
+    justify-content: flex-start;  /* ← do lewej */
+    padding-left: 8px;  /* ← usuń duży padding */
+    padding-right: 8px;
+  }
+  
+  .contentFiltersWrapper {
+    justify-content: flex-start;  /* ← do lewej */
+    padding-left: 8px;  /* ← lekki padding */
+  }
+  
+  .label::after {
+    content: "Witamy";
+  }
 }

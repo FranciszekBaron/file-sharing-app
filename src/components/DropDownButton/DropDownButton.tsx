@@ -64,11 +64,18 @@ const DropDownButton = ({
         >
           {icon}
           {label}
+          {variant==="filters" ? <ChevronDown 
+            size={11} 
+            className={open ? styles.iconOpen : ""} 
+            color="black" 
+            fill="black" 
+          />
+          : ''}
         </button>
       ) : (
         <button 
           className={`${styles.button} ${variant ? styles[variant] : ''} ${selected ? styles.clicked : ""}`} 
-          style={{ fontSize: `${textSize}px` }} 
+          style={{ fontSize: `${textSize}px`,...style }} 
           onClick={() => setOpen(!open)}
         >
           {label}

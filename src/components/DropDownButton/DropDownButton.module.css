@@ -19,6 +19,10 @@
   border: none;
   height: 40px;
   border-radius: 40px;
+  white-space: nowrap;      /* ← nie zawijaj tekstu */
+  overflow: hidden;         /* ← ukryj nadmiar */
+  text-overflow: ellipsis;
+
 }
 
 .button:hover {
@@ -58,7 +62,7 @@
     background: rgb(255, 255, 255);
     color: rgb(60, 60, 60);
     font-size: 14px;
-    font-weight: 400;
+    font-weight: 500;
     cursor: pointer;
     transition: background 0.15s ease,
                 box-shadow 0.15s ease,

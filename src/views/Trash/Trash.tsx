@@ -1,5 +1,5 @@
 import { useState } from "react";
-import styles from "./Trash.module.css"
+import styles from "..//MyFiles//MyFiles.module.css"
 import type { FileItem as FileItemType} from "../../types/FileItem";
 import FileItem from "../../components/FileItem/FileItem";
 import DropDownButton from "../../components/DropDownButton/DropDownButton";
@@ -21,6 +21,7 @@ import { ArrowCircled } from "../../icons/ArrowCircled";
 import { filterLabels } from "../../types/FilterType";
 import Modal from "../../components/Modal/Modal";
 import { useFiles } from "../../services/FilesContextType";
+import { useFileSelection } from "../../hooks/useFileSelection";
 
 
 
@@ -39,10 +40,19 @@ const Trash = () => {
     handleSort
   } = useFiles()
 
+  const {
+      selectedItems,
+      handleClickItem,
+      clearSelection,
+      hasSelection
+    } = useFileSelection();
+
 
   const [acitveIndexFileItems,SetActiveIndexFileItems] = useState<string| null>()
   const [activeIndexFiltersItems,SetActiveIndexFiltersItems] = useState<string | null>()
   const [addFileOpen,SetAddFileOpen] = useState(false);
+  const [isNameFilterActive,SetNameFilterActive] = useState(true);
+  const [isDateFilterActive,SetDateFilterActive] = useState(true);
 
   const [fileName,SetFileName] = useState("");
 
@@ -88,20 +98,25 @@ const Trash = () => {
           <DropDownButton label="Źródło" textSize={14} variant="filters" menuVariant="elements"></DropDownButton>
         </div>
       </div>
-      <div className={styles.main}>
+     <div className={styles.main}>
         <div className={styles.mainContent}>
           <div className={styles.mainContentTopbar}>
             <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarName}`}
             data-tooltip= {sortAscending ? 'Sortuj od Z do A' : 'Sortuj od A do Z'}
-             onClick={()=>{handleSort('name')}}>
-              <span className={styles.label} style={{fontSize:14, fontWeight:500,color:"#383838ff"}}>
+             onClick={()=>{handleSort('name')
+              SetNameFilterActive(true);
+              SetDateFilterActive(false);
+             }}>
+              <span className={styles.label} style={isNameFilterActive ? {fontSize: 14, fontWeight: 500, color: "#393939ff"} : {fontSize: 14, fontWeight: 500, color: "#636363ff"}}>
                 Nazwa
               </span>
-              {sortBy==='name' && 
-              <div className={sortAscending ? styles.icon : styles.iconReversed}>
+              
+              <div 
+                className={sortAscending ? styles.icon : styles.iconReversed}
+                style={{ opacity: sortBy === 'name' ? 1 : 0 }} 
+              >
                 <ArrowCircled size={24}></ArrowCircled>
               </div>
-              }
             </div>
 
             <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarOwner}`}>
@@ -110,19 +125,24 @@ const Trash = () => {
               </span>           
             </div>
             <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarDate}`}
-            data-tooltip= {sortAscending ? 'Sortuj od Z do A' : 'Sortuj od A do Z'}>
-              <span className={styles.label} style={{fontSize:14, fontWeight:500,color:"#636363ff"}} onClick={()=>{handleSort('date')}}>
-                Data usunięcia
+            data-tooltip= {sortAscending ? 'Sortuj od Z do A' : 'Sortuj od A do Z'}
+            onClick={()=>{handleSort('date')
+              SetNameFilterActive(false);
+              SetDateFilterActive(true);
+            }}>
+              <span className={styles.label} style={isDateFilterActive ? {fontSize: 14, fontWeight: 500, color: "#393939ff"} : {fontSize: 14, fontWeight: 500, color: "#636363ff"}}>
+                Data modyfikacji
               </span>
-              {sortBy==='date' && 
-              <div className={sortAscending ? styles.icon : styles.iconReversed}>
+              <div 
+                className={sortAscending ? styles.icon : styles.iconReversed}
+                style={{ opacity: sortBy === 'date' ? 1 : 0   }} 
+              >
                 <ArrowCircled size={24}></ArrowCircled>
-              </div>
-              }           
+              </div>          
             </div>
             <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarSize}`}>
               <span className={styles.label} style={{fontSize:14, fontWeight:500,color:"#636363ff"}} onClick={()=>{handleSort('date')}}>
-                Rozmiar
+                Rozmiar pliku
               </span>           
             </div>
             <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarOptions}`}>
@@ -134,9 +154,12 @@ const Trash = () => {
           </div>
           <FileItemDivider/>
           <div className={styles.fileList}>
-            {deletedFiles.map(item=>(
-              <div key={item.id}>
-                <FileItemList file={item} isActive={acitveIndexFileItems === item.id} onActivate={()=>{SetActiveIndexFileItems(item.id)}}/>
+            {deletedFiles.map((item,index)=>(
+              <div key={index}>
+                <FileItemList file={item} isActive={selectedItems.has(index.toString())} 
+                onActivate={(e)=>{ 
+                  e.preventDefault();
+                  handleClickItem(item.id,index.toString(), e)}}/>
                 <FileItemDivider/>
               </div>
             ))}

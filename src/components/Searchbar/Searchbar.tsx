@@ -1,13 +1,14 @@
-import { useState } from "react";
+import { useState, type CSSProperties } from "react";
 import styles from "./Searchbar.module.css";
 import { Search } from 'lucide-react';
 import type { FileItem } from "../../types/FileItem";
 
 interface Props {
   items: FileItem[];
+  style?: CSSProperties;
 }
 
-export const Searchbar = ({items}: Props) => {
+export const Searchbar = ({items,style}: Props) => {
   const [isActive, setToActive] = useState(false);
   const [query, SetQuery] = useState("");
   const isSearching = query.length > 0;
@@ -45,7 +46,8 @@ export const Searchbar = ({items}: Props) => {
         ${styles.searchbar} 
         ${isSearching ? styles.searching : isActive ? styles.active : ''}
         ${isSearching ? styles.searchbarExpanded : ''}
-      `}>
+      `}
+      style={{...style}}>
         <Search className={styles.searchIcon} size={20} strokeWidth={2}/>
         <input 
           placeholder="Szukaj w plikach"

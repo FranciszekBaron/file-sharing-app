@@ -19,7 +19,7 @@
   background-color: var(--background);
   align-items: flex-start;
   white-space: nowrap;
-  text-overflow: ellipsis;
+  width: 100%;
 }
 
 
@@ -32,12 +32,14 @@
   padding: 8px 12px; /* było 8px 12px */
   border-radius: 20px; /* było 20px */
   color: rgb(42, 42, 42);
+  width: calc(100% - 18px);  /* ← WAŻNE: 100% minus padding-left z .sidebarOptions */
   cursor: pointer;
   width: 100%;
   height: 30px; /* było 30px */
   gap: 12px; /* było 8-9px */
   text-align: left;
   white-space: nowrap;
+  overflow: hidden;  /* ← DODAJ */
 }
 
 .boxSelected {
@@ -73,14 +75,22 @@
 
 }
 
-.label {
+.label,
+.labelActived {
   font-size: 14px;
-  font-weight: 300;
   color: black;
+  white-space: nowrap;     /* ← już masz */
+  overflow: hidden;        /* ← DODAJ */
+  text-overflow: ellipsis; /* ← DODAJ */
+  flex: 1;                 /* ← DODAJ - label zajmuje pozostałą przestrzeń */
+  min-width: 0;            /* ← WAŻNE dla flex! */
+}
+
+.label {
+  font-weight: 300;
 }
 
 .labelActived {
-  font-size: 14px;
   font-weight: 398;
   color: #1d4973;
 }

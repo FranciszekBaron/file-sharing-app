@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "..//MyFiles//MyFiles.module.css"
 import type { FileItem as FileItemType} from "../../types/FileItem";
 import FileItem from "../../components/FileItem/FileItem";
@@ -21,6 +21,7 @@ import { ArrowCircled } from "..//..//icons//ArrowCircled";
 import { filterLabels } from "../../types/FilterType";
 import Modal from "../../components/Modal/Modal";
 import { useFiles } from "../../services/FilesContextType";
+import { useFileSelection } from "../../hooks/useFileSelection";
 
 
 
@@ -37,9 +38,20 @@ const MyFiles = () => {
     handleUpdate,
     handleFilter,
     handleClearFilter,
-    handleSort
+    handleSort,
+    refreshFiles
   } = useFiles()
 
+  const {
+    selectedItems,
+    handleClickItem,
+    clearSelection,
+    hasSelection
+  } = useFileSelection();
+
+  useEffect(()=>{
+    handleClearFilter();
+  },[])
 
   const [acitveIndexFileItems,SetActiveIndexFileItems] = useState<string| null>()
   const [activeIndexFiltersItems,SetActiveIndexFiltersItems] = useState<string | null>()
@@ -71,7 +83,7 @@ const MyFiles = () => {
   }
 
 
-
+  
 
 
   const handleUploadFile = () => {}; // TODO
@@ -116,13 +128,13 @@ const MyFiles = () => {
             </DropDownButton>
             <h1 className={styles.label}>Opcje widoku</h1>
         </div>
-        {acitveIndexFileItems ? 
+        {hasSelection ? 
         <div className={styles.filtersWrapper}>
             <div className={styles.ItemSelected}>
-                <div className={styles.hoverIcon} data-tooltip='Odznacz' onClick={()=>{SetActiveIndexFileItems("")}}>
+                <div className={styles.hoverIcon} data-tooltip='Odznacz' onClick={()=>{clearSelection()}}>
                     <X size={20} strokeWidth={1.6}/>
                 </div>
-                <span className={styles.ItemSelectedLabel}>wybrano {acitveIndexFileItems}</span>
+                <span className={styles.ItemSelectedLabel}>wybrano {selectedItems.size}</span>
                 <div className={styles.hoverIcon} data-tooltip='Udostępnij'>
                     <Share2 size={14} strokeWidth={2}/>
                 </div>
@@ -213,9 +225,12 @@ const MyFiles = () => {
           </div>
           <FileItemDivider/>
           <div className={styles.fileList}>
-            {displayedFiles.map(item=>(
-              <div key={item.id}>
-                <FileItemList file={item} isActive={acitveIndexFileItems === item.id} onActivate={()=>{SetActiveIndexFileItems(item.id)}}/>
+            {displayedFiles.map((item,index)=>(
+              <div key={index}>
+                <FileItemList file={item} isActive={selectedItems.has(index.toString())} 
+                onActivate={(e)=>{ 
+                  e.preventDefault();
+                  handleClickItem(item.id,index.toString(), e)}}/>
                 <FileItemDivider/>
               </div>
             ))}

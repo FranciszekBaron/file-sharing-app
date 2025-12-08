@@ -8,6 +8,10 @@ export default defineConfig({
       babel: {
         plugins: [['babel-plugin-react-compiler']],
       },
+      
     }),
   ],
+  define: {
+    'process.env.EDITOR': JSON.stringify('code') // lub 'code-insiders'
+  }
 })

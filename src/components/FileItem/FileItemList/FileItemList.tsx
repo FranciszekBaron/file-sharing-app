@@ -29,7 +29,7 @@ import FileItem from "../FileItem";
 interface Props {//troche jak generics , ze to jest typ tego pliku ktory sobie przekazemy
     file: FileItemType,
     isActive: boolean
-    onActivate: ()=>void // przekazujemy funkcje 
+    onActivate: (e: React.MouseEvent)=>void // przekazujemy funkcje 
 }
 
 export const FileItemList = ({file,isActive,onActivate} : Props) => {

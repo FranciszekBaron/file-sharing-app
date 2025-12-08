@@ -6,13 +6,15 @@ import Dashboard from './pages/Dashboard/Dashboard'
 import { FilesProvider } from './services/FilesContextType'
 
 import { mockFiles } from "..//src//data/mockFiles";
+import { ClickToComponent } from 'click-to-react-component'
 
 function App() {
   return (
     <FilesProvider>
-      <Dashboard/>
+      <ClickToComponent 
+      editor="vscode"/>
+      <Dashboard />
     </FilesProvider>
   ) 
 }
-
 export default App
