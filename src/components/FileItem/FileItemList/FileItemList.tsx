@@ -17,11 +17,14 @@ import {
   Star,
   RotateCw
 } from "lucide-react";
+import { ThreeDotsIcon } from "../../../icons/ThreeDots";
+
 import MenuItem from "../../Common/MenuItem/MenuItem";
 import MenuDivider from "../../Common/MenuDivider/MenuDivider";
 import { useFiles } from "../../../services/FilesContextType";
 import Modal from "../../Modal/Modal";
 import FileItem from "../FileItem";
+
 
 
 
@@ -39,7 +42,7 @@ export const FileItemList = ({file,isActive,onActivate} : Props) => {
         handleUpdate,
     } = useFiles()
 
-    const optionsIcon = <EllipsisVertical size={14} strokeWidth={2.5}/>
+    const optionsIcon = <ThreeDotsIcon size={20}/>
     const [addFileOpen,SetAddFileOpen] = useState(false);
     const [fileName,SetFileName] = useState("");
     const [isStared,SetStared] = useState(file.starred);

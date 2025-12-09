@@ -17,6 +17,7 @@ import {
   MenuIcon,
   AlertCircle
 } from "lucide-react";
+import { PlusIcon } from "..//..//icons//Plus";
 
 import { useState } from "react";
 import {Button} from "../Common/Button";
@@ -80,7 +81,7 @@ const Sidebar = ({
   const FileUpIcon = <FileUp size={20}/>
   const alertIcon = <AlertCircle size = {20}/>
 
-  const addItem = <Plus strokeWidth={2.7} size={25}/>;
+  const addItem = <PlusIcon strokeWidth={2.7} size={25}/>;
 
   return (
     

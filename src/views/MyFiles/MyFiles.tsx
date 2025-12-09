@@ -23,6 +23,7 @@ import Modal from "../../components/Modal/Modal";
 import { useFiles } from "../../services/FilesContextType";
 import { useFileSelection } from "../../hooks/useFileSelection";
 import DoubleItemButton from "../../components/Common/DoubleItemButton/DoubleItemButton";
+import FileItemGrid from "../../components/FileItem/FileItemGrid/FileItemGrid";
 
 
 
@@ -121,7 +122,7 @@ const MyFiles = () => {
       }
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
-            <DropDownButton label="Mój dysk" menuVariant="operations">
+            <DropDownButton label="Mój dysk" menuVariant="operations" chevron={true}>
                 <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations" onActivate={()=>{handleAddFolderClick()}} />
                 <MenuDivider/>
                 <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations" onActivate={()=>SetAddFileOpen(true)}/>
@@ -155,7 +156,7 @@ const MyFiles = () => {
         </div>
         :
         <div className={styles.filtersWrapper}>
-            <DropDownButton label={activeFilter !=='none' ? filterLabels[activeFilter] : "Typ elementu"} textSize={14} variant="filters" menuVariant="elements" selected={activeFilter!=='none'} onClear={()=>handleClearFilter()}>
+            <DropDownButton label={activeFilter !=='none' ? filterLabels[activeFilter] : "Typ elementu"} textSize={14} variant="filters" menuVariant="elements" chevron={true} selected={activeFilter!=='none'} onClear={()=>handleClearFilter()}>
               {filterItems.map((item) => (
                 <React.Fragment key={item.id}>
                   <MenuItem icon={item.icon} label={item.label} size={14} gap={14} clicked={activeFilter===item.id} onActivate={
@@ -168,9 +169,9 @@ const MyFiles = () => {
               ))}
             </DropDownButton> 
           
-          <DropDownButton label="Osoby" textSize={14} variant="filters" menuVariant="elements"></DropDownButton> 
-          <DropDownButton label="Zmodyfikowano" textSize={14} variant="filters" menuVariant="elements"></DropDownButton>
-          <DropDownButton label="Źródło" textSize={14} variant="filters" menuVariant="elements"></DropDownButton>
+          <DropDownButton label="Osoby" textSize={14} variant="filters" menuVariant="elements" chevron={true}></DropDownButton> 
+          <DropDownButton label="Zmodyfikowano" textSize={14} variant="filters" menuVariant="elements" chevron={true}></DropDownButton>
+          <DropDownButton label="Źródło" textSize={14} variant="filters" menuVariant="elements" chevron={true}></DropDownButton>
         </div>
         }
         
@@ -245,17 +246,49 @@ const MyFiles = () => {
         </div>
       </div>
       :
-      <div className={styles.fileGrid}>
-            {displayedFiles.map((item,index)=>(
-              <div key={index}>
-                <FileItemList file={item} isActive={selectedItems.has(index.toString())} 
-                onActivate={(e)=>{ 
-                  e.preventDefault();
-                  handleClickItem(item.id,index.toString(), e)}}/>
-                <FileItemDivider/>
-              </div>
-            ))}
+      <div>
+          <div className={styles.gridContentTopbar}>
+            <DropDownButton 
+              label={
+                <div className={styles.gridCategoryButton}>
+                  <span 
+                    className={styles.label} 
+                    style={isNameFilterActive ? {fontSize: 14, fontWeight: 500, color: "#393939ff"} : {fontSize: 14, fontWeight: 500, color: "#636363ff"}}
+                  >
+                    {sortBy === 'name' ? 'Nazwa' : 'Data modyfikacji'}  {/* ← DODAJ TO - dynamiczny tekst */}
+                  </span>
+                  <div 
+                    className={sortAscending ? styles.icon : styles.iconReversed}
+                  >
+                    <ArrowCircled size={24} />
+                  </div> 
+                </div>
+              } 
+              textSize={14} 
+              menuVariant="sortOptions" 
+              style={{fontWeight:400}}
+            >
+              <span>Sortuj według</span>
+              <MenuItem label="Nazwa" gap={14} size={14} variant="operations" onActivate={()=>{handleAddFolderClick()}} />
+              <MenuItem label="Data Modyfikacji" gap={14} size={14} variant="operations" onActivate={()=>SetAddFileOpen(true)}/>
+              <MenuDivider/>
+              <span>Kolejność sortowania</span>
+              <MenuItem label="Od A do Z" gap={14} size={14} variant="operations" onActivate={()=>{handleAddFolderClick()}} />
+              <MenuItem label="Od Z do A" gap={14} size={14} variant="operations" onActivate={()=>SetAddFileOpen(true)}/>
+              <MenuDivider/>
+            </DropDownButton>
           </div>
+          <div className={styles.fileGrid}>
+                {displayedFiles.map((item,index)=>(
+                  <div key={index}>
+                    <FileItemGrid file={item} isActive={selectedItems.has(index.toString())} 
+                    onActivate={(e)=>{ 
+                      e.preventDefault();
+                      handleClickItem(item.id,index.toString(), e)}}/>
+                  </div>
+                ))}
+              </div>
+        </div>
       }
 
     </div>

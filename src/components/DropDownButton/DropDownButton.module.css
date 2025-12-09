@@ -58,7 +58,7 @@
     height: 32px;
     gap: 18px; 
     border-radius: 8px;
-    border: 0.1px solid rgba(17, 17, 17, 0.425);
+    border: 1px solid rgba(17, 17, 17, 0.625);
     background: rgb(255, 255, 255);
     color: rgb(60, 60, 60);
     font-size: 14px;
@@ -192,6 +192,20 @@
   animation: scaleFromTop 0.15s ease-out; /* krótsza, szybsza animacja */
   transform-origin: top;
 }
+
+.menu.sortOptions {
+  position: absolute;
+  top: 100px;
+  left: 100px;
+  background: #e8eaed;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  min-width: 160px;
+  z-index: 20;
+  padding: 12px;
+}
+
+
 
 
 /*-----WARIANTY MENY------*/

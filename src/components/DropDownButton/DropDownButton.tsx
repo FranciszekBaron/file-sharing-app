@@ -5,12 +5,13 @@ import { ChevronDown, X } from "lucide-react";
 interface Props {
   children?: React.ReactNode;
   icon?: ReactNode;
-  label?: string;
+  label?: ReactNode;
   textSize?: number;
   variant?: "default" | "filters" | "icon"; 
-  menuVariant?: "default" | "operations" | "elements";
+  menuVariant?: "default" | "operations" | "elements" | "sortOptions";
   position?: "below" | "above" | "left" | "right" | "on";
   selected?: boolean;
+  chevron?: boolean
   onClear?: () => void;
   style?: CSSProperties;
 }
@@ -25,6 +26,7 @@ const DropDownButton = ({
   position = "below",
   selected,
   style,
+  chevron,
   onClear
 }: Props) => {
   const [open, setOpen] = useState(false);
@@ -64,7 +66,8 @@ const DropDownButton = ({
         >
           {icon}
           {label}
-          {variant==="filters" ? <ChevronDown 
+          {variant==="filters" ? 
+          <ChevronDown 
             size={11} 
             className={open ? styles.iconOpen : ""} 
             color="black" 
@@ -79,12 +82,14 @@ const DropDownButton = ({
           onClick={() => setOpen(!open)}
         >
           {label}
-          <ChevronDown 
+          {chevron && 
+            <ChevronDown 
             size={11} 
             className={open ? styles.iconOpen : ""} 
             color="black" 
             fill="black" 
           />
+          }
         </button>
       )}
       

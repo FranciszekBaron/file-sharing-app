@@ -1,0 +1,205 @@
+.fileItemGridWrapper {
+  display: flex;
+  flex-direction: row;
+  font-weight: 400;
+  color: #333;
+  height: 46px;
+  align-items: center;
+  position: relative;
+  border-radius: 12px;
+  background-color: #eaeef5;
+}
+
+.fileItemGridWrapper:hover {
+  background-color: #e8eaed;
+}
+
+.fileItemGridWrapper.active {
+  color: #1d4973;
+  background-color: #c9e6fd;
+}
+
+.fileItemGridColumn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+/* Name (lewa kolumna) - elastyczna */
+.fileItemGridName {
+  flex: 3;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 14px;
+  font-weight: 500;
+  padding-left: 16px;
+}
+
+.fileItemGridOwner {
+  flex: 0 0 200px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  font-weight: 300;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  justify-content: flex-start;
+  padding-left: 8px;
+}
+
+
+
+
+.fileItemGridHoverActions {
+  position: absolute;  /* ← NIE bierze miejsca w flex, w polaczenie z position relative w wraperze */
+  right: 50px;        
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  opacity: 0;         
+  pointer-events: none; 
+  background-color: transparent; 
+  padding: 4px 8px;
+  border-radius: 20px;
+  gap:1px;
+}
+
+.fileItemGridWrapper:hover .fileItemGridHoverActions{
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.fileItemGridHoverActions:hover{
+  background-color: transparent;
+}
+
+/* Options (prawa kolumna) - stała szerokość DOKŁADNIE jak w nagłówku */
+.fileItemGridOptions {
+  flex: 0 0 150px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color:#252525;
+  justify-content: flex-end;
+  padding-right: 4px;
+}
+
+@media (max-width: 1500px) {
+
+
+  .fileItemGridOptions {
+    flex: 0 0 50px;
+  }
+
+  .fileItemGridWrapper:hover .fileItemGridHoverActions{
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+/* Drugi breakpoint - schowaj Size */
+@media (max-width: 1200px) {
+  .fileItemGridSize {
+    display: none;
+  }
+}
+
+/* Trzeci breakpoint - schowaj Owner */
+@media (max-width: 900px) {
+  .fileItemGridOwner {
+    display: none;
+  }
+}
+
+/* Ostatni breakpoint - zostaje tylko Name i Date */
+@media (max-width: 800px) {
+  .fileItemGridDate {
+    flex: 0 0 150px;
+    max-width: 150px;
+  }
+}
+
+
+.hoverIcon {
+  cursor: pointer;
+  padding: 6px;
+  height: 36px;
+  width:36px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+.hoverIcon::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%); 
+  background: #333;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+  margin-top: 5px;
+}
+
+.hoverIcon:hover {
+  background-color: rgba(0,0,0,0.1);;
+}
+
+.hoverIcon:hover::after{
+  opacity: 1;
+}
+
+
+/*--------MODAL ZMIEN NAZWE---------*/
+.modalLabel{
+  font-size: 24px;
+  font-weight: 300;
+  color: black;
+}
+
+.modalInput {
+  border-radius: 2px;
+  border: 1px solid rgba(17, 17, 17, 0.865);
+  font-size: 16px;
+  height: 50px;
+  color: #000000;
+  padding: 12px;
+}
+
+.modalInput::placeholder{
+  font-weight: 300;
+  color: #000000;
+}
+
+.modalButtons{
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  height: 50px;
+  padding-right: 10px;
+}
+
+.modalButton {
+  font-size: 12px;
+  width: 60px;
+  border-radius:16px ;
+  background-color: transparent;
+  border: none;
+  color:blue;
+}
+
+.modalButton:hover {
+  background-color: var(--background);
+}

@@ -11,7 +11,9 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(17, 17, 17, 0.425);
+  border-top: 0.7px solid rgba(17, 17, 17, 0.725);
+  border-right: 0.7px solid rgba(17, 17, 17, 0.725);
+  border-bottom: 0.7px solid rgba(17, 17, 17, 0.725);
   border-radius: 0px 24px 24px 0px;
   padding: 6px;
   box-sizing: border-box;
@@ -25,7 +27,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 1px solid rgba(17, 17, 17, 0.425);
+  border: 0.7px solid rgba(17, 17, 17, 0.725);
   border-radius: 24px 0px 0px 24px;
   padding: 6px;
   box-sizing: border-box;
@@ -55,6 +57,10 @@
 /* ← DODAJ animację dla checkmark */
 .checkIcon {
   animation: fadeIn 0.3s ease-in-out;
+}
+
+.mainIcon svg {
+  stroke-width: 0.5px !important;  /* ← stała szerokość w px, nie relatywna */
 }
 
 @keyframes fadeIn {

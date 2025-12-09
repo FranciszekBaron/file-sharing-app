@@ -2,6 +2,7 @@ import { useState, type CSSProperties } from "react";
 import styles from "./Searchbar.module.css";
 import { Search } from 'lucide-react';
 import type { FileItem } from "../../types/FileItem";
+import { SearchIcon } from "..//..//icons//Search";
 
 interface Props {
   items: FileItem[];
@@ -48,7 +49,7 @@ export const Searchbar = ({items,style}: Props) => {
         ${isSearching ? styles.searchbarExpanded : ''}
       `}
       style={{...style}}>
-        <Search className={styles.searchIcon} size={20} strokeWidth={2}/>
+        <SearchIcon size={20} color="#5f6368" strokeWidth={2}/>
         <input 
           placeholder="Szukaj w plikach"
           className={styles.searchInput}

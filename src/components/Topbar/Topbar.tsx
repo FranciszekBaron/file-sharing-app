@@ -4,14 +4,16 @@ import {Searchbar} from "../Searchbar/Searchbar";
 import styles from "./Topbar.module.css";
 import buttonStyles from "../Common/Button.module.css"
 import { mockFiles } from "../../data/mockFiles";
-
+import { SettingsIcon } from "../../icons/SettingsIcon";
+import { HelpCircleIcon } from "../../icons/HelpCircleIcon";
 import { Settings,Sliders, HelpCircle} from "lucide-react";
+import { AppsIcon } from "../../icons/AppsIcon";
 
 const Topbar = ({activeView} : {activeView: number}) => {
-  const settingsIcon = <Settings size={20} strokeWidth={2.5}/>
-  const slidersIcon = <Sliders size={20} strokeWidth={2.5}/>
-  const helpCircleIcon = <HelpCircle size={20} strokeWidth={2.5}/>
-  
+  const settingsIcon = <SettingsIcon size={20} strokeWidth={2}/>
+  const slidersIcon = <AppsIcon size={20}/>
+  const helpCircleIcon = <HelpCircleIcon size={20} strokeWidth={2}/>
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.contentWrapper}>

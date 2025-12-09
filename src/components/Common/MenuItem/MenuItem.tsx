@@ -3,11 +3,11 @@ import { Check } from "lucide-react";
 import styles from "..//MenuItem/MenuItem.module.css";
 
 interface Props {
-    icon: ReactNode;
+    icon?: ReactNode;
     label: ReactNode;
     size?: number;
     gap?: number;
-    variant?: "default" | "operations" | "elements";
+    variant?: "default" | "operations" | "elements" ;
     style?: CSSProperties;
     onActivate?: ()=>void;
     clicked?:boolean;

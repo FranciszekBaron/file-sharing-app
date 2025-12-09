@@ -18,6 +18,10 @@
   max-width: 490px;
 }
 
+.iconSvg svg {
+  color: red;
+}
+
 /* Prawa sekcja - Buttony */
 .rightSection {
   display: flex;
