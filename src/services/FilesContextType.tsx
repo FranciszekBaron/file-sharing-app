@@ -40,44 +40,14 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
     const [allFiles,setAllFiles] = useState<FileItem[]>([]); // zwraca dane 
     const [displayedFiles,setDisplayedFiles] = useState<FileItem[]>([]);// zwraca dane 
 
-    const deletedFiles = useMemo(() => allFiles.filter(f=>f.deleted),[allFiles])
-    const starredFiles = useMemo(()=>allFiles.filter(f=>!f.deleted && f.starred),[allFiles])
 
+    
     const [loading,setLoading] = useState(true);// zwraca dane 
     const [activeFilter,setActiveFilter] = useState<FilterType>('none');// zwraca dane 
-
+    
     const [sortBy,setSortBy] = useState<'name' | 'date'>('name');
     const [sortAscending,setSortAscending] = useState(true);
     const [sortWithFoldersUp,setSortWithFoldersUp] = useState(true);
-
-
-    console.log("ascending: " + sortAscending);
-
-    useEffect(()=>{
-        loadFiles();
-    },[])
-
-
-    const loadFiles = async () => {
-        try{
-            setLoading(true);
-            const data = await filesService.getAll();
-
-            setAllFiles(data);
-
-            const toDisplay = sortFiles(data.filter(f=>!f.deleted),sortBy,sortAscending,sortWithFoldersUp);
-            
-            toDisplay.forEach(element => {
-                console.log(element.id + " " + element.name + " " + element.modifiedDate);
-            });
-            setDisplayedFiles(toDisplay)
-        }catch(err){
-            console.error('Error loading files',err)
-        }finally{
-            setLoading(false);
-        }
-    }
-
 
     const sortFiles = (files:FileItem[],type:'name'|'date' | 'deletetedAt',ascending:boolean,foldersUp:boolean) => {
 
@@ -114,6 +84,45 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
         return sorted;
     }
 
+
+    //automatyczne przeliczanie kiedy ktoras z wartosci w [] sie zmieni
+    const deletedFiles = useMemo(() => {
+        const filtered = allFiles.filter(f=>f.deleted);
+        return sortFiles(filtered,sortBy,sortAscending,false);
+    },[allFiles,sortBy,sortAscending]);
+    
+    const starredFiles = useMemo(()=>{
+        const filtered = allFiles.filter(f=>f.starred);
+        return sortFiles(filtered,sortBy,sortAscending,sortWithFoldersUp);
+
+    },[allFiles,sortBy,sortAscending,sortWithFoldersUp])
+
+    console.log("ascending: " + sortAscending);
+
+    useEffect(()=>{
+        loadFiles();
+    },[])
+
+
+    const loadFiles = async () => {
+        try{
+            setLoading(true);
+            const data = await filesService.getAll();
+
+            setAllFiles(data);
+
+            const toDisplay = sortFiles(data.filter(f=>!f.deleted),sortBy,sortAscending,sortWithFoldersUp);
+            
+            toDisplay.forEach(element => {
+                console.log(element.id + " " + element.name + " " + element.modifiedDate);
+            });
+            setDisplayedFiles(toDisplay)
+        }catch(err){
+            console.error('Error loading files',err)
+        }finally{
+            setLoading(false);
+        }
+    }
     
 
 
@@ -195,8 +204,10 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
         setSortAscending(ascending);
         setSortWithFoldersUp(foldersUp);
 
-        const sorted = sortFiles(displayedFiles.filter(f=>!f.deleted),type,ascending,foldersUp);
-        setDisplayedFiles(sorted);
+        const displayedSorted = sortFiles(displayedFiles.filter(f=>!f.deleted),type,ascending,foldersUp);
+
+        const starredSorted = sortFiles(starredFiles.filter(f=>!f.deleted),type,ascending,foldersUp);
+        setDisplayedFiles(displayedSorted);
     }
 
     const handleFilter = (filter: Exclude<FilterType,'none'>) => { 
