@@ -8,7 +8,7 @@
 }
 
 .wrapper:hover {
-   background-color: var(--border);
+   background-color: rgba(0, 0, 0, 0.1);
 }
 
 
@@ -19,7 +19,16 @@
   font-weight: 300;
   cursor: pointer;
   padding: 14px;
-  height: 32px;
+  height: 34px;
+}
+
+.wrapper.sortOptions {
+  display: inline-flex;
+  align-items: center;
+  font-weight: 300;
+  cursor: pointer;
+  padding: 14px;
+  height: 38px;
 }
 
 
@@ -35,13 +44,35 @@
 }
 
 
+.clicked.sortOptions {
+  display: flex;
+  align-items:center;
+  padding: 12px 14px;  
+  background-color: rgba(0, 0, 0, 0.071); 
+}
+
+
 .clicked:hover{
   background-color: var(--border);
 }
 
+.checkmarkIcon {
+  flex-shrink: 0;  /* ← NIE kurczy się */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;  /* ← minimalna szerokość */
+}
 
 .checkmark {
+  display: flex;
   margin-left: auto;
   color: blue;
+}
+
+
+.checkmark.sortOptions {
+  margin-left: auto;
+  background-color: rgba(0, 0, 0, 0.4); 
 }
 

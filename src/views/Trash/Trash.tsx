@@ -22,6 +22,9 @@ import { filterLabels } from "../../types/FilterType";
 import Modal from "../../components/Modal/Modal";
 import { useFiles } from "../../services/FilesContextType";
 import { useFileSelection } from "../../hooks/useFileSelection";
+import { sortOrderItems,sortByItems,sortFoldersItem } from "../../types/SortOptions";
+import MenuHeader from "../../components/Common/MenuHeader/MenuHeader";
+import FileItemGrid from "../../components/FileItem/FileItemGrid/FileItemGrid";
 
 
 
@@ -34,6 +37,9 @@ const Trash = () => {
     activeFilter,
     sortBy,
     sortAscending,
+    sortWithFoldersUp,
+    setSortBy,
+    setSortWithFoldersUp,
     handleAdd,
     handleFilter,
     handleClearFilter,
@@ -53,6 +59,7 @@ const Trash = () => {
   const [addFileOpen,SetAddFileOpen] = useState(false);
   const [isNameFilterActive,SetNameFilterActive] = useState(true);
   const [isDateFilterActive,SetDateFilterActive] = useState(true);
+  const [layout,setLayout] = useState<'list'| 'grid'>('list');
 
   const [fileName,SetFileName] = useState("");
 
@@ -98,12 +105,14 @@ const Trash = () => {
           <DropDownButton label="Źródło" textSize={14} variant="filters" menuVariant="elements"></DropDownButton>
         </div>
       </div>
-     <div className={styles.main}>
+     {layout === 'list' ? 
+      //===================LIST VIEW========================
+      <div className={styles.main}>
         <div className={styles.mainContent}>
           <div className={styles.mainContentTopbar}>
             <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarName}`}
             data-tooltip= {sortAscending ? 'Sortuj od Z do A' : 'Sortuj od A do Z'}
-             onClick={()=>{handleSort('name')
+             onClick={()=>{handleSort('name',!sortAscending,sortWithFoldersUp)
               SetNameFilterActive(true);
               SetDateFilterActive(false);
              }}>
@@ -120,18 +129,18 @@ const Trash = () => {
             </div>
 
             <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarOwner}`}>
-              <span className={styles.label} style={{fontSize:14, fontWeight:500,color:"#636363ff"}} onClick={()=>{handleSort('date')}}>
+              <span className={styles.label} style={{fontSize:14, fontWeight:500,color:"#636363ff"}} onClick={()=>{handleSort('date',!sortAscending,sortWithFoldersUp)}}>
                 Właściciel
               </span>           
             </div>
             <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarDate}`}
             data-tooltip= {sortAscending ? 'Sortuj od Z do A' : 'Sortuj od A do Z'}
-            onClick={()=>{handleSort('date')
+            onClick={()=>{handleSort('date',!sortAscending,sortWithFoldersUp)
               SetNameFilterActive(false);
               SetDateFilterActive(true);
             }}>
               <span className={styles.label} style={isDateFilterActive ? {fontSize: 14, fontWeight: 500, color: "#393939ff"} : {fontSize: 14, fontWeight: 500, color: "#636363ff"}}>
-                Data modyfikacji
+                Data usunięcia
               </span>
               <div 
                 className={sortAscending ? styles.icon : styles.iconReversed}
@@ -141,15 +150,69 @@ const Trash = () => {
               </div>          
             </div>
             <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarSize}`}>
-              <span className={styles.label} style={{fontSize:14, fontWeight:500,color:"#636363ff"}} onClick={()=>{handleSort('date')}}>
+              <span className={styles.label} style={{fontSize:14, fontWeight:500,color:"#636363ff"}} onClick={()=>{handleSort('date',!sortAscending,sortWithFoldersUp)}}>
                 Rozmiar pliku
               </span>           
             </div>
             <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarOptions}`}>
-              <button className={styles.button}>
-                <SortIcon size={18}/>
-                <span className={styles.label}>Sortuj</span>
-              </button>
+            
+            
+            {/* ==== PRZYCISK OPCJI SORTOWANIA ==== */}
+            <DropDownButton 
+              label={
+                <div>
+                  <SortIcon size={18}/>
+                  <span className={styles.label}>Sortuj</span>
+                </div>
+              } 
+              textSize={14} 
+              menuVariant="sortOptions" 
+              style={{fontWeight:400}}
+              position="leftOpt"
+              >
+              <MenuHeader>Sortuj według</MenuHeader>
+                {sortByItems.map((item,index)=>(
+                  <React.Fragment key={index}>
+                      <MenuItem gap={14} size={14} variant="sortOptions" clicked={sortBy === item.id} onActivate={()=>{
+                        {
+                          if(item.id === sortBy){
+                            handleSort(item.id as 'name' | 'date',!sortAscending,sortWithFoldersUp)
+                          }else {
+                            handleSort(item.id as 'name' | 'date',true,sortWithFoldersUp) //Wracamy do default state
+                          }
+                        }}}>
+                      <span style={{whiteSpace:"nowrap"}}>
+                        {item.label}
+                      </span>
+                      </MenuItem>
+                  </React.Fragment>
+                ))}
+              <MenuDivider/>
+              <MenuHeader>Kolejność sortowania</MenuHeader>
+                {sortOrderItems.map((item,index)=>(
+                  <React.Fragment key={index}>
+                      <MenuItem gap={14} size={14} variant="sortOptions" clicked={sortAscending === item.id} onActivate={()=>{
+                        handleSort(sortBy as 'date' | 'name',!sortAscending,sortWithFoldersUp)
+                      }}>
+                        <span style={{whiteSpace:"nowrap"}}>{item.label}
+                        </span>
+                      </MenuItem>
+                  </React.Fragment>
+                ))}
+              <MenuDivider/>
+              <MenuHeader>Foldery</MenuHeader>
+                {sortFoldersItem.map((item,index)=>(
+                  <React.Fragment key={index}>
+                      <MenuItem gap={14} size={14} variant="sortOptions" clicked={sortWithFoldersUp === item.id} onActivate={()=>{
+                          handleSort(sortBy,sortAscending,!sortWithFoldersUp);
+                        }}
+                        >
+                        <span style={{whiteSpace:"nowrap"}}>{item.label}
+                        </span>
+                      </MenuItem>
+                  </React.Fragment>
+                ))}
+            </DropDownButton>
             </div>
           </div>
           <FileItemDivider/>
@@ -166,6 +229,88 @@ const Trash = () => {
           </div>
         </div>
       </div>
+
+      :
+
+      //======================GRID VIEW========================
+      <div>
+          <div className={styles.gridContentTopbar}>
+            <DropDownButton 
+              label={
+                <div className={styles.gridCategoryButton}>
+                  <span 
+                    className={styles.label} 
+                    style={isNameFilterActive ? {fontSize: 14, fontWeight: 500, color: "#393939ff"} : {fontSize: 14, fontWeight: 500, color: "#636363ff"}}
+                  >
+                    {sortBy === 'name' ? 'Nazwa' : 'Data modyfikacji'}  {/* ← DODAJ TO - dynamiczny tekst */}
+                  </span>
+                  <div 
+                    className={sortAscending ? styles.icon : styles.iconReversed}
+                  >
+                    <ArrowCircled size={24} />
+                  </div> 
+                </div>
+              } 
+              textSize={14} 
+              menuVariant="sortOptions" 
+              style={{fontWeight:400}}
+            
+            >
+              <MenuHeader>Sortuj według</MenuHeader>
+              {sortByItems.map((item,index)=>(
+                <React.Fragment key={index}>
+                    <MenuItem gap={14} size={14} variant="sortOptions" clicked={sortBy === item.id} onActivate={()=>{
+              {
+              
+              handleSort(item.id as 'name' | 'date',!sortAscending,sortWithFoldersUp)
+              SetNameFilterActive(true);
+              SetDateFilterActive(false);
+             }}}>
+                      <span style={{padding:20,whiteSpace:"nowrap"}}>{item.label}
+                      </span>
+                    </MenuItem>
+                </React.Fragment>
+              ))}
+              <MenuDivider/>
+              <MenuHeader>Kolejność sortowania</MenuHeader>
+              {sortOrderItems.map((item,index)=>(
+                <React.Fragment key={index}>
+                    <MenuItem gap={14} size={14} variant="sortOptions" clicked={sortAscending === item.id} onActivate={()=>{
+                      handleSort(sortBy as 'date' | 'name',!sortAscending,sortWithFoldersUp)
+                    }}>
+                      <span style={{padding:20,whiteSpace:"nowrap"}}>{item.label}
+                      </span>
+                    </MenuItem>
+                </React.Fragment>
+              ))}
+              <MenuDivider/>
+              <MenuHeader>Foldery</MenuHeader>
+              {sortFoldersItem.map((item,index)=>(
+                <React.Fragment key={index}>
+                    <MenuItem gap={14} size={14} variant="sortOptions" clicked={sortWithFoldersUp === item.id} onActivate={()=>{
+                        handleSort(sortBy,sortAscending,!sortWithFoldersUp)
+                      }}
+                      >
+                      <span style={{padding:20,whiteSpace:"nowrap"}}>{item.label}
+                      </span>
+                    </MenuItem>
+                </React.Fragment>
+              ))}
+              
+            </DropDownButton>
+          </div>
+          <div className={styles.fileGrid}>
+                {deletedFiles.map((item,index)=>(
+                  <div key={index}>
+                    <FileItemGrid file={item} isActive={selectedItems.has(index.toString())} 
+                    onActivate={(e)=>{ 
+                      e.preventDefault();
+                      handleClickItem(item.id,index.toString(), e)}}/>
+                  </div>
+                ))}
+              </div>
+        </div>
+      }
 
     </div>
   );

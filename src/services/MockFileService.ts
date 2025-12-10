@@ -18,7 +18,7 @@ export class MockFilesService implements IFileService {
 
     async getAll():  Promise<FileItem[]> {
         await this.delay;
-        return [...this.files].sort((a,b)=>a.name.localeCompare(b.name));
+        return [...this.files];
     }
 
     async getById(id: string): Promise<FileItem | null> {

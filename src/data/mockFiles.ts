@@ -47,7 +47,8 @@ export const mockFiles: FileItem[] = [
     modifiedDate: new Date('2024-11-15'),
     owner: 'Ty',
     shared: true,
-    deleted:false
+    deleted:false,
+    deletedAt:new Date('2024-12-12')
   },
   {
     id: '6',

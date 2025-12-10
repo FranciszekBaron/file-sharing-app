@@ -127,8 +127,7 @@
   }
 
   .fileItemListWrapper:hover .fileItemListHoverActions{
-    opacity: 0;
-    pointer-events: none;
+    display: none;
   }
 }
 
@@ -156,6 +155,7 @@
 
 
 .hoverIcon {
+  position: relative;
   cursor: pointer;
   padding: 6px;
   height: 36px;

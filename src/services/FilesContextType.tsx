@@ -14,16 +14,20 @@ interface FilesContextType{
     starredFiles:FileItem[];
     loading: boolean;
     activeFilter: FilterType;
-    sortBy: 'name'|'date' | null;
+    sortBy: 'name'|'date';
     sortAscending: boolean;
+    sortWithFoldersUp: boolean;
 
     //Tutaj akcje czyli funkcje które będa zmieniać te state'y
+    setSortBy: (sortBy:'name' | 'date') => void;
+    setSortAscending: (ascending:boolean) => void;
+    setSortWithFoldersUp: (sorted:boolean) => void;
     handleAdd: (name:string,type:FileItem['type']) =>Promise<void>;
     handleSoftDelete: (id:string) => Promise<void>;
     handleUpdate: (id:string,updates: Partial<FileItem>) => Promise<void>;
     handleFilter: (filter: Exclude<FilterType,'none'>) => void;
     handleClearFilter: () => void;
-    handleSort: (type:'name'|'date') => void;
+    handleSort: (type:'name'|'date',ascending:boolean,foldersUp:boolean) => void;
     refreshFiles: () => Promise<void>;
 }
 
@@ -32,7 +36,7 @@ const FilesContext = createContext<FilesContextType | undefined>(undefined);
 
 //2.Provider recznie wypelnia calosc 
 export const FilesProvider = ({children} : {children:React.ReactNode}) => {
-    console.log("Robie re-render" + this);
+
     const [allFiles,setAllFiles] = useState<FileItem[]>([]); // zwraca dane 
     const [displayedFiles,setDisplayedFiles] = useState<FileItem[]>([]);// zwraca dane 
 
@@ -43,27 +47,74 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
     const [activeFilter,setActiveFilter] = useState<FilterType>('none');// zwraca dane 
 
     const [sortBy,setSortBy] = useState<'name' | 'date'>('name');
-    const [sortAscending,setSortAscening] = useState(true);
+    const [sortAscending,setSortAscending] = useState(true);
+    const [sortWithFoldersUp,setSortWithFoldersUp] = useState(true);
+
+
+    console.log("ascending: " + sortAscending);
 
     useEffect(()=>{
         loadFiles();
     },[])
+
 
     const loadFiles = async () => {
         try{
             setLoading(true);
             const data = await filesService.getAll();
 
-
             setAllFiles(data);
-            const toDisplay = data.filter(f=>!f.deleted)
-            setDisplayedFiles(toDisplay);
+
+            const toDisplay = sortFiles(data.filter(f=>!f.deleted),sortBy,sortAscending,sortWithFoldersUp);
+            
+            toDisplay.forEach(element => {
+                console.log(element.id + " " + element.name + " " + element.modifiedDate);
+            });
+            setDisplayedFiles(toDisplay)
         }catch(err){
             console.error('Error loading files',err)
         }finally{
             setLoading(false);
         }
     }
+
+
+    const sortFiles = (files:FileItem[],type:'name'|'date' | 'deletetedAt',ascending:boolean,foldersUp:boolean) => {
+
+        const sorted = files.filter(f=>!f.deleted).sort((a,b) => {
+            if(type==='name'){
+                return ascending ?
+                a.name.localeCompare(b.name) : 
+                b.name.localeCompare(a.name);
+            }else if(type === 'deletetedAt'){
+                if(a.deletedAt && b.deletedAt){
+                    const diff = a.deletedAt.getTime() - b.deletedAt.getTime();
+                    return ascending ? diff : -diff;
+                }else{
+                    alert('nie udało się posortować po datach usunięcia, posortowano po nazwach')
+                    return ascending ?
+                    a.name.localeCompare(b.name) : 
+                    b.name.localeCompare(a.name);
+                }   
+            }else{
+                const diff = a.modifiedDate.getTime() - b.modifiedDate.getTime();
+                return ascending ? diff : -diff;
+            }
+        })
+        
+        console.log("sortWithFolderUp = " + sortWithFoldersUp + "[FROM FilesContext]")
+
+        if(foldersUp){
+            const allFolders = sorted.filter(f=>f.type === 'folder');
+            const allFilesNoFolders = sorted.filter(f=>f.type !== 'folder');
+            console.log("!!!! robie sie kurde !!!!")
+            return [...allFolders,...allFilesNoFolders];
+        }
+
+        return sorted;
+    }
+
+    
 
 
     const handleAdd = async (name:string,type:FileItem['type']) => {
@@ -138,24 +189,13 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
 
     }
     
-    const handleSort = (type:'name' | 'date')  => {
+    const handleSort = (type:'name' | 'date',ascending:boolean,foldersUp:boolean)  => {
         
         setSortBy(type);
+        setSortAscending(ascending);
+        setSortWithFoldersUp(foldersUp);
 
-        const sorted = [...displayedFiles.filter(f=>!f.deleted)].sort((a,b)=>{
-            if(type==='name'){
-                return !sortAscending 
-                ? a.name.localeCompare(b.name)
-                : b.name.localeCompare(a.name)
-            }else {
-                const diff = new Date(a.modifiedDate).getTime() - new Date(b.modifiedDate).getTime()
-                return !sortAscending
-                ? diff
-                : -diff;
-            }
-        })
-        
-        setSortAscening(prev => !prev);
+        const sorted = sortFiles(displayedFiles.filter(f=>!f.deleted),type,ascending,foldersUp);
         setDisplayedFiles(sorted);
     }
 
@@ -166,7 +206,11 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
     
     const handleClearFilter = () => {
         setActiveFilter('none');
-        setDisplayedFiles([...allFiles.filter(f=>!f.deleted)])
+
+        const filtered = allFiles.filter(f=>!f.deleted);
+        const sorted = sortFiles(filtered,sortBy,sortAscending,sortWithFoldersUp);
+
+        setDisplayedFiles(sorted);
     }
 
     const refreshFiles = async () => { 
@@ -183,6 +227,10 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             activeFilter,
             sortBy,
             sortAscending,
+            sortWithFoldersUp,
+            setSortBy,
+            setSortAscending,
+            setSortWithFoldersUp,
             handleAdd,
             handleSoftDelete,
             handleUpdate,

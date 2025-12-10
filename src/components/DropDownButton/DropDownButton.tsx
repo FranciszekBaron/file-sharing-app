@@ -9,7 +9,7 @@ interface Props {
   textSize?: number;
   variant?: "default" | "filters" | "icon"; 
   menuVariant?: "default" | "operations" | "elements" | "sortOptions";
-  position?: "below" | "above" | "left" | "right" | "on";
+  position?: "below" | "above" | "left" | "right" | "on" | "leftOpt";
   selected?: boolean;
   chevron?: boolean
   onClear?: () => void;
@@ -50,7 +50,8 @@ const DropDownButton = ({
     above: styles.posAbove,
     left: styles.posLeft,
     right: styles.posRight,
-    on: styles.on
+    on: styles.on,
+    leftOpt: styles.posLeftOptions
   }[position];
 
   return (
