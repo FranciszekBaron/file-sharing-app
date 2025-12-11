@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "..//MyFiles//MyFiles.module.css"
 import type { FileItem as FileItemType} from "../../types/FileItem";
 import FileItem from "../../components/FileItem/FileItem";
@@ -22,10 +22,11 @@ import { filterLabels } from "../../types/FilterType";
 import Modal from "../../components/Modal/Modal";
 import { useFiles } from "../../services/FilesContextType";
 import { useFileSelection } from "../../hooks/useFileSelection";
-import { sortOrderItems,sortByItems,sortFoldersItem } from "../../types/SortOptions";
+import { sortOrderItems,sortByItems,sortFoldersItem, sortByItemsDelete } from "../../types/SortOptions";
 import MenuHeader from "../../components/Common/MenuHeader/MenuHeader";
 import FileItemGrid from "../../components/FileItem/FileItemGrid/FileItemGrid";
-
+import { filterItems } from "..//..//types//FilterOptions.ts"
+import DoubleItemButton from "../../components/Common/DoubleItemButton/DoubleItemButton.tsx";
 
 
 const Trash = () => {
@@ -38,7 +39,9 @@ const Trash = () => {
     sortBy,
     sortAscending,
     sortWithFoldersUp,
+    activeLayout,
     setSortBy,
+    setActiveLayout,
     setSortWithFoldersUp,
     handleAdd,
     handleFilter,
@@ -59,7 +62,6 @@ const Trash = () => {
   const [addFileOpen,SetAddFileOpen] = useState(false);
   const [isNameFilterActive,SetNameFilterActive] = useState(true);
   const [isDateFilterActive,SetDateFilterActive] = useState(true);
-  const [layout,setLayout] = useState<'list'| 'grid'>('list');
 
   const [fileName,SetFileName] = useState("");
 
@@ -71,28 +73,40 @@ const Trash = () => {
   const handleUploadFile = () => {}; // TODO
   const handleUploadFolder = () => {}; // TODO
 
-  const filterItems = [
-    {id: 'folder', label: 'Foldery',icon: <Folder size={20}/>},
-    {id: 'doc',label: 'Dokumenty',icon: <SquareDocumentIcon size={20}/>},
-    {id: 'pdf',label: 'Pliki PDF',icon: <PdfIcon size={20}/>}
-  ] 
+  const filterIcons ={ 
+    folder: <Folder size={20} />,
+    doc: <SquareDocumentIcon size={20} /> ,
+    pdf: <PdfIcon size={20}/>
+  }
+
+
+  //Defaultowo zmien na sortowanie po dacie usunięcia 
+  useEffect(()=>{
+    setSortBy("deletedAt");
+  },[])
 
   if (loading) {
     return <div className={styles.contentWrapper}>Ładowanie...</div>;
   }
   
+
+  deletedFiles.forEach(element => {
+      console.log(element.name + " " + element.deletedAt)  
+  });
   return (
     <div className={styles.contentWrapper}>
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
             <h1 className={styles.label}>Kosz</h1>
-            <h1 className={styles.label}>Opcje widoku</h1>
+            <div className={styles.viewButtonWrapper}>
+                <DoubleItemButton size={32} activeLayout={activeLayout} onActivateLeft={()=>{setActiveLayout('list')}} onActivateRight={()=>{setActiveLayout('grid')}}></DoubleItemButton>
+          </div>
         </div>
         <div className={styles.filtersWrapper}>
             <DropDownButton label={activeFilter !=='none' ? filterLabels[activeFilter] : "Typ elementu"} textSize={14} variant="filters" menuVariant="elements" selected={activeFilter!=='none'} onClear={()=>handleClearFilter()}>
               {filterItems.map((item) => (
                 <React.Fragment key={item.id}>
-                  <MenuItem icon={item.icon} label={item.label} size={14} gap={14} clicked={activeFilter===item.id} onActivate={
+                  <MenuItem icon={filterIcons[item.id]} label={item.label} size={14} gap={14} clicked={activeFilter===item.id} onActivate={
                     ()=>{
                       handleClearFilter()
                       handleFilter(item.id as 'folder' | 'doc' | 'pdf')
@@ -105,7 +119,7 @@ const Trash = () => {
           <DropDownButton label="Źródło" textSize={14} variant="filters" menuVariant="elements"></DropDownButton>
         </div>
       </div>
-     {layout === 'list' ? 
+     {activeLayout === 'list' ? 
       //===================LIST VIEW========================
       <div className={styles.main}>
         <div className={styles.mainContent}>
@@ -134,8 +148,8 @@ const Trash = () => {
               </span>           
             </div>
             <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarDate}`}
-            data-tooltip= {sortAscending ? 'Sortuj od Z do A' : 'Sortuj od A do Z'}
-            onClick={()=>{handleSort('date',!sortAscending,sortWithFoldersUp)
+            data-tooltip= {sortAscending ? 'Sortuj od starych do nowych' : 'Sortuj od nowych do starych'}
+            onClick={()=>{handleSort('deletedAt',!sortAscending,sortWithFoldersUp)
               SetNameFilterActive(false);
               SetDateFilterActive(true);
             }}>
@@ -144,7 +158,7 @@ const Trash = () => {
               </span>
               <div 
                 className={sortAscending ? styles.icon : styles.iconReversed}
-                style={{ opacity: sortBy === 'date' ? 1 : 0   }} 
+                style={{ opacity: sortBy === 'deletedAt' ? 1 : 0   }} 
               >
                 <ArrowCircled size={24}></ArrowCircled>
               </div>          
@@ -171,14 +185,14 @@ const Trash = () => {
               position="leftOpt"
               >
               <MenuHeader>Sortuj według</MenuHeader>
-                {sortByItems.map((item,index)=>(
+                {sortByItemsDelete.map((item,index)=>(
                   <React.Fragment key={index}>
                       <MenuItem gap={14} size={14} variant="sortOptions" clicked={sortBy === item.id} onActivate={()=>{
                         {
                           if(item.id === sortBy){
-                            handleSort(item.id as 'name' | 'date',!sortAscending,sortWithFoldersUp)
+                            handleSort(item.id as 'name' | 'date' | 'deletedAt',!sortAscending,sortWithFoldersUp)
                           }else {
-                            handleSort(item.id as 'name' | 'date',true,sortWithFoldersUp) //Wracamy do default state
+                            handleSort(item.id as 'name' | 'date' | 'deletedAt',true,sortWithFoldersUp) //Wracamy do default state
                           }
                         }}}>
                       <span style={{whiteSpace:"nowrap"}}>

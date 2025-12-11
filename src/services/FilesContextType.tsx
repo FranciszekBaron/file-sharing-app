@@ -14,20 +14,22 @@ interface FilesContextType{
     starredFiles:FileItem[];
     loading: boolean;
     activeFilter: FilterType;
-    sortBy: 'name'|'date';
+    activeLayout: 'list' | 'grid';
+    sortBy: 'name'|'date' | 'deletedAt';
     sortAscending: boolean;
     sortWithFoldersUp: boolean;
 
     //Tutaj akcje czyli funkcje które będa zmieniać te state'y
-    setSortBy: (sortBy:'name' | 'date') => void;
+    setSortBy: (sortBy:'name' | 'date' | 'deletedAt') => void;
     setSortAscending: (ascending:boolean) => void;
     setSortWithFoldersUp: (sorted:boolean) => void;
+    setActiveLayout: (layout: 'list'|'grid') => void;
     handleAdd: (name:string,type:FileItem['type']) =>Promise<void>;
     handleSoftDelete: (id:string) => Promise<void>;
     handleUpdate: (id:string,updates: Partial<FileItem>) => Promise<void>;
     handleFilter: (filter: Exclude<FilterType,'none'>) => void;
     handleClearFilter: () => void;
-    handleSort: (type:'name'|'date',ascending:boolean,foldersUp:boolean) => void;
+    handleSort: (type:'name'|'date'|'deletedAt',ascending:boolean,foldersUp:boolean) => void;
     refreshFiles: () => Promise<void>;
 }
 
@@ -38,30 +40,31 @@ const FilesContext = createContext<FilesContextType | undefined>(undefined);
 export const FilesProvider = ({children} : {children:React.ReactNode}) => {
 
     const [allFiles,setAllFiles] = useState<FileItem[]>([]); // zwraca dane 
-    const [displayedFiles,setDisplayedFiles] = useState<FileItem[]>([]);// zwraca dane 
 
 
     
     const [loading,setLoading] = useState(true);// zwraca dane 
     const [activeFilter,setActiveFilter] = useState<FilterType>('none');// zwraca dane 
+    const [activeLayout,setActiveLayout] = useState<'list'|'grid'>('list');
     
-    const [sortBy,setSortBy] = useState<'name' | 'date'>('name');
+    const [sortBy,setSortBy] = useState<'name' | 'date' | 'deletedAt'>('name');
     const [sortAscending,setSortAscending] = useState(true);
     const [sortWithFoldersUp,setSortWithFoldersUp] = useState(true);
 
-    const sortFiles = (files:FileItem[],type:'name'|'date' | 'deletetedAt',ascending:boolean,foldersUp:boolean) => {
+    const sortFiles = (files:FileItem[],type:'name'|'date' | 'deletedAt',ascending:boolean,foldersUp:boolean) => {
 
-        const sorted = files.filter(f=>!f.deleted).sort((a,b) => {
+        const sorted = files.sort((a,b) => {
             if(type==='name'){
                 return ascending ?
                 a.name.localeCompare(b.name) : 
                 b.name.localeCompare(a.name);
-            }else if(type === 'deletetedAt'){
+            }else if(type === 'deletedAt'){
+                const deleted = files.filter(f=>f.deleted);
                 if(a.deletedAt && b.deletedAt){
                     const diff = a.deletedAt.getTime() - b.deletedAt.getTime();
                     return ascending ? diff : -diff;
                 }else{
-                    alert('nie udało się posortować po datach usunięcia, posortowano po nazwach')
+                    alert('nie udało się posortować po datach usunięcia, posortowano po nazwach');
                     return ascending ?
                     a.name.localeCompare(b.name) : 
                     b.name.localeCompare(a.name);
@@ -84,16 +87,29 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
         return sorted;
     }
 
+    //AUTOMATYCZNE PRZELICZANIE KIEDY KTORAS Z WARTOSCI W [] SIE ZMIENI
+    //SWIETNA RZECZ 
+    const displayedFiles = useMemo(()=>{
+        let filtered = allFiles.filter(f=>!f.deleted);
 
-    //automatyczne przeliczanie kiedy ktoras z wartosci w [] sie zmieni
+        if(activeFilter!=='none'){
+            filtered = filtered.filter(f=>f.type===activeFilter);
+        }
+
+        const sortType = sortBy === 'deletedAt' ? 'date' : sortBy;
+        return sortFiles(filtered,sortType,sortAscending,sortWithFoldersUp)
+    },[allFiles,sortBy,sortAscending,activeFilter]);
+
     const deletedFiles = useMemo(() => {
         const filtered = allFiles.filter(f=>f.deleted);
         return sortFiles(filtered,sortBy,sortAscending,false);
     },[allFiles,sortBy,sortAscending]);
     
     const starredFiles = useMemo(()=>{
-        const filtered = allFiles.filter(f=>f.starred);
-        return sortFiles(filtered,sortBy,sortAscending,sortWithFoldersUp);
+        const filtered = allFiles.filter(f=>f.starred && !f.deleted);
+
+        const sortType = sortBy === 'deletedAt' ? 'date' : sortBy;
+        return sortFiles(filtered,sortType,sortAscending,sortWithFoldersUp);
 
     },[allFiles,sortBy,sortAscending,sortWithFoldersUp])
 
@@ -110,13 +126,6 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             const data = await filesService.getAll();
 
             setAllFiles(data);
-
-            const toDisplay = sortFiles(data.filter(f=>!f.deleted),sortBy,sortAscending,sortWithFoldersUp);
-            
-            toDisplay.forEach(element => {
-                console.log(element.id + " " + element.name + " " + element.modifiedDate);
-            });
-            setDisplayedFiles(toDisplay)
         }catch(err){
             console.error('Error loading files',err)
         }finally{
@@ -124,7 +133,6 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
         }
     }
     
-
 
     const handleAdd = async (name:string,type:FileItem['type']) => {
         try {
@@ -136,12 +144,6 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             //w tym miejscu juz utworzysz nowy plik w bazie lub w mocku, ale trzeba jeszcze zrobic tak zeby sie poprawnie wyswietlalo
             
             setAllFiles(prev=> [...prev,newFile]);
-
-            if(activeFilter!=='none'){
-                setDisplayedFiles(prev=>[...prev,newFile].filter(e=>e.type===activeFilter));
-            } else {
-                setDisplayedFiles(prev => [...prev,newFile]);
-            }
         }catch(err){
             console.error('Error adding file: ',err);
             throw err;
@@ -161,12 +163,6 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
                 : f
             );
             
-            //Jeśli wyświetlamy co innego niz AllFiles, to zaktualizuj widok
-            if(activeFilter !=='none'){
-                setDisplayedFiles(updatedFiles.filter(f=>f.type===activeFilter && !f.deleted))
-            }else{
-                setDisplayedFiles(updatedFiles.filter(f=>!f.deleted));
-            }
             return updatedFiles;
             }); 
         }catch(err){
@@ -180,13 +176,7 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             const updateFile = await filesService.update(id,updates);
             
             setAllFiles(prev => { 
-                const updatedFiles = prev.map(e=>e.id===id ? updateFile : e)
-
-                if(activeFilter !=='none'){
-                    setDisplayedFiles(updatedFiles.filter(f=>f.type===activeFilter && !f.deleted));
-                }else{
-                    setDisplayedFiles(updatedFiles.filter(f=>!f.deleted));
-                }
+                const updatedFiles = prev.map(e=>e.id===id ? updateFile : e);
                 return updatedFiles;
             });
         }catch(err){
@@ -198,30 +188,18 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
 
     }
     
-    const handleSort = (type:'name' | 'date',ascending:boolean,foldersUp:boolean)  => {
-        
+    const handleSort = (type:'name' | 'date' | 'deletedAt',ascending:boolean,foldersUp:boolean)  => {
         setSortBy(type);
         setSortAscending(ascending);
         setSortWithFoldersUp(foldersUp);
-
-        const displayedSorted = sortFiles(displayedFiles.filter(f=>!f.deleted),type,ascending,foldersUp);
-
-        const starredSorted = sortFiles(starredFiles.filter(f=>!f.deleted),type,ascending,foldersUp);
-        setDisplayedFiles(displayedSorted);
     }
 
     const handleFilter = (filter: Exclude<FilterType,'none'>) => { 
         setActiveFilter(filter);
-        setDisplayedFiles([...allFiles.filter(f=>!f.deleted)].filter(e=>e.type === filter))
     }
     
     const handleClearFilter = () => {
         setActiveFilter('none');
-
-        const filtered = allFiles.filter(f=>!f.deleted);
-        const sorted = sortFiles(filtered,sortBy,sortAscending,sortWithFoldersUp);
-
-        setDisplayedFiles(sorted);
     }
 
     const refreshFiles = async () => { 
@@ -236,12 +214,14 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             starredFiles,
             loading,
             activeFilter,
+            activeLayout,
             sortBy,
             sortAscending,
             sortWithFoldersUp,
             setSortBy,
             setSortAscending,
             setSortWithFoldersUp,
+            setActiveLayout,
             handleAdd,
             handleSoftDelete,
             handleUpdate,

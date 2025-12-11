@@ -27,6 +27,8 @@ import MenuHeader from "../../components/Common/MenuHeader/MenuHeader";
 
 import { sortByItems,sortFoldersItem,sortOrderItems } from "../../types/SortOptions";
 import FileItemGrid from "../../components/FileItem/FileItemGrid/FileItemGrid";
+import { filterItems } from "..//..//types//FilterOptions.ts";
+import DoubleItemButton from "../../components/Common/DoubleItemButton/DoubleItemButton.tsx";
 
 
 const Starred = () => {
@@ -39,8 +41,10 @@ const Starred = () => {
     sortBy,
     sortAscending,
     sortWithFoldersUp,
+    activeLayout,
     setSortBy,
     setSortWithFoldersUp,
+    setActiveLayout,
     handleAdd,
     handleFilter,
     handleClearFilter,
@@ -54,29 +58,16 @@ const Starred = () => {
     hasSelection
   } = useFileSelection();
 
-  const [acitveIndexFileItems, SetActiveIndexFileItems] = useState<string | null>()
-  const [activeIndexFiltersItems, SetActiveIndexFiltersItems] = useState<string | null>()
-  const [addFileOpen, SetAddFileOpen] = useState(false);
   const [isNameFilterActive, SetNameFilterActive] = useState(true);
   const [isDateFilterActive, SetDateFilterActive] = useState(true);
 
-  const [fileName, SetFileName] = useState("");
-  const [layout,setLayout] = useState<'list'| 'grid'>('list');
 
-  const addFileIcon = <FolderPlus size={20} />
-  const uploadFileIcon = <Upload size={20} />
-  const FileUpIcon = <FileUp size={20} />
-  const alertIcon = <AlertCircle size={20} />
-
-  const handleUploadFile = () => { }; // TODO
-  const handleUploadFolder = () => { }; // TODO
-
-  const filterItems = [
-    { id: 'folder', label: 'Foldery', icon: <Folder size={20} /> },
-    { id: 'doc', label: 'Dokumenty', icon: <SquareDocumentIcon size={20} /> },
-    { id: 'pdf', label: 'Pliki PDF', icon: <PdfIcon size={20} /> }
-  ]
-
+  const filterIcons = {
+    folder: <Folder size={20} />,
+    doc: <SquareDocumentIcon size={20} /> ,
+    pdf: <PdfIcon size={20}/>
+    
+}
 
   if (loading) {
     return <div className={styles.contentWrapper}>Ładowanie...</div>;
@@ -87,13 +78,15 @@ const Starred = () => {
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
           <h1 className={styles.label}>Oznaczone gwiazdką</h1>
-          <h1 className={styles.label}>Opcje widoku</h1>
+          <div className={styles.viewButtonWrapper}>
+                <DoubleItemButton size={32} activeLayout={activeLayout} onActivateLeft={()=>{setActiveLayout('list')}} onActivateRight={()=>{setActiveLayout('grid')}}></DoubleItemButton>
+          </div>
         </div>
         <div className={styles.filtersWrapper}>
           <DropDownButton label={activeFilter !== 'none' ? filterLabels[activeFilter] : "Typ elementu"} textSize={14} variant="filters" menuVariant="elements" selected={activeFilter !== 'none'} onClear={() => handleClearFilter()}>
             {filterItems.map((item) => (
               <React.Fragment key={item.id}>
-                <MenuItem icon={item.icon} label={item.label} size={14} gap={14} clicked={activeFilter === item.id} onActivate={
+                <MenuItem icon={filterIcons[item.id]} label={item.label} size={14} gap={14} clicked={activeFilter === item.id} onActivate={
                   () => {
                     handleClearFilter()
                     handleFilter(item.id as 'folder' | 'doc' | 'pdf')
@@ -106,7 +99,7 @@ const Starred = () => {
           <DropDownButton label="Źródło" textSize={14} variant="filters" menuVariant="elements"></DropDownButton>
         </div>
       </div>
-      {layout === 'list' ? 
+      {activeLayout === 'list' ? 
       //===================LIST VIEW========================
       <div className={styles.main}>
         <div className={styles.mainContent}>
