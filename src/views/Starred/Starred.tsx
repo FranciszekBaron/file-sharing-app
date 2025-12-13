@@ -29,7 +29,6 @@ import { sortByItems,sortFoldersItem,sortOrderItems } from "../../types/SortOpti
 import FileItemGrid from "../../components/FileItem/FileItemGrid/FileItemGrid";
 import { filterItems } from "..//..//types//FilterOptions.ts";
 import DoubleItemButton from "../../components/Common/DoubleItemButton/DoubleItemButton.tsx";
-import { useNavigate } from "react-router-dom";
 import { useNavigation } from "../../services/NavigationContext.tsx";
 import { ViewType } from '..//..//services//NavigationContext.tsx';
 

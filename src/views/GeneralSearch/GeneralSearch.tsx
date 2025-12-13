@@ -43,7 +43,6 @@ const MyFiles = () => {
     sortAscending,
     sortWithFoldersUp,
     activeLayout,
-    currentFolderId,
     breadcrumbPath,
     setSortBy,
     setSortWithFoldersUp,

@@ -1,6 +1,9 @@
 import { act, createContext, useContext, useEffect, useMemo, useState } from "react";
 import type { FileItem } from "../types/FileItem";
 import { filesService } from ".";
+import { useNavigation } from "./NavigationContext";
+
+
 
 
 type FilterType = 'folder' | 'doc' | 'pdf' | 'none';
@@ -18,7 +21,6 @@ interface FilesContextType{
     sortBy: 'name'|'date' | 'deletedAt';
     sortAscending: boolean;
     sortWithFoldersUp: boolean;
-    currentFolderId: string | null;
     breadcrumbPath: FileItem[];
 
     //Tutaj akcje czyli funkcje które będa zmieniać te state'y
@@ -26,7 +28,6 @@ interface FilesContextType{
     setSortAscending: (ascending:boolean) => void;
     setSortWithFoldersUp: (sorted:boolean) => void;
     setActiveLayout: (layout: 'list'|'grid') => void;
-    setCurrentFolderId: (id:string | null) => void;
     handleAdd: (name:string,type:FileItem['type']) =>Promise<void>;
     handleSoftDelete: (id:string) => Promise<void>;
     handlePermanentDelete: (id:string) => Promise<void>;
@@ -46,7 +47,7 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
 
     const [allFiles,setAllFiles] = useState<FileItem[]>([]); // zwraca dane 
 
-
+    const { currentFolderId } = useNavigation();
     
     const [loading,setLoading] = useState(true);// zwraca dane 
     const [activeFilter,setActiveFilter] = useState<FilterType>('none');// zwraca dane 
@@ -55,7 +56,7 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
     const [sortBy,setSortBy] = useState<'name' | 'date' | 'deletedAt'>('name');
     const [sortAscending,setSortAscending] = useState(true);
     const [sortWithFoldersUp,setSortWithFoldersUp] = useState(true);
-    const [currentFolderId,setCurrentFolderId] = useState<string | null>(null);
+   
 
     const sortFiles = (files:FileItem[],type:'name'|'date' | 'deletedAt',ascending:boolean,foldersUp:boolean) => {
 
@@ -274,13 +275,11 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             sortBy,
             sortAscending,
             sortWithFoldersUp,
-            currentFolderId,
             breadcrumbPath,
             setSortBy,
             setSortAscending,
             setSortWithFoldersUp,
             setActiveLayout,
-            setCurrentFolderId,
             handleAdd,
             handleSoftDelete,
             handleRestore,

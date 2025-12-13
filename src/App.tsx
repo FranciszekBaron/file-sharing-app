@@ -14,11 +14,7 @@ function App() {
   return (
     <NavigationProvider>
       <FilesProvider>
-        <Routes> {/* 👈 Definiujesz możliwe ścieżki */}
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/drive/:view" element={<Dashboard />} />
-          <Route path="/drive/:view/:folderId" element={<Dashboard />} />
-        </Routes>
+        <Dashboard/>
     </FilesProvider>
     </NavigationProvider>
   

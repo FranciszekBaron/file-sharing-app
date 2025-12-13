@@ -46,8 +46,6 @@ const Sidebar = ({
     } = useNavigation()
 
 
-
-    console.log("Sidebar:" + activeView)
   
 
     const [hoveredIndex,setHoveredIndex] = useState<number | null>(null);
@@ -131,7 +129,7 @@ const Sidebar = ({
                     : styles.box             // domyślny
                 }
                 onClick={()=>{setActiveIndex(index),
-                  console.log("index: " + index),setActiveView(index)}}
+                  setActiveView(index)}}
                 onMouseEnter={()=>setHoveredIndex(index)}
                 onMouseLeave={()=>setHoveredIndex(null)}>
                     <div className={

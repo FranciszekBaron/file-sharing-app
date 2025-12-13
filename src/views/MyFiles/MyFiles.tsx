@@ -29,7 +29,7 @@ import MenuHeader from "../../components/Common/MenuHeader/MenuHeader";
 import { sortByItems,sortOrderItems,sortFoldersItem, sortDateItem } from "../../types/SortOptions";
 import { filterItems } from "..//..//types//FilterOptions.ts";
 
-import { useNavigation } from "../../services/NavigationContext.tsx";
+import { useNavigation, ViewType } from "../../services/NavigationContext.tsx";
 
 
 const MyFiles = () => {
@@ -335,6 +335,7 @@ const MyFiles = () => {
                 onDoubleClick={()=>{
                   if(item.type==='folder'){
                     setCurrentFolderId(item.id);
+                    setActiveView(ViewType.GENERAL_SEARCH);
                   }else{
                     //open TODO 
                   }

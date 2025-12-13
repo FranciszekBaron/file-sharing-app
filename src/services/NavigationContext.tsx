@@ -25,6 +25,7 @@ const VIEW_ROUTES: Record<string,number> = {
     'starred': ViewType.STARRED,
     'spam': ViewType.SPAM,
     'trash': ViewType.TRASH,
+    'general-search': ViewType.GENERAL_SEARCH
 }
 
 const ROUTE_NAMES: Record<number, string> = {
@@ -35,6 +36,7 @@ const ROUTE_NAMES: Record<number, string> = {
   [ViewType.STARRED]: 'starred',
   [ViewType.SPAM]: 'spam',
   [ViewType.TRASH]: 'trash',
+  [ViewType.GENERAL_SEARCH] : 'general-search'
 };
 
 
@@ -56,35 +58,24 @@ const NavigationContext = createContext<NavigationContextType | undefined>(undef
 export const NavigationProvider = ({children} : {children: React.ReactNode}) => {
     
 
+    const navigate = useNavigate();
+    const params = useParams(); // ✅ Teraz params DZIAŁA!
+    const location = useLocation();
+    
+    const activeView = params.view
+        ? (VIEW_ROUTES[params.view] ?? ViewType.HOME)
+        : ViewType.HOME;
+    
+    const currentFolderId = params.folderId || null; // ✅ Zamiast params.folderId
     
 
-
-    const navigate = useNavigate(); // do zmiany URL
-    const params = useParams(); // czytasz z parametrów URL
-    const location = useLocation(); // aktualny URL
-
-
-    console.log("=== NAVIGATION PROVIDER RENDER ===");
-    console.log("location.pathname:", location.pathname);
-    console.log("params:", params);
-    console.log("params.view:", params.view);
-    console.log("params.folderId:", params.folderId);
-  
-
-    const activeView = params.view 
-    ? (VIEW_ROUTES[params.view] ?? ViewType.HOME)
-    : ViewType.HOME;
-
-    console.log("params.view:", params.view);
-    console.log("VIEW_ROUTES[params.view]:", params.view ? VIEW_ROUTES[params.view] : "brak params.view");
-    console.log("Re-render navigation" + activeView);
-
-    const currentFolderId = params.folderId || null;
+    console.log(currentFolderId);
 
     const navigateTo = (view:number,folderId: string | null = null) => {
         const routeName = ROUTE_NAMES[view] || 'home';
         //tu na odwró† patrzymy names -> url 
         console.log("routeName:" + routeName);
+        console.log("routeName: " + "folder" + folderId);
 
         if(folderId) {
             navigate(`/drive/${routeName}/${folderId}`);
@@ -92,7 +83,6 @@ export const NavigationProvider = ({children} : {children: React.ReactNode}) => 
             navigate(`/drive/${routeName}`);
         }
     };
-
 
     //ustawianie active view i current folder po url 
     const setActiveView = (view:number | null) => {
@@ -102,6 +92,7 @@ export const NavigationProvider = ({children} : {children: React.ReactNode}) => 
     };
 
     const setCurrentFolderId = (folderId:string | null) => {
+        console.log(folderId);
         navigateTo(activeView,folderId);
     }
 
