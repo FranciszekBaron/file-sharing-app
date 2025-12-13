@@ -19,12 +19,12 @@ type ViewType = typeof ViewType[keyof typeof ViewType];
 
 const VIEW_ROUTES: Record<string,number> = {
     'home': ViewType.HOME,
-    'my-files':ViewType.MY_FILES,
-    'shared':ViewType.SHARED,
-    'recent':ViewType.RECENT,
-    'starred':ViewType.STARRED,
-    'spam':ViewType.SPAM,
-    'trash':ViewType.TRASH,
+    'my-files': ViewType.MY_FILES,
+    'shared': ViewType.SHARED,
+    'recent': ViewType.RECENT,
+    'starred': ViewType.STARRED,
+    'spam': ViewType.SPAM,
+    'trash': ViewType.TRASH,
 }
 
 const ROUTE_NAMES: Record<number, string> = {
@@ -45,7 +45,6 @@ interface NavigationContextType {
     activeView: number | null;
     currentFolderId: string | null;
 
-
     //Funkcje do zmieniania state'ów
     setActiveView: (activeView: number | null) => void;
     setCurrentFolderId: (folderId: string | null) => void;
@@ -57,20 +56,36 @@ const NavigationContext = createContext<NavigationContextType | undefined>(undef
 export const NavigationProvider = ({children} : {children: React.ReactNode}) => {
     
 
+    
+
 
     const navigate = useNavigate(); // do zmiany URL
     const params = useParams(); // czytasz z parametrów URL
     const location = useLocation(); // aktualny URL
 
+
+    console.log("=== NAVIGATION PROVIDER RENDER ===");
+    console.log("location.pathname:", location.pathname);
+    console.log("params:", params);
+    console.log("params.view:", params.view);
+    console.log("params.folderId:", params.folderId);
+  
+
     const activeView = params.view 
     ? (VIEW_ROUTES[params.view] ?? ViewType.HOME)
     : ViewType.HOME;
+
+    console.log("params.view:", params.view);
+    console.log("VIEW_ROUTES[params.view]:", params.view ? VIEW_ROUTES[params.view] : "brak params.view");
+    console.log("Re-render navigation" + activeView);
 
     const currentFolderId = params.folderId || null;
 
     const navigateTo = (view:number,folderId: string | null = null) => {
         const routeName = ROUTE_NAMES[view] || 'home';
         //tu na odwró† patrzymy names -> url 
+        console.log("routeName:" + routeName);
+
         if(folderId) {
             navigate(`/drive/${routeName}/${folderId}`);
         }else{

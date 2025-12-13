@@ -43,9 +43,7 @@ const Dashboard = ({items}:Props) => {
 
   console.log("DASHBOARD: " + activeView);
 
-  const renderView = () => {
-    return viewMap[activeView ? activeView : 0] || <Home/>;
-  };
+  
 
   const handleNewFileKey = (e:KeyboardEvent) =>{
     if (e.ctrlKey && e.key === "c"){
@@ -90,7 +88,7 @@ const Dashboard = ({items}:Props) => {
 
   return (
       <Layout>
-          {renderView()}
+          {viewMap[activeView ?? 0] || <Home />}
       </Layout>
   );
 };
