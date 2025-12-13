@@ -22,7 +22,6 @@
   white-space: nowrap;      /* ← nie zawijaj tekstu */
   overflow: hidden;         /* ← ukryj nadmiar */
   text-overflow: ellipsis;
-
 }
 
 .button:hover {

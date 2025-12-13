@@ -1,10 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "..//MyFiles//MyFiles.module.css"
 import type { FileItem as FileItemType } from "../../types/FileItem";
 import FileItem from "../../components/FileItem/FileItem";
 import DropDownButton from "../../components/DropDownButton/DropDownButton";
 import MenuItem from "../../components/Common/MenuItem/MenuItem";
-import { FolderPlus, Upload, FileUp, Folder, FileText, AlertCircle, Key, TrendingUp } from "lucide-react";
+import { FolderPlus, Upload, FileUp, Folder, FileText, AlertCircle, Key, TrendingUp, X, Download, Share2, Trash, ChevronRight } from "lucide-react";
 import MenuDivider from "../../components/Common/MenuDivider/MenuDivider";
 import { Button } from "../../components/Common/Button";
 import buttonStyles from "../../components/Common/Button.module.css";
@@ -29,6 +29,10 @@ import { sortByItems,sortFoldersItem,sortOrderItems } from "../../types/SortOpti
 import FileItemGrid from "../../components/FileItem/FileItemGrid/FileItemGrid";
 import { filterItems } from "..//..//types//FilterOptions.ts";
 import DoubleItemButton from "../../components/Common/DoubleItemButton/DoubleItemButton.tsx";
+import { useNavigate } from "react-router-dom";
+import { useNavigation } from "../../services/NavigationContext.tsx";
+import { ViewType } from '..//..//services//NavigationContext.tsx';
+
 
 
 const Starred = () => {
@@ -42,8 +46,10 @@ const Starred = () => {
     sortAscending,
     sortWithFoldersUp,
     activeLayout,
+    breadcrumbPath,
     setSortBy,
     setSortWithFoldersUp,
+    setCurrentFolderId,
     setActiveLayout,
     handleAdd,
     handleFilter,
@@ -58,47 +64,116 @@ const Starred = () => {
     hasSelection
   } = useFileSelection();
 
+
+  const  {
+    setActiveView
+  } = useNavigation()
+
+  const [addFileOpen,SetAddFileOpen] = useState(false);
   const [isNameFilterActive, SetNameFilterActive] = useState(true);
   const [isDateFilterActive, SetDateFilterActive] = useState(true);
 
+  useEffect(()=>{
+      handleClearFilter();
+  },[])
+
+  const addFileIcon = <FolderPlus size={20}/>
+  const uploadFileIcon = <Upload size={20}/>
+  const FileUpIcon = <FileUp size={20}/>
+  const alertIcon = <AlertCircle size={20}/>
 
   const filterIcons = {
     folder: <Folder size={20} />,
     doc: <SquareDocumentIcon size={20} /> ,
     pdf: <PdfIcon size={20}/>
-    
-}
+  }
+  const chevRightIcon = <ChevronRight size={16} />;
 
   if (loading) {
     return <div className={styles.contentWrapper}>Ładowanie...</div>;
   }
 
+  const handleAddFolderClick = () => {
+      SetAddFileOpen(true);
+  }
+  const handleUploadFile = () => {}; // TODO
+  const handleUploadFolder = () => {}; // TODO
+
   return (
     <div className={styles.contentWrapper}>
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
-          <h1 className={styles.label}>Oznaczone gwiazdką</h1>
+          <div className={styles.breadcrumbWrapper}>
+            {breadcrumbPath.length === 0 ?
+            <div className={styles.titleOnly}>Oznaczone gwiazdką</div>
+            :
+            <div className={styles.breadcrumbWrapper}>
+              <button className={styles.breadcrumbButton} onClick={()=>{setCurrentFolderId(null); setActiveView(ViewType.MY_FILES)}}>Mój Dysk</button>
+              {chevRightIcon}
+              {breadcrumbPath.slice(0,breadcrumbPath.length-1).map((item) => (
+                <React.Fragment key={item.id}>
+                    <button className={styles.breadcrumbButton} onClick={()=>{setCurrentFolderId(item.id)}}>{item.name}</button>
+                    {chevRightIcon}
+                </React.Fragment>
+              ))}
+              
+              <DropDownButton label={breadcrumbPath[breadcrumbPath.length-1].name} menuVariant="operations" chevron={true}>
+                <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations" onActivate={()=>{handleAddFolderClick()}} />
+                <MenuDivider/>
+                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations" onActivate={()=>SetAddFileOpen(true)}/>
+                <MenuItem icon = {FileUpIcon} label= "Prześlij Folder" gap={14} size={14} variant="operations" onActivate={handleUploadFolder}/> 
+                <MenuDivider/>
+                <MenuItem icon = {alertIcon} label= "..." gap={14} size={14} variant="operations" 
+                style={{color:"lightgray", cursor:"not-allowed",pointerEvents:"none"}}/> 
+            </DropDownButton>
+            </div>
+            }
+          </div>
           <div className={styles.viewButtonWrapper}>
                 <DoubleItemButton size={32} activeLayout={activeLayout} onActivateLeft={()=>{setActiveLayout('list')}} onActivateRight={()=>{setActiveLayout('grid')}}></DoubleItemButton>
           </div>
         </div>
+        {hasSelection ? 
         <div className={styles.filtersWrapper}>
-          <DropDownButton label={activeFilter !== 'none' ? filterLabels[activeFilter] : "Typ elementu"} textSize={14} variant="filters" menuVariant="elements" selected={activeFilter !== 'none'} onClear={() => handleClearFilter()}>
-            {filterItems.map((item) => (
-              <React.Fragment key={item.id}>
-                <MenuItem icon={filterIcons[item.id]} label={item.label} size={14} gap={14} clicked={activeFilter === item.id} onActivate={
-                  () => {
-                    handleClearFilter()
-                    handleFilter(item.id as 'folder' | 'doc' | 'pdf')
-                  }}>
-                </MenuItem>
-              </React.Fragment>
-            ))}
-          </DropDownButton>
-          <DropDownButton label="Zmodyfikowano" textSize={14} variant="filters" menuVariant="elements"></DropDownButton>
-          <DropDownButton label="Źródło" textSize={14} variant="filters" menuVariant="elements"></DropDownButton>
+            <div className={styles.ItemSelected}>
+                <div className={styles.hoverIcon} data-tooltip='Odznacz' onClick={()=>{clearSelection()}}>
+                    <X size={20} strokeWidth={1.6}/>
+                </div>
+                <span className={styles.ItemSelectedLabel}>wybrano {selectedItems.size}</span>
+                <div className={styles.hoverIcon} data-tooltip='Udostępnij'>
+                    <Share2 size={14} strokeWidth={2}/>
+                </div>
+                <div className={styles.hoverIcon} data-tooltip='Pobierz'>
+                    <Download size={14}strokeWidth={2}/>
+                </div>
+                <div className={styles.hoverIcon} data-tooltip='Zmień nazwę' onClick={()=>{}}>
+                    <Trash size={14} strokeWidth={2}/>
+                </div>
+            
+            </div>
         </div>
+        :
+        <div className={styles.filtersWrapper}>
+            <DropDownButton label={activeFilter !=='none' ? filterLabels[activeFilter] : "Typ elementu"} textSize={14} variant="filters" menuVariant="elements" chevron={true} selected={activeFilter!=='none'} onClear={()=>handleClearFilter()}>
+              {filterItems.map((item) => (
+                <React.Fragment key={item.id}>
+                  <MenuItem icon={filterIcons[item.id]} label={item.label} size={14} gap={14} clicked={activeFilter===item.id} onActivate={
+                    ()=>{
+                      handleClearFilter()
+                      handleFilter(item.id as 'folder' | 'doc' | 'pdf')
+                    }}>
+                  </MenuItem>
+                </React.Fragment>
+              ))}
+            </DropDownButton> 
+          
+          <DropDownButton label="Osoby" textSize={14} variant="filters" menuVariant="elements" chevron={true}></DropDownButton> 
+          <DropDownButton label="Zmodyfikowano" textSize={14} variant="filters" menuVariant="elements" chevron={true}></DropDownButton>
+          <DropDownButton label="Źródło" textSize={14} variant="filters" menuVariant="elements" chevron={true}></DropDownButton>
+        </div>
+        }
       </div>
+
       {activeLayout === 'list' ? 
       //===================LIST VIEW========================
       <div className={styles.main}>
@@ -216,7 +291,16 @@ const Starred = () => {
                 <FileItemList file={item} isActive={selectedItems.has(index.toString())} 
                 onActivate={(e)=>{ 
                   e.preventDefault();
-                  handleClickItem(item.id,index.toString(), e)}}/>
+                  handleClickItem(item.id,index.toString(), e)}}
+                  onDoubleClick={()=>{
+                  if(item.type==='folder'){
+                    setCurrentFolderId(item.id);
+                    setActiveView(ViewType.GENERAL_SEARCH);
+                  }else{
+                    //open TODO 
+                  }
+                  }}
+                />
                 <FileItemDivider/>
               </div>
             ))}
@@ -311,3 +395,7 @@ const Starred = () => {
 };
 
 export default Starred;
+
+function setCurrentFolderId(arg0: null) {
+  throw new Error("Function not implemented.");
+}

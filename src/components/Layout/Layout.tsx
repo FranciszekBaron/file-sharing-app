@@ -5,17 +5,16 @@ import type React from "react";
 import Rightbar from "../Rightbar/Rightbar";
 import { useState } from "react";
 import Pointer from "../Common/Pointer";
+import { useNavigation } from "../../services/NavigationContext";
 
 
 const Layout = ({
     children,
-    activeView,
-    setActiveView
 } : {
     children: React.ReactNode,
-    activeView: number,
-    setActiveView: (index: number) => void
 }) => {
+
+    
 
     const [sidebarWidth, setSidebarWidth] = useState(260); // ustawia domyślną szerokość
 
@@ -82,14 +81,12 @@ const Layout = ({
     return (
         <div className={styles.wrapper}>
             <div className={styles.topbarWrapper}>
-                <Topbar activeView={activeView}/>
+                <Topbar/>
             </div>
             <div className={styles.contentWrapper}>
                 <div className={styles.sidebarWrapper}
                 style={{width: sidebarWidth}}>
-                    <Sidebar
-                    activeView={activeView}
-                    setActiveView={setActiveView}>
+                    <Sidebar>
                     </Sidebar>
                     <div className={styles.resizeHandle}
                     onMouseDown={handleSidebarResize}>

@@ -8,11 +8,18 @@ import { SettingsIcon } from "../../icons/SettingsIcon";
 import { HelpCircleIcon } from "../../icons/HelpCircleIcon";
 import { Settings,Sliders, HelpCircle} from "lucide-react";
 import { AppsIcon } from "../../icons/AppsIcon";
+import { useNavigation } from "../../services/NavigationContext";
 
-const Topbar = ({activeView} : {activeView: number}) => {
+
+const Topbar = () => {
   const settingsIcon = <SettingsIcon size={20} strokeWidth={2}/>
   const slidersIcon = <AppsIcon size={20}/>
   const helpCircleIcon = <HelpCircleIcon size={20} strokeWidth={2}/>
+
+
+  const {
+    activeView
+  } = useNavigation()
 
   return (
     <div className={styles.wrapper}>

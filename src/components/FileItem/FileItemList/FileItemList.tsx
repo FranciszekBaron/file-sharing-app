@@ -33,13 +33,15 @@ interface Props {//troche jak generics , ze to jest typ tego pliku ktory sobie p
     file: FileItemType,
     isActive: boolean
     onActivate: (e: React.MouseEvent)=>void // przekazujemy funkcje 
+    onDoubleClick?: (e:React.MouseEvent) => void
 }
 
-export const FileItemList = ({file,isActive,onActivate} : Props) => {
-
+export const FileItemList = ({file,isActive,onActivate,onDoubleClick} : Props) => {
     const  {
         handleSoftDelete,
         handleUpdate,
+        handleRestore,
+        handlePermanentDelete
     } = useFiles()
 
     const optionsIcon = <ThreeDotsIcon size={20}/>
@@ -125,19 +127,18 @@ export const FileItemList = ({file,isActive,onActivate} : Props) => {
     ]
 
     const optionsItemsDelete = [
-        {icon: <RotateCw/>, label: "Przywróć", action: handleSoftDeleteItem},
-        {icon: <Trash/>, label: "Usuń na zawsze", action: handleSoftDeleteItem}
+        {icon: <RotateCw/>, label: "Przywróć", action: handleRestore},
+        {icon: <Trash/>, label: "Usuń na zawsze", action: handlePermanentDelete}
     ]
 
 
-
-    
     return (
         <div className={`
             ${styles.fileItemListWrapper}
             ${isActive ? styles.active : ''}
         `} 
-        onClick={onActivate}>
+        onClick={onActivate}
+        onDoubleClick={onDoubleClick}>
 
             {
             <Modal open={addFileOpen} onClose={()=>SetAddFileOpen(false)}>

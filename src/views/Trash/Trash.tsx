@@ -4,7 +4,7 @@ import type { FileItem as FileItemType} from "../../types/FileItem";
 import FileItem from "../../components/FileItem/FileItem";
 import DropDownButton from "../../components/DropDownButton/DropDownButton";
 import MenuItem from "../../components/Common/MenuItem/MenuItem";
-import { FolderPlus, Upload, FileUp , Folder, FileText , AlertCircle, Key, TrendingUp} from "lucide-react";
+import { FolderPlus, Trash as TrashIcon, Upload, FileUp , Folder, FileText , AlertCircle, Key, TrendingUp, Download, Share2, X} from "lucide-react";
 import MenuDivider from "../../components/Common/MenuDivider/MenuDivider";
 import { Button } from "../../components/Common/Button";
 import buttonStyles from "../../components/Common/Button.module.css";
@@ -43,9 +43,11 @@ const Trash = () => {
     setSortBy,
     setActiveLayout,
     setSortWithFoldersUp,
+    setCurrentFolderId,
     handleAdd,
     handleFilter,
     handleClearFilter,
+    handleRestore,
     handleSort
   } = useFiles()
 
@@ -97,13 +99,35 @@ const Trash = () => {
     <div className={styles.contentWrapper}>
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
-            <h1 className={styles.label}>Kosz</h1>
-            <div className={styles.viewButtonWrapper}>
+          <div className={styles.breadcrumbWrapper}>
+            <div className={styles.titleOnly}>Kosz</div>
+          </div>
+          <div className={styles.viewButtonWrapper}>
                 <DoubleItemButton size={32} activeLayout={activeLayout} onActivateLeft={()=>{setActiveLayout('list')}} onActivateRight={()=>{setActiveLayout('grid')}}></DoubleItemButton>
           </div>
         </div>
+        {hasSelection ? 
         <div className={styles.filtersWrapper}>
-            <DropDownButton label={activeFilter !=='none' ? filterLabels[activeFilter] : "Typ elementu"} textSize={14} variant="filters" menuVariant="elements" selected={activeFilter!=='none'} onClear={()=>handleClearFilter()}>
+            <div className={styles.ItemSelected}>
+                <div className={styles.hoverIcon} data-tooltip='Odznacz' onClick={()=>{clearSelection()}}>
+                    <X size={20} strokeWidth={1.6}/>
+                </div>
+                <span className={styles.ItemSelectedLabel}>wybrano {selectedItems.size}</span>
+                <div className={styles.hoverIcon} data-tooltip='Udostępnij'>
+                    <Share2 size={14} strokeWidth={2}/>
+                </div>
+                <div className={styles.hoverIcon} data-tooltip='Pobierz'>
+                    <Download size={14}strokeWidth={2}/>
+                </div>
+                <div className={styles.hoverIcon} data-tooltip='Zmień nazwę' onClick={()=>{}}>
+                    <TrashIcon size={14} strokeWidth={2}/>
+                </div>
+      
+            </div>
+        </div>
+        :
+        <div className={styles.filtersWrapper}>
+            <DropDownButton label={activeFilter !=='none' ? filterLabels[activeFilter] : "Typ elementu"} textSize={14} variant="filters" menuVariant="elements" chevron={true} selected={activeFilter!=='none'} onClear={()=>handleClearFilter()}>
               {filterItems.map((item) => (
                 <React.Fragment key={item.id}>
                   <MenuItem icon={filterIcons[item.id]} label={item.label} size={14} gap={14} clicked={activeFilter===item.id} onActivate={
@@ -115,9 +139,12 @@ const Trash = () => {
                 </React.Fragment>
               ))}
             </DropDownButton> 
-          <DropDownButton label="Zmodyfikowano" textSize={14} variant="filters" menuVariant="elements"></DropDownButton>
-          <DropDownButton label="Źródło" textSize={14} variant="filters" menuVariant="elements"></DropDownButton>
+          
+          <DropDownButton label="Osoby" textSize={14} variant="filters" menuVariant="elements" chevron={true}></DropDownButton> 
+          <DropDownButton label="Zmodyfikowano" textSize={14} variant="filters" menuVariant="elements" chevron={true}></DropDownButton>
+          <DropDownButton label="Źródło" textSize={14} variant="filters" menuVariant="elements" chevron={true}></DropDownButton>
         </div>
+        }
       </div>
      {activeLayout === 'list' ? 
       //===================LIST VIEW========================

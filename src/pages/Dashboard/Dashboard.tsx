@@ -10,6 +10,8 @@ import { useState } from "react";
 import useGlobalShortcut from "../../hooks/useGlobalShortcut";
 
 import type { FileItem } from "../../types/FileItem";
+import { useNavigation } from "..//..//services//NavigationContext";
+import GeneralSearch from "../../views/GeneralSearch/GeneralSearch";
 
 interface Props {
   items?: FileItem[]
@@ -18,7 +20,10 @@ interface Props {
 
 const Dashboard = ({items}:Props) => {
 
-    const [activeView,setActiveView] = useState(0);
+    const {
+      activeView,
+      setActiveView
+    } = useNavigation()
 
   
     const viewMap = [
@@ -30,13 +35,14 @@ const Dashboard = ({items}:Props) => {
     <Starred />,       // index 5
     null,              // index 6 (spacer)
     <Spam />,          // index 7
-    <Trash />,         // index 8
+    <Trash />,        // index 8
+    <GeneralSearch/>      //index 9   
   ];
 
   let lastClicked = "";
 
   const renderView = () => {
-    return viewMap[activeView] || <Home />;
+    return viewMap[activeView ? activeView : 0] || <Home/>;
   };
 
   const handleNewFileKey = (e:KeyboardEvent) =>{
@@ -81,7 +87,7 @@ const Dashboard = ({items}:Props) => {
   
 
   return (
-      <Layout activeView={activeView} setActiveView={setActiveView}>
+      <Layout>
           {renderView()}
       </Layout>
   );

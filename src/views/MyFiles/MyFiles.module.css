@@ -34,6 +34,59 @@
   padding: 2px;
 }
 
+.breadcrumbWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  height: 50px;
+  background-color: #ffffff;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 300;
+  padding: 2px;
+}
+
+.breadcrumbButton{
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: 320;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  height: 40px;
+  border-radius: 40px;
+  white-space: nowrap;      /* ← nie zawijaj tekstu */
+  overflow: hidden;         /* ← ukryj nadmiar */
+  text-overflow: ellipsis;
+  color: #535353;
+}
+
+.titleOnly {
+  cursor: pointer;
+  font-size: 24px;
+  font-weight: 320;
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: transparent;
+  border: none;
+  height: 40px;
+  border-radius: 40px;
+  white-space: nowrap;      /* ← nie zawijaj tekstu */
+  overflow: hidden;         /* ← ukryj nadmiar */
+  text-overflow: ellipsis;
+}
+
+.breadcrumbButton:hover {
+   background-color: rgba(0,0,0,0.1); /* dobre do mienia transparent backgroundu i jednoczesnie przyciemniania*/
+}
 .viewButtonWrapper {
   display: flex;
   flex: 0 0 180px;

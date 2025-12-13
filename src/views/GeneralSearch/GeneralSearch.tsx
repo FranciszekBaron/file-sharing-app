@@ -28,8 +28,8 @@ import MenuHeader from "../../components/Common/MenuHeader/MenuHeader";
 
 import { sortByItems,sortOrderItems,sortFoldersItem, sortDateItem } from "../../types/SortOptions";
 import { filterItems } from "..//..//types//FilterOptions.ts";
-
-import { useNavigation } from "../../services/NavigationContext.tsx";
+import { useNavigate } from "react-router-dom";
+import { useNavigation, ViewType } from "../../services/NavigationContext.tsx";
 
 
 const MyFiles = () => {
@@ -62,16 +62,11 @@ const MyFiles = () => {
     hasSelection
   } = useFileSelection();
 
-
   const {
     setActiveView
   } = useNavigation()
-  
 
-  useEffect(()=>{
-    handleClearFilter();
-    setCurrentFolderId(null);
-  },[])
+  
 
   const [addFileOpen,SetAddFileOpen] = useState(false);
   const [isNameFilterActive,SetNameFilterActive] = useState(true);
@@ -147,7 +142,7 @@ const MyFiles = () => {
             </div>
             :
             <div className={styles.breadcrumbWrapper}>
-              <button className={styles.breadcrumbButton} onClick={()=>{setCurrentFolderId(null)}}>Mój Dysk</button>
+              <button className={styles.breadcrumbButton} onClick={()=>{setCurrentFolderId(null); setActiveView(ViewType.MY_FILES)} }>Mój Dysk</button>
               {chevRightIcon}
               {breadcrumbPath.slice(0,breadcrumbPath.length-1).map((item) => (
                 <React.Fragment key={item.id}>

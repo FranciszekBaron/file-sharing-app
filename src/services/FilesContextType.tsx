@@ -18,14 +18,19 @@ interface FilesContextType{
     sortBy: 'name'|'date' | 'deletedAt';
     sortAscending: boolean;
     sortWithFoldersUp: boolean;
+    currentFolderId: string | null;
+    breadcrumbPath: FileItem[];
 
     //Tutaj akcje czyli funkcje które będa zmieniać te state'y
     setSortBy: (sortBy:'name' | 'date' | 'deletedAt') => void;
     setSortAscending: (ascending:boolean) => void;
     setSortWithFoldersUp: (sorted:boolean) => void;
     setActiveLayout: (layout: 'list'|'grid') => void;
+    setCurrentFolderId: (id:string | null) => void;
     handleAdd: (name:string,type:FileItem['type']) =>Promise<void>;
     handleSoftDelete: (id:string) => Promise<void>;
+    handlePermanentDelete: (id:string) => Promise<void>;
+    handleRestore: (id:string) => Promise<void>;
     handleUpdate: (id:string,updates: Partial<FileItem>) => Promise<void>;
     handleFilter: (filter: Exclude<FilterType,'none'>) => void;
     handleClearFilter: () => void;
@@ -50,6 +55,7 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
     const [sortBy,setSortBy] = useState<'name' | 'date' | 'deletedAt'>('name');
     const [sortAscending,setSortAscending] = useState(true);
     const [sortWithFoldersUp,setSortWithFoldersUp] = useState(true);
+    const [currentFolderId,setCurrentFolderId] = useState<string | null>(null);
 
     const sortFiles = (files:FileItem[],type:'name'|'date' | 'deletedAt',ascending:boolean,foldersUp:boolean) => {
 
@@ -90,7 +96,7 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
     //AUTOMATYCZNE PRZELICZANIE KIEDY KTORAS Z WARTOSCI W [] SIE ZMIENI
     //SWIETNA RZECZ 
     const displayedFiles = useMemo(()=>{
-        let filtered = allFiles.filter(f=>!f.deleted);
+        let filtered = allFiles.filter(f=>!f.deleted && f.parentId === currentFolderId);
 
         if(activeFilter!=='none'){
             filtered = filtered.filter(f=>f.type===activeFilter);
@@ -98,20 +104,38 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
 
         const sortType = sortBy === 'deletedAt' ? 'date' : sortBy;
         return sortFiles(filtered,sortType,sortAscending,sortWithFoldersUp)
-    },[allFiles,sortBy,sortAscending,activeFilter]);
+    },[allFiles,sortBy,sortAscending,activeFilter,currentFolderId]);
 
     const deletedFiles = useMemo(() => {
-        const filtered = allFiles.filter(f=>f.deleted);
+        const filtered = allFiles.filter(f=>f.deleted && f.parentId === currentFolderId);
         return sortFiles(filtered,sortBy,sortAscending,false);
-    },[allFiles,sortBy,sortAscending]);
+    },[allFiles,sortBy,sortAscending,currentFolderId]);
     
     const starredFiles = useMemo(()=>{
-        const filtered = allFiles.filter(f=>f.starred && !f.deleted);
+        const filtered = allFiles.filter(f=>!f.deleted && f.parentId === currentFolderId && f.starred);
 
         const sortType = sortBy === 'deletedAt' ? 'date' : sortBy;
         return sortFiles(filtered,sortType,sortAscending,sortWithFoldersUp);
 
-    },[allFiles,sortBy,sortAscending,sortWithFoldersUp])
+    },[allFiles,sortBy,sortAscending,sortWithFoldersUp,currentFolderId])
+
+    const breadcrumbPath = useMemo(()=> {
+        if(!currentFolderId) return [];
+
+        const path: FileItem[] = [];
+
+        let current = allFiles.find(f=>f.id === currentFolderId);
+
+        while(current){
+            path.unshift(current);
+            current = allFiles.find(f=>f.id === current?.parentId);
+        }
+        
+
+        console.log("ACTUAL PATH: " + JSON.stringify(path,null,2));
+        return path;
+
+    },[allFiles,currentFolderId])
 
     console.log("ascending: " + sortAscending);
 
@@ -139,8 +163,10 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             const newFile = await filesService.add({
                 name,
                 type,
-                modifiedDate: new Date()
+                modifiedDate: new Date(),
+                parentId: currentFolderId
             });
+
             //w tym miejscu juz utworzysz nowy plik w bazie lub w mocku, ale trzeba jeszcze zrobic tak zeby sie poprawnie wyswietlalo
             
             setAllFiles(prev=> [...prev,newFile]);
@@ -171,6 +197,38 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
         }
     }
 
+    const handleRestore = async (id:string) => {
+        try{
+            await filesService.update(id,{deleted:undefined,deletedAt:undefined});
+
+            setAllFiles(prev=>{
+                const updatedFiles = prev.map(f=>f.id === id
+                    ?  {...f,deleted:undefined,deletedAt:undefined}
+                    : f
+                )
+                return updatedFiles
+            });
+        }catch(err){
+            console.error('Error restoring file: ', err);
+            throw err;
+        }
+    }
+
+    const handlePermanentDelete = async (id:string) => {
+        try{
+            await filesService.delete(id);
+
+            setAllFiles(prev=>{
+                const updatedFiles = prev.filter(f=>f.id !== id);
+                return updatedFiles;
+            })
+
+        }catch(err){
+            console.error('Error permanently deleting file: ', err);
+            throw err;
+        }
+    }
+
     const handleUpdate = async (id:string,updates: Partial<FileItem>) => {
         try{
             const updateFile = await filesService.update(id,updates);
@@ -184,9 +242,7 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
         }
     }
 
-    const handleStarred = async (id:string, updates: Partial<FileItem>) => {
 
-    }
     
     const handleSort = (type:'name' | 'date' | 'deletedAt',ascending:boolean,foldersUp:boolean)  => {
         setSortBy(type);
@@ -218,12 +274,17 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             sortBy,
             sortAscending,
             sortWithFoldersUp,
+            currentFolderId,
+            breadcrumbPath,
             setSortBy,
             setSortAscending,
             setSortWithFoldersUp,
             setActiveLayout,
+            setCurrentFolderId,
             handleAdd,
             handleSoftDelete,
+            handleRestore,
+            handlePermanentDelete,
             handleUpdate,
             handleFilter,
             handleClearFilter,

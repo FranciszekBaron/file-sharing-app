@@ -27,19 +27,25 @@ import MenuDivider from "../Common/MenuDivider/MenuDivider";
 import MenuItem from "../Common/MenuItem/MenuItem";
 import { useFiles } from "../../services/FilesContextType";
 import Modal from "../Modal/Modal";
+import { useNavigation, ViewType } from "../../services/NavigationContext";
 
 
 const Sidebar = ({ 
   children,
-  activeView,
-  setActiveView
 }: { 
   children?: React.ReactNode,
-  activeView: number,
-  setActiveView: (index: number) => void
 }) => {
 
-    const {handleAdd} = useFiles()
+    const {
+      handleAdd
+    } = useFiles()
+
+    const {
+      activeView,
+      setActiveView
+    } = useNavigation()
+
+
   
 
     const [hoveredIndex,setHoveredIndex] = useState<number | null>(null);
@@ -116,7 +122,7 @@ const Sidebar = ({
             item ? (
                 <div key={index} 
                 className={
-                  activeIndex === index
+                  activeView === index
                     ? styles.boxActivated     // jeśli kliknięty → zaznaczony
                     : hoveredIndex === index
                     ? styles.boxSelected      // jeśli hover → hover
@@ -126,11 +132,11 @@ const Sidebar = ({
                 onMouseEnter={()=>setHoveredIndex(index)}
                 onMouseLeave={()=>setHoveredIndex(null)}>
                     <div className={
-                      activeIndex === index ? styles.iconActivated : styles.icon
+                      activeView === index ? styles.iconActivated : styles.icon
                     }
                     >{item.icon}</div>
                     <div className={
-                      activeIndex === index ? styles.labelActived : styles.label
+                      activeView === index ? styles.labelActived : styles.label
                     }>{item.label}</div>
                 </div>
             ) : (

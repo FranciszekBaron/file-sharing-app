@@ -13,7 +13,8 @@ export const mockFiles: FileItem[] = [
     type: 'folder',
     modifiedDate: new Date('2024-11-20'),
     owner: 'Ty',
-    starred: true
+    starred: true,
+    parentId:null
   },
   {
     id: '2',
@@ -21,7 +22,8 @@ export const mockFiles: FileItem[] = [
     type: 'folder',
     modifiedDate: new Date('2025-11-20'),
     owner: 'Ty',
-    starred: true
+    starred: true,
+    parentId:null
   },
   {
     id: '3',
@@ -30,14 +32,16 @@ export const mockFiles: FileItem[] = [
     size: 1908576,
     modifiedDate: new Date('2024-11-15'),
     owner: 'Ty',
-    shared: true
+    shared: true,
+    parentId:null
   },
   {
     id: '4',
     name: 'Wakacje',
     type: 'folder',
     modifiedDate: new Date('2023-10-01'),
-    owner: 'Ty'
+    owner: 'Ty',
+    parentId:null
   },
   {
     id: '5',
@@ -47,8 +51,10 @@ export const mockFiles: FileItem[] = [
     modifiedDate: new Date('2024-11-15'),
     owner: 'Ty',
     shared: true,
+    starred:true,
     deleted:false,
-    deletedAt:new Date('2024-12-12')
+    deletedAt:new Date('2024-12-12'),
+    parentId:null
   },
   {
     id: '6',
@@ -59,6 +65,38 @@ export const mockFiles: FileItem[] = [
     owner: 'Ty',
     shared: true,
     deleted:true,
-    deletedAt:new Date('2024-12-12')
+    deletedAt:new Date('2024-12-12'),
+    parentId:null
+  },
+  {
+    id: '7',
+    name: 'plikWFolderze.txt',
+    type: 'doc',
+    size: 3868576,
+    modifiedDate: new Date('2024-03-14'),
+    owner: 'Ty',
+    shared: true,
+    parentId:'1'
+  },
+  {
+    id: '8',
+    name: 'plik2WFolderze.txt',
+    type: 'doc',
+    size: 3868576,
+    modifiedDate: new Date('2024-03-14'),
+    owner: 'Ty',
+    shared: true,
+    starred:true,
+    parentId:'1'
+  },
+  {
+    id: '9',
+    name: 'plik2WFolderze2.txt',
+    type: 'doc',
+    size: 3868576,
+    modifiedDate: new Date('2024-03-14'),
+    owner: 'Ty',
+    shared: true,
+    parentId:'2'
   }
 ]
