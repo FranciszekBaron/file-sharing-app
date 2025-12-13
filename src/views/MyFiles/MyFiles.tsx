@@ -43,7 +43,7 @@ const MyFiles = () => {
     sortAscending,
     sortWithFoldersUp,
     activeLayout,
-    currentFolderId,
+    
     breadcrumbPath,
     setSortBy,
     setSortWithFoldersUp,
@@ -52,7 +52,7 @@ const MyFiles = () => {
     handleFilter,
     handleClearFilter,
     handleSort,
-    setCurrentFolderId
+  
   } = useFiles()
 
   const {
@@ -64,7 +64,8 @@ const MyFiles = () => {
 
 
   const {
-    setActiveView
+    setActiveView,
+    setCurrentFolderId
   } = useNavigation()
   
 

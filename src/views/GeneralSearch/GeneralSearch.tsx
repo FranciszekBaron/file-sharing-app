@@ -52,7 +52,6 @@ const MyFiles = () => {
     handleFilter,
     handleClearFilter,
     handleSort,
-    setCurrentFolderId
   } = useFiles()
 
   const {
@@ -63,7 +62,8 @@ const MyFiles = () => {
   } = useFileSelection();
 
   const {
-    setActiveView
+    setActiveView,
+    setCurrentFolderId
   } = useNavigation()
 
   

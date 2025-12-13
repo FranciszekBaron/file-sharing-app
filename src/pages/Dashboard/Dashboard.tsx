@@ -41,6 +41,8 @@ const Dashboard = ({items}:Props) => {
 
   let lastClicked = "";
 
+  console.log("DASHBOARD: " + activeView);
+
   const renderView = () => {
     return viewMap[activeView ? activeView : 0] || <Home/>;
   };

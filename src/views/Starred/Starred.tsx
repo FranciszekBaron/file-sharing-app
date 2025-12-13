@@ -49,7 +49,6 @@ const Starred = () => {
     breadcrumbPath,
     setSortBy,
     setSortWithFoldersUp,
-    setCurrentFolderId,
     setActiveLayout,
     handleAdd,
     handleFilter,
@@ -66,7 +65,8 @@ const Starred = () => {
 
 
   const  {
-    setActiveView
+    setActiveView,
+    setCurrentFolderId
   } = useNavigation()
 
   const [addFileOpen,SetAddFileOpen] = useState(false);

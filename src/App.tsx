@@ -8,12 +8,17 @@ import { FilesProvider } from './services/FilesContextType'
 import { mockFiles } from "..//src//data/mockFiles";
 import { ClickToComponent } from 'click-to-react-component'
 import { NavigationProvider } from './services/NavigationContext'
+import { Routes,Route } from 'react-router-dom'
 
 function App() {
   return (
     <NavigationProvider>
       <FilesProvider>
-      <Dashboard />
+        <Routes> {/* 👈 Definiujesz możliwe ścieżki */}
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/drive/:view" element={<Dashboard />} />
+          <Route path="/drive/:view/:folderId" element={<Dashboard />} />
+        </Routes>
     </FilesProvider>
     </NavigationProvider>
   
