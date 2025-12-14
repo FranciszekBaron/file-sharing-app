@@ -42,7 +42,8 @@ const Sidebar = ({
 
     const {
       activeView,
-      setActiveView
+      setActiveView,
+      setCurrentFolderId
     } = useNavigation()
 
 
@@ -129,6 +130,7 @@ const Sidebar = ({
                     : styles.box             // domyślny
                 }
                 onClick={()=>{setActiveIndex(index),
+                  setCurrentFolderId(null),
                   setActiveView(index)}}
                 onMouseEnter={()=>setHoveredIndex(index)}
                 onMouseLeave={()=>setHoveredIndex(null)}>

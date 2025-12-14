@@ -98,5 +98,26 @@ export const mockFiles: FileItem[] = [
     owner: 'Ty',
     shared: true,
     parentId:'2'
+  },
+  {
+    id: '10',
+    name: 'FolderStary',
+    type: 'folder',
+    size: 3868576,
+    modifiedDate: new Date('2021-03-14'),
+    owner: 'Ty',
+    shared: true,
+    parentId:null
+  },
+  {
+    id: '10',
+    name: 'FolderJeszczeStarszy',
+    type: 'folder',
+    size: 3868576,
+    modifiedDate: new Date('2021-03-10'),
+    owner: 'Ty',
+    shared: true,
+    parentId:null
   }
+
 ]

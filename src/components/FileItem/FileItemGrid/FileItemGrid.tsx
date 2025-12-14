@@ -1,7 +1,7 @@
 import styles from "./FileItemGrid.module.css";
 import type { FileItem as FileItemType} from "../../../types/FileItem";
 import {FileText,Folder,EllipsisVertical, HelpCircle} from "lucide-react";
-import React from "react";
+import React, { type CSSProperties } from "react";
 import { PdfIcon } from "..//..//../icons//PdfIcon";
 import { DocumentIcon } from "..//..//../icons//DocumentIcon";
 import { use, useState } from "react";
@@ -29,10 +29,13 @@ import FileItem from "../FileItem";
 interface Props {//troche jak generics , ze to jest typ tego pliku ktory sobie przekazemy
     file: FileItemType,
     isActive: boolean
-    onActivate: (e: React.MouseEvent)=>void // przekazujemy funkcje 
+    onActivate: (e: React.MouseEvent)=>void
+    onDoubleClick: () => void// przekazujemy funkcje 
+    location?: boolean
+    style?: CSSProperties
 }
 
-export const FileItemGrid = ({file,isActive,onActivate} : Props) => {
+export const FileItemGrid = ({file,isActive,location,style,onActivate,onDoubleClick} : Props) => {
 
     const  {
         handleSoftDelete,
@@ -42,7 +45,6 @@ export const FileItemGrid = ({file,isActive,onActivate} : Props) => {
     const optionsIcon = <EllipsisVertical size={14} strokeWidth={2.5}/>
     const [addFileOpen,SetAddFileOpen] = useState(false);
     const [fileName,SetFileName] = useState("");
-    const [isStared,SetStared] = useState(file.starred);
 
     const handleIcon = (file: FileItemType) =>{
         switch (file.type){
@@ -132,10 +134,12 @@ export const FileItemGrid = ({file,isActive,onActivate} : Props) => {
     return (
         <div className={`
             ${styles.fileItemGridWrapper}
+
             ${isActive ? styles.active : ''}
         `} 
-        onClick={onActivate}>
-
+        onClick={onActivate}
+        onDoubleClick={onDoubleClick}
+        style={{...style}}>
             {
             <Modal open={addFileOpen} onClose={()=>SetAddFileOpen(false)}>
                 <label className={styles.modalLabel}>Zmień nazwę</label>
@@ -149,22 +153,15 @@ export const FileItemGrid = ({file,isActive,onActivate} : Props) => {
             </Modal>
             }
 
-            <div className={`${styles.fileItemGridColumn} ${styles.fileItemGridName}`}>{icon} {file.name}</div>
-            <div className={`${styles.fileItemGridColumn} ${styles.fileItemGridSize}`}>{formatFilebytes(file.size ?? 0)}</div>
-            <div className={styles.fileItemGridHoverActions}>
-                <div className={styles.hoverIcon} data-tooltip='Udostępnij'>
-                    <Share2 size={14} strokeWidth={2.5}/>
-                </div>
-                <div className={styles.hoverIcon} data-tooltip='Pobierz'>
-                    <Download size={14}strokeWidth={2.5}/>
-                </div>
-                <div className={styles.hoverIcon} data-tooltip='Zmień nazwę' onClick={()=>{handleRenameClick()}}>
-                    <Edit size={14} strokeWidth={2.5}/>
-                </div>
-                <div className={styles.hoverIcon} data-tooltip='Dodaj do oznaczonych gwiazdką' onClick={()=>{handleUpdate(file.id,{starred:!file.starred})}}>
-                    <Star size={14}strokeWidth={2.5} fill={file.starred ? 'black' : 'none'}/>
+            <div className={`${styles.fileItemGridColumn} ${styles.fileItemGridName}`}>{icon} 
+                <div className={styles.fileItemGridNameLabel}>
+                {file.name} 
+                {location && <span className={styles.fileItemGridNameLoc}>{file.owner === 'Ty' ? 'w: Mój Dysk' : 'w: Udostępnione'}
+                </span>}
                 </div>
             </div>
+            {/* <div className={`${styles.fileItemGridColumn} ${styles.fileItemGridSize}`}>{formatFilebytes(file.size ?? 0)}</div> */}
+            
             <div className={`${styles.fileItemGridColumn} ${styles.fileItemGridOptions}`}>
                 {!file.deleted ? 
                 <DropDownButton icon={optionsIcon} 

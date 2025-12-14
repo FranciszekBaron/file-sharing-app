@@ -69,9 +69,12 @@ export const NavigationProvider = ({children} : {children: React.ReactNode}) => 
     const currentFolderId = params.folderId || null; // ✅ Zamiast params.folderId
     
 
+
+
     console.log(currentFolderId);
 
     const navigateTo = (view:number,folderId: string | null = null) => {
+        
         const routeName = ROUTE_NAMES[view] || 'home';
         //tu na odwró† patrzymy names -> url 
         console.log("routeName:" + routeName);
@@ -87,7 +90,7 @@ export const NavigationProvider = ({children} : {children: React.ReactNode}) => 
     //ustawianie active view i current folder po url 
     const setActiveView = (view:number | null) => {
         if(view !== null){
-            navigateTo(view,null);
+            navigateTo(view,currentFolderId);
         }
     };
 
@@ -97,9 +100,6 @@ export const NavigationProvider = ({children} : {children: React.ReactNode}) => 
     }
 
 
-
-    
-    
     return (
         <NavigationContext.Provider value={{
             activeView,

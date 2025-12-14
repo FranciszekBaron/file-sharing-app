@@ -9,15 +9,17 @@ import { mockFiles } from "..//src//data/mockFiles";
 import { ClickToComponent } from 'click-to-react-component'
 import { NavigationProvider } from './services/NavigationContext'
 import { Routes,Route } from 'react-router-dom'
+import { AuthProvider } from './services/AuthContext'
 
 function App() {
   return (
-    <NavigationProvider>
-      <FilesProvider>
-        <Dashboard/>
-    </FilesProvider>
-    </NavigationProvider>
-  
+    <AuthProvider>
+      <NavigationProvider>
+          <FilesProvider>
+            <Dashboard/>
+          </FilesProvider>
+      </NavigationProvider>
+    </AuthProvider>
   ) 
 }
 export default App

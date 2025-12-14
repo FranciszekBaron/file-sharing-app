@@ -34,9 +34,14 @@ interface Props {//troche jak generics , ze to jest typ tego pliku ktory sobie p
     isActive: boolean
     onActivate: (e: React.MouseEvent)=>void // przekazujemy funkcje 
     onDoubleClick?: (e:React.MouseEvent) => void
+
+    owner?:boolean;
+    dateModified?:boolean;
+    deletedAt?: boolean;
+    fileSize?: boolean;
 }
 
-export const FileItemList = ({file,isActive,onActivate,onDoubleClick} : Props) => {
+export const FileItemList = ({file,isActive,onActivate,onDoubleClick,owner,dateModified,deletedAt,fileSize} : Props) => {
     const  {
         handleSoftDelete,
         handleUpdate,
@@ -154,12 +159,10 @@ export const FileItemList = ({file,isActive,onActivate,onDoubleClick} : Props) =
             }
 
             <div className={`${styles.fileItemListColumn} ${styles.fileItemListName}`}>{icon} {file.name} {file.starred && <Star size={10} fill="black"/>}</div>
-            <div className={`${styles.fileItemListColumn} ${styles.fileItemListOwner}`}>{file.owner}</div>
-            { file.deleted && file.deletedAt !== undefined ? 
-            <div className={`${styles.fileItemListColumn} ${styles.fileItemListDate}`}>{file.deletedAt.toLocaleDateString()}</div> 
-            : 
-            <div className={`${styles.fileItemListColumn} ${styles.fileItemListDate}`}>{file.modifiedDate.toLocaleDateString()}</div> }
-            <div className={`${styles.fileItemListColumn} ${styles.fileItemListSize}`}>{formatFilebytes(file.size ?? 0)}</div>
+            {owner && <div className={`${styles.fileItemListColumn} ${styles.fileItemListOwner}`}>{file.owner}</div>}
+            {deletedAt && file.deleted && file.deletedAt && <div className={`${styles.fileItemListColumn} ${styles.fileItemListDate}`}>{file.deletedAt.toLocaleDateString()}</div>}
+            {dateModified && <div className={`${styles.fileItemListColumn} ${styles.fileItemListDate}`}>{file.modifiedDate.toLocaleDateString()}</div>}
+            {fileSize && <div className={`${styles.fileItemListColumn} ${styles.fileItemListSize}`}>{formatFilebytes(file.size ?? 0)}</div>}
             <div className={styles.fileItemListHoverActions}>
                 <div className={styles.hoverIcon} data-tooltip='Udostępnij'>
                     <Share2 size={14} strokeWidth={2.5}/>

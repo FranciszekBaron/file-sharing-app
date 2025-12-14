@@ -43,7 +43,6 @@ const MyFiles = () => {
     sortAscending,
     sortWithFoldersUp,
     activeLayout,
-    
     breadcrumbPath,
     setSortBy,
     setSortWithFoldersUp,
@@ -65,7 +64,8 @@ const MyFiles = () => {
 
   const {
     setActiveView,
-    setCurrentFolderId
+    setCurrentFolderId,
+    navigateTo
   } = useNavigation()
   
 
@@ -334,13 +334,14 @@ const MyFiles = () => {
                   handleClickItem(item.id,index.toString(), e)}}
                 onDoubleClick={()=>{
                   if(item.type==='folder'){
-                    setCurrentFolderId(item.id);
-                    setActiveView(ViewType.GENERAL_SEARCH);
+                    navigateTo(ViewType.GENERAL_SEARCH,item.id)
                   }else{
                     //open TODO 
                   }
                   }}
-                />
+                owner={true}
+                dateModified={true}
+                fileSize={true}/>
                 <FileItemDivider/>
               </div>
             ))}
@@ -422,10 +423,17 @@ const MyFiles = () => {
                     <FileItemGrid file={item} isActive={selectedItems.has(index.toString())} 
                     onActivate={(e)=>{ 
                       e.preventDefault();
-                      handleClickItem(item.id,index.toString(), e)}}/>
+                      handleClickItem(item.id,index.toString(), e)}}
+                      onDoubleClick={()=>{
+                      if(item.type==='folder'){
+                        navigateTo(ViewType.GENERAL_SEARCH,item.id)
+                      }else{
+                        //open TODO 
+                      }
+                      }}/>
                   </div>
                 ))}
-              </div>
+            </div>
         </div>
       }
 

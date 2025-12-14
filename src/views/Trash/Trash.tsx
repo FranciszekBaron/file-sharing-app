@@ -27,6 +27,7 @@ import MenuHeader from "../../components/Common/MenuHeader/MenuHeader";
 import FileItemGrid from "../../components/FileItem/FileItemGrid/FileItemGrid";
 import { filterItems } from "..//..//types//FilterOptions.ts"
 import DoubleItemButton from "../../components/Common/DoubleItemButton/DoubleItemButton.tsx";
+import { useNavigation, ViewType } from "..//..//services//NavigationContext.tsx";
 
 
 const Trash = () => {
@@ -43,7 +44,7 @@ const Trash = () => {
     setSortBy,
     setActiveLayout,
     setSortWithFoldersUp,
-    setCurrentFolderId,
+    
     handleAdd,
     handleFilter,
     handleClearFilter,
@@ -57,6 +58,12 @@ const Trash = () => {
       clearSelection,
       hasSelection
     } = useFileSelection();
+
+  const {
+    navigateTo,
+    setActiveView,
+    setCurrentFolderId
+  } = useNavigation()
 
 
   const [acitveIndexFileItems,SetActiveIndexFileItems] = useState<string| null>()
@@ -85,6 +92,7 @@ const Trash = () => {
   //Defaultowo zmien na sortowanie po dacie usunięcia 
   useEffect(()=>{
     setSortBy("deletedAt");
+    
   },[])
 
   if (loading) {
@@ -263,8 +271,12 @@ const Trash = () => {
                 <FileItemList file={item} isActive={selectedItems.has(index.toString())} 
                 onActivate={(e)=>{ 
                   e.preventDefault();
-                  handleClickItem(item.id,index.toString(), e)}}/>
-                <FileItemDivider/>
+                  handleClickItem(item.id,index.toString(), e)}}
+                  owner={true}
+                  deletedAt={true}
+                  fileSize={true}/>
+                <FileItemDivider
+                />
               </div>
             ))}
           </div>
@@ -346,7 +358,15 @@ const Trash = () => {
                     <FileItemGrid file={item} isActive={selectedItems.has(index.toString())} 
                     onActivate={(e)=>{ 
                       e.preventDefault();
-                      handleClickItem(item.id,index.toString(), e)}}/>
+                      handleClickItem(item.id,index.toString(), e)}} 
+                    onDoubleClick={()=>{
+                      if(item.type==='folder'){
+                        navigateTo(ViewType.GENERAL_SEARCH,item.id)
+                      }else{
+                        //open TODO 
+                      }
+                      }}
+                    />
                   </div>
                 ))}
               </div>
