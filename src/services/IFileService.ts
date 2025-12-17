@@ -13,5 +13,11 @@ export interface IFileService {
     update(id:string,updates:Partial<FileItem>): Promise<FileItem>;
 
     delete(id: string) : Promise<boolean>;
+
+    getFileContent(id:string) : Promise<string>;
+
+    updateFileContent(id:string,content:string) : Promise<void>;
+
+    addFileContent(id:string,content:string) : Promise<void>;
     
 }

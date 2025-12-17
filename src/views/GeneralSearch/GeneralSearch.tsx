@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "..//MyFiles//MyFiles.module.css"
 import type { FileItem as FileItemType} from "../../types/FileItem";
 import FileItem from "../../components/FileItem/FileItem";
@@ -30,9 +30,14 @@ import { sortByItems,sortOrderItems,sortFoldersItem, sortDateItem } from "../../
 import { filterItems } from "..//..//types//FilterOptions.ts";
 import { useNavigate } from "react-router-dom";
 import { useNavigation, ViewType } from "../../services/NavigationContext.tsx";
+import { FileContentViewer } from "../../components/FileContentViewer/FileContentViewer.tsx";
 
 
 const MyFiles = () => {
+
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const folderInputRef = useRef<HTMLInputElement>(null);
 
   const {
     allFiles,
@@ -50,7 +55,8 @@ const MyFiles = () => {
     handleAdd,
     handleFilter,
     handleClearFilter,
-    handleSort,
+    handleSort, 
+    handleGetContent
   } = useFiles()
 
   const {
@@ -66,12 +72,15 @@ const MyFiles = () => {
     navigateTo
   } = useNavigation()
 
-  
+
 
   const [addFileOpen,SetAddFileOpen] = useState(false);
+  const [contentOpen,setContentOpen] = useState(false);
+  const [fileContent,setFileContent] = useState("");
+  const [selectedFileId,setSelectedFileId] = useState<string|null>(null);
   const [isNameFilterActive,SetNameFilterActive] = useState(true);
   const [isDateFilterActive,SetDateFilterActive] = useState(true);
-
+  
   const [fileName,SetFileName] = useState("");
 
   const addFileIcon = <FolderPlus size={20}/>
@@ -93,8 +102,23 @@ const MyFiles = () => {
     }
   }
 
-  const handleUploadFile = () => {}; // TODO
-  const handleUploadFolder = () => {}; // TODO
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (files) {
+      console.log('Wybrane pliki:', files);
+      for(let i = 0;i<files.length;i++){
+        console.log(files[i].name + " " + files[i].size + " " + files[i].type)
+      }
+      // Tutaj obsłuż upload
+    }
+  };
+
+  const handleUploadFile = () => {
+    fileInputRef.current?.click();
+  }; 
+  const handleUploadFolder = () => {
+    folderInputRef.current?.click();
+  }; 
 
   const filterIcons = {
     folder: <Folder size={20}/>,
@@ -110,6 +134,26 @@ const MyFiles = () => {
   
   return (
     <div className={styles.contentWrapper}>
+
+      <input 
+        type="file" 
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+        multiple
+      />
+
+      <input 
+        type="file" 
+        ref={folderInputRef}
+        style = {{display:'none'}}
+        onChange={handleFileChange}
+        webkitdirectory=""
+        directory=""
+        multiple
+      />
+
+
       {
       <Modal open={addFileOpen} onClose={()=>SetAddFileOpen(false)}>
         <label className={styles.modalLabel}>Nowy Folder</label>
@@ -123,6 +167,10 @@ const MyFiles = () => {
           </button>
         </div>
       </Modal>
+      }
+
+      {
+        <FileContentViewer contentOpen={contentOpen} fileContent={fileContent} selectedFileId={selectedFileId} onActivate={()=>setContentOpen(false)} onClose={()=>{setContentOpen(false)}} onEditing={(e)=>setFileContent(e.target.value)} ></FileContentViewer>
       }
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
@@ -154,7 +202,7 @@ const MyFiles = () => {
               <DropDownButton label={breadcrumbPath[breadcrumbPath.length-1].name} menuVariant="operations" chevron={true}>
                 <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations" onActivate={()=>{handleAddFolderClick()}} />
                 <MenuDivider/>
-                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations" onActivate={()=>SetAddFileOpen(true)}/>
+                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations" onActivate={handleUploadFile}/>
                 <MenuItem icon = {FileUpIcon} label= "Prześlij Folder" gap={14} size={14} variant="operations" onActivate={handleUploadFolder}/> 
                 <MenuDivider/>
                 <MenuItem icon = {alertIcon} label= "..." gap={14} size={14} variant="operations" 
@@ -326,12 +374,16 @@ const MyFiles = () => {
                 onActivate={(e)=>{ 
                   e.preventDefault();
                   handleClickItem(item.id,index.toString(), e)}}
-                onDoubleClick={()=>{
+                onDoubleClick={async ()=>{
                   if(item.type==='folder'){
-
                     setCurrentFolderId(item.id);
                   }else{
-                    //open TODO 
+                    if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
+                      const content = await handleGetContent(item.id);
+                      setContentOpen(true);
+                      setFileContent(content);
+                      setSelectedFileId(item.id);
+                    }
                   }
                   }}
                 owner={true}

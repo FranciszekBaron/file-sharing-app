@@ -28,6 +28,7 @@ import FileItemGrid from "../../components/FileItem/FileItemGrid/FileItemGrid";
 import { filterItems } from "..//..//types//FilterOptions.ts"
 import DoubleItemButton from "../../components/Common/DoubleItemButton/DoubleItemButton.tsx";
 import { useNavigation, ViewType } from "..//..//services//NavigationContext.tsx";
+import { FileContentViewer } from "../../components/FileContentViewer/FileContentViewer.tsx";
 
 
 const Trash = () => {
@@ -49,7 +50,8 @@ const Trash = () => {
     handleFilter,
     handleClearFilter,
     handleRestore,
-    handleSort
+    handleSort,
+    handleGetContent
   } = useFiles()
 
   const {
@@ -72,6 +74,9 @@ const Trash = () => {
   const [isNameFilterActive,SetNameFilterActive] = useState(true);
   const [isDateFilterActive,SetDateFilterActive] = useState(true);
 
+  const [contentOpen,setContentOpen] = useState(false);
+  const [fileContent,setFileContent] = useState("");
+  const [selectedFileId,setSelectedFileId] = useState<string>("");
   const [fileName,SetFileName] = useState("");
 
   const addFileIcon = <FolderPlus size={20}/>
@@ -105,6 +110,9 @@ const Trash = () => {
   });
   return (
     <div className={styles.contentWrapper}>
+      {
+        <FileContentViewer contentOpen={contentOpen} fileContent={fileContent} selectedFileId={selectedFileId} onActivate={()=>setContentOpen(false)} onClose={()=>{setContentOpen(false)}} onEditing={(e)=>setFileContent(e.target.value)} ></FileContentViewer>
+      }
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
           <div className={styles.breadcrumbWrapper}>
@@ -267,18 +275,26 @@ const Trash = () => {
           <FileItemDivider/>
           <div className={styles.fileList}>
             {deletedFiles.map((item,index)=>(
-              <div key={index}>
-                <FileItemList file={item} isActive={selectedItems.has(index.toString())} 
-                onActivate={(e)=>{ 
-                  e.preventDefault();
-                  handleClickItem(item.id,index.toString(), e)}}
-                  owner={true}
-                  deletedAt={true}
-                  fileSize={true}/>
-                <FileItemDivider
-                />
-              </div>
-            ))}
+                <div key={index}>
+                  <FileItemList file={item} isActive={selectedItems.has(index.toString())} 
+                  onActivate={(e)=>{ 
+                    e.preventDefault();
+                    handleClickItem(item.id,index.toString(), e)}}
+                    onDoubleClick={async ()=>{
+                    if(item.type==='folder'){
+                      navigateTo(ViewType.GENERAL_SEARCH,item.id)
+                    }else{
+                      if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
+                        const content = await handleGetContent(item.id);
+                        setContentOpen(true);
+                        setFileContent(content);
+                        setSelectedFileId(item.id)
+                      }
+                    }
+                    }}
+                    />
+                </div>
+              ))}
           </div>
         </div>
       </div>

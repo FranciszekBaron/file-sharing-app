@@ -2,6 +2,17 @@ import type { FileItem } from "../types/FileItem";
 import type { IFileService } from "./IFileService";
 
 export class FileService implements IFileService {
+    
+    
+    // FILE CONTENT TODO!!!!!
+    addFileContent(id: string, content: string): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+    updateFileContent(id: string, content: string): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+
+
 
     private baseUrl = '/api/files'; 
 
@@ -64,5 +75,9 @@ export class FileService implements IFileService {
         return this.fetchWrapper<FileItem[]>(
             `${this.baseUrl}/search?q=${encodeURIComponent(query)}`
         );
+    }
+
+    async getFileContent(id: string): Promise<string> {
+        throw new Error("Method not implemented.");
     }
 }

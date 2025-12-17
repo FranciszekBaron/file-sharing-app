@@ -1,0 +1,124 @@
+.contentWrapper{
+    display: flex;
+    background-color:aliceblue ;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;  /* DOKŁADNIE wysokość ekranu, nie min-height */
+    width: 100%;
+    min-width: 1000px;  /* DODAJ - minimalna szerokość całej strony */
+    overflow-x: auto;   /* scroll poziomy */
+    overflow-y: hidden; 
+    background-color: var(--background);
+}
+
+.loginPanelWrapper{
+    display: flex;
+    flex-direction: column;
+    height: 460px;
+    width: 560px;
+    background-color: rgb(255, 255, 255);
+    border-radius: 40px;
+    padding: 30px;
+    gap: 40px;
+}
+
+.titleWrapper{
+    display: flex;
+    flex-direction: column;
+    gap:18px
+}
+
+.title {
+    font-size: 36px;
+    font-weight: 400;
+}
+
+.adnotation {
+    font-size:16px;
+    font-weight: 400;
+    color:rgb(37, 37, 37)
+}
+
+.inputWrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1px;
+}
+
+.inputsAreaWrapper{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap:16px;
+}
+
+
+.inputArea {
+    border-radius: 6px;
+    border: 1px solid rgba(17, 17, 17, 0.865);
+    font-size: 16px;
+    height: 60px;
+    color: #000000;
+    padding: 12px;
+}
+
+
+.inputArea::placeholder{
+    font-weight: 300;
+    color: #000000;
+}
+
+.inputArea:focus {
+    outline: none;  /* ← usuń domyślne niebieskie obramowanie przeglądarki */
+    border: 2px solid #215bec;  /* ← twój kolor i grubość */ /* ← opcjonalnie: świecący efekt */
+}
+
+.inputError {
+    border: 2px solid rgb(200, 0, 0) !important;  /* czerwony border */
+}
+
+.inputError:focus {
+    border: 2px solid rgb(200, 0, 0) !important;  /* czerwony nawet przy focus */
+}
+
+.errorMessage{
+    font-size:12px; 
+    padding: 6px;
+    color:rgb(200, 0, 0)
+}
+
+.passReminderButton{
+    font-size:14px; 
+    color:#215bec ;
+    cursor:pointer;
+    display: inline-block;
+    padding: 6px;
+    border-radius: 12px;
+}
+
+
+.passReminderButton:hover{
+    background-color:#f1f5ff ;
+}
+
+.buttonsWrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    
+}
+
+.button {
+  font-size: 14px;
+  width: 90px;
+  height: 50px;
+  border-radius:24px ;
+  background-color: #215bec;
+  border: none;
+  color:#ffff;
+}
+
+.btton:hover {
+  background-color: var(--background);
+}

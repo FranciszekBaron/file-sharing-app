@@ -31,6 +31,7 @@ import { filterItems } from "..//..//types//FilterOptions.ts";
 import DoubleItemButton from "../../components/Common/DoubleItemButton/DoubleItemButton.tsx";
 import { useNavigation } from "../../services/NavigationContext.tsx";
 import { ViewType } from '..//..//services//NavigationContext.tsx';
+import { FileContentViewer } from "../../components/FileContentViewer/FileContentViewer.tsx";
 
 
 
@@ -52,7 +53,8 @@ const Starred = () => {
     handleAdd,
     handleFilter,
     handleClearFilter,
-    handleSort
+    handleSort,
+    handleGetContent
   } = useFiles()
 
   const {
@@ -72,6 +74,10 @@ const Starred = () => {
   const [addFileOpen,SetAddFileOpen] = useState(false);
   const [isNameFilterActive, SetNameFilterActive] = useState(true);
   const [isDateFilterActive, SetDateFilterActive] = useState(true);
+  const [contentOpen,setContentOpen] = useState(false);
+  const [fileContent,setFileContent] = useState("");
+
+  const [selectedFileId,setSelectedFileId] = useState("");
 
   useEffect(()=>{
       handleClearFilter();
@@ -102,6 +108,9 @@ const Starred = () => {
 
   return (
     <div className={styles.contentWrapper}>
+      {
+        <FileContentViewer contentOpen={contentOpen} fileContent={fileContent} selectedFileId={selectedFileId} onActivate={()=>setContentOpen(false)} onClose={()=>{setContentOpen(false)}} onEditing={(e)=>setFileContent(e.target.value)} ></FileContentViewer>
+      }
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
           <div className={styles.breadcrumbWrapper}>
@@ -293,13 +302,18 @@ const Starred = () => {
                 onActivate={(e)=>{ 
                   e.preventDefault();
                   handleClickItem(item.id,index.toString(), e)}}
-                onDoubleClick={()=>{
+                onDoubleClick={async ()=>{
                   if(item.type==='folder'){
                     navigateTo(ViewType.GENERAL_SEARCH,item.id)
                   }else{
-                    //open TODO 
+                    if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
+                        const content = await handleGetContent(item.id);
+                        setContentOpen(true);
+                        setFileContent(content);
+                        setSelectedFileId(item.id);
+                    }
                   }
-                  }}
+                }}
                 owner={true}
                 dateModified={true}
                 fileSize={true}/>
@@ -386,11 +400,16 @@ const Starred = () => {
                     onActivate={(e)=>{ 
                       e.preventDefault();
                       handleClickItem(item.id,index.toString(), e)}}
-                      onDoubleClick={()=>{
+                      onDoubleClick={async ()=>{
                       if(item.type==='folder'){
                         navigateTo(ViewType.GENERAL_SEARCH,item.id)
                       }else{
-                        //open TODO 
+                        if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
+                          const content = await handleGetContent(item.id);
+                          setContentOpen(true);
+                          setFileContent(content);
+                          setCurrentFolderId(item.id);
+                        }
                       }
                       }}
                       />

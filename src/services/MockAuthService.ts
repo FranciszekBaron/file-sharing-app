@@ -4,6 +4,7 @@ import { MOCK_USERS } from "..//data//mockUsers"
 
 
 
+
 export class MockAuthService implements IAuthService {
 
     private users: User[] = [...MOCK_USERS];
@@ -15,19 +16,35 @@ export class MockAuthService implements IAuthService {
     }
 
     async login(email: string, password: string): Promise<User> {
-        await this.delay;
-        const user = this.users.find(u=>u.email===email);
+        await this.delay();
+        const user = this.users.find(u=>u.email===email && u.password === password);
         if(!user){
-            throw new Error("User not found");
+            throw new Error("Nieprawidłowy email lub hasło");
         }
 
-        this.currentUser = user;
-        localStorage.setItem('currentUser', JSON.stringify(user));
-        return user;
+
+        const {password: _, ...userWithoutPassword} = user;
+
+        this.currentUser = userWithoutPassword;
+
+
+        localStorage.setItem('currentUser', JSON.stringify(userWithoutPassword));
+        localStorage.setItem('isAuthenticated','true');
+        return userWithoutPassword;
     }
 
 
     async getCurrentUser(): Promise<User | null> {
+
+        // console.log("getCurrentUser called,returning:", this.users[0]);
+        // return this.users[0];
+
+        const isAuthenticated = localStorage.getItem('isAuthenticated');
+
+        if(!isAuthenticated){
+            return null;
+        }
+
         if(this.currentUser){
             return this.currentUser;
         }
@@ -37,13 +54,12 @@ export class MockAuthService implements IAuthService {
             this.currentUser = JSON.parse(stored);
             return this.currentUser
         }
-        this.currentUser = this.users[0];
-        localStorage.setItem('currentUser',JSON.stringify(this.currentUser));
-        return this.currentUser;
+        return null;
     }
 
     async logout(): Promise<void> {
         this.currentUser = null;
+        localStorage.removeItem('isAuthenticated');
         localStorage.removeItem('currentUser');
     }
     

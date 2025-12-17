@@ -2,11 +2,14 @@
 import { mockFiles } from "../data/mockFiles";
 import type { FileItem } from "../types/FileItem";
 import type { IFileService } from "./IFileService";
+import { MOCK_FILES_CONTENTS } from "../data/mockFiles";
 
 
 export class MockFilesService implements IFileService {
+    
 
     private files: FileItem[] = [...mockFiles]; //kopia nowej tablocy
+    private filesContents = new Map([...MOCK_FILES_CONTENTS]);
     private nextId: number = mockFiles.length+1;
 
     private delay(ms:number = 300): Promise<void> {
@@ -75,5 +78,26 @@ export class MockFilesService implements IFileService {
         this.files.splice(deleteFileIndex,1);
         return true;
     }
+    
+    //symulacja działania z baza, w bazie dzwonimy do uplouds na serwerze
+    async getFileContent(id: string): Promise<string> {
+        await this.delay();
+
+        const context = this.filesContents.get(id);
+        if(!context) throw new Error('File not found');
+        return context;
+    }
+    
+
+    async updateFileContent(id: string, newContent: string): Promise<void> {
+       await this.delay();
+       this.filesContents.set(id,newContent)
+    }
+
+    async addFileContent(id: string, content: string): Promise<void> {
+        await this.delay();
+        this.filesContents.set(id,content);
+    }
+
     
 }

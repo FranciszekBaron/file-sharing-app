@@ -26,6 +26,7 @@ const MenuItem = ({children,icon,label,size=16,gap=8,variant,style,onActivate,cl
         `}
         style={{gap,fontSize:size,...style}} 
         onClick={onActivate}>
+            
             {/* ZAWSZE ten sam wrapper */}
             <div className={styles.checkmarkIcon}>
                 {clicked ? (

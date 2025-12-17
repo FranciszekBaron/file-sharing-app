@@ -1,0 +1,120 @@
+/*--------MODAL TEXT CONTENT---------*/
+.modalFileContentOverlay {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modalFileContentHeader{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  color: white;
+  height: 6%;
+  align-items: center;
+  padding-left: 18px;
+  padding-right: 18px;
+  gap: 12px;
+}
+
+.modalFileContentBottom{
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  color: white;
+  height: 6%;
+  align-items: center;
+  justify-content: center;
+  padding-left: 18px;
+  padding-right: 18px;
+  gap: 12px;
+}
+
+.title{
+  display: flex;
+  flex-direction: row;
+  gap: 6px;
+  align-items: center;
+}
+
+.label{
+  font-size: 12px;
+  color: #a3a3a3;
+  cursor: pointer;
+}
+
+.button{
+  padding: 7px;
+  border-radius: 24px;
+  border:none;
+  background-color: black;
+  color: #e1e1e1;
+  cursor: pointer;
+
+}
+
+.modalFileContent {
+  display: flex;
+  flex-direction: column;
+  background-color: white;
+  padding: 20px;
+  border-radius: 1px;
+  width: 75%;
+  height: 90vh; /* ← Zmiana z max-height na height */
+  overflow: hidden; /* ← Zmiana z overflow-y: auto */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.fileViewer {
+  display: flex;
+  flex-direction: column;
+  flex: 1; /* ← DODAJ TO - rozciąga się na całą dostępną przestrzeń */
+  overflow: hidden; /* ← DODAJ TO */
+}
+
+.editor {
+  width: 100%;
+  flex: 1; /* ← DODAJ TO zamiast min-height - wypełnia całą dostępną przestrzeń */
+  padding: 2px;
+  border: none;
+  outline: none;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 10px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  resize: none; /* ← Zmiana z vertical na none, bo i tak wypełnia całość */
+  overflow-y: auto; /* ← DODAJ TO - scrollowanie wewnątrz textarea */
+}
+
+.pdfViewer {
+  width: 100%;
+  flex: 1; 
+  padding: 2px;
+  border: none;
+  outline: none;
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  font-size: 10px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  resize: none; 
+  overflow-y: auto; 
+}
+
+.editor:focus {
+  outline: none;
+}
+
+.editor::placeholder {
+  color: #999;
+  font-style: italic;
+}

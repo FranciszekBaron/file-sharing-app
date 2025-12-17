@@ -9,6 +9,7 @@ import { HelpCircleIcon } from "../../icons/HelpCircleIcon";
 import { Settings,Sliders, HelpCircle} from "lucide-react";
 import { AppsIcon } from "../../icons/AppsIcon";
 import { useNavigation } from "../../services/NavigationContext";
+import { useAuth } from "../../services/AuthContext";
 
 
 const Topbar = () => {
@@ -20,6 +21,11 @@ const Topbar = () => {
   const {
     activeView
   } = useNavigation()
+
+  const {
+    currentUser,
+    logout
+  } = useAuth()
 
   return (
     <div className={styles.wrapper}>
@@ -42,7 +48,7 @@ const Topbar = () => {
             <Button className={buttonStyles.iconOnly} icon={slidersIcon} />
           </div>
           <div className={styles.buttonProfile}>
-            <Profile />
+            <Profile image={currentUser?.avatar}/>
           </div>
         </div>
         

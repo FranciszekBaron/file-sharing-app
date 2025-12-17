@@ -6,6 +6,7 @@ import { authService } from ".";
 interface AuthContextType {
     //state'y
     currentUser: User | null;
+    isLoading: boolean;
 
     //funkcje do zmiany state'ow
     login: (email:string,password:string) => Promise<void>;
@@ -18,10 +19,12 @@ export const AuthProvider = ({children} : {children:React.ReactNode}) => {
     const [currentUser,setCurrentUser] = useState<User|null>(null);
     const [isLoading,setIsLoading] = useState(true);
 
-
+    
     useEffect(()=>{
-        const loadUSer = async () => {
+        const loadUser = async () => {
             try{
+
+                //ustawiamy domyslnego bo getCurrentUser() daje nam users[0]
                 const user = await authService.getCurrentUser();
                 setCurrentUser(user);
             }catch (err){
@@ -30,7 +33,11 @@ export const AuthProvider = ({children} : {children:React.ReactNode}) => {
                 setIsLoading(false);
             }
         }
+
+        loadUser()
     },[])
+
+    console.log("AuthProvider mounted");
 
     const login = async (email:string,password:string) => {
         const user = await authService.login(email,password);
@@ -44,7 +51,7 @@ export const AuthProvider = ({children} : {children:React.ReactNode}) => {
 
     return (
         <AuthContext.Provider value={{
-            currentUser,login,logout
+            currentUser,isLoading,login,logout
         }}>
         {children}
         </AuthContext.Provider>

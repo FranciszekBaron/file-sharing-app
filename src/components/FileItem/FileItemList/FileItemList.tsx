@@ -79,8 +79,6 @@ export const FileItemList = ({file,isActive,onActivate,onDoubleClick,owner,dateM
     } //TODO!!!!
     
     const handleRename = async (id:string,newName:string) => {
-
-
         try {
             await handleUpdate(id,{name:newName})
             SetAddFileOpen(false);

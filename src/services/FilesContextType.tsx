@@ -23,12 +23,13 @@ interface FilesContextType{
     sortWithFoldersUp: boolean;
     breadcrumbPath: FileItem[];
 
+
     //Tutaj akcje czyli funkcje które będa zmieniać te state'y
     setSortBy: (sortBy:'name' | 'date' | 'deletedAt') => void;
     setSortAscending: (ascending:boolean) => void;
     setSortWithFoldersUp: (sorted:boolean) => void;
     setActiveLayout: (layout: 'list'|'grid') => void;
-    handleAdd: (name:string,type:FileItem['type']) =>Promise<void>;
+    handleAdd: (name:string,type:FileItem['type']) =>Promise<FileItem>;
     handleSoftDelete: (id:string) => Promise<void>;
     handlePermanentDelete: (id:string) => Promise<void>;
     handleRestore: (id:string) => Promise<void>;
@@ -36,6 +37,9 @@ interface FilesContextType{
     handleFilter: (filter: Exclude<FilterType,'none'>) => void;
     handleClearFilter: () => void;
     handleSort: (type:'name'|'date'|'deletedAt',ascending:boolean,foldersUp:boolean) => void;
+    handleGetContent: (id:string) => Promise<string>;
+    handleUpdateContent: (id:string,content:string) => Promise<void>;
+    handleAddContent: (id:string,content:string) => Promise<void>;
     refreshFiles: () => Promise<void>;
 }
 
@@ -169,8 +173,8 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             });
 
             //w tym miejscu juz utworzysz nowy plik w bazie lub w mocku, ale trzeba jeszcze zrobic tak zeby sie poprawnie wyswietlalo
-            
             setAllFiles(prev=> [...prev,newFile]);
+            return newFile;
         }catch(err){
             console.error('Error adding file: ',err);
             throw err;
@@ -226,6 +230,47 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
 
         }catch(err){
             console.error('Error permanently deleting file: ', err);
+            throw err;
+        }
+    }
+
+
+    const handleGetContent = async  (id:string) => {
+        try{
+            const content = await filesService.getFileContent(id);
+            console.log(content);
+            return content;
+        }catch(err){
+            console.error('Error getting file contnet:', err);
+            throw err;
+        }
+    }
+    
+
+    const handleUpdateContent = async (id:string,newContent: string) => {
+        try{
+            await filesService.updateFileContent(id,newContent);
+
+            setAllFiles(prev=>{
+                const updatedFiles = prev.map(f=>f.id === id 
+                    ? {...f,dateModified: new Date()}
+                    : f
+                )
+                return updatedFiles
+            })
+        }catch(err){
+            console.error('Error updating file content:',err);
+            throw err;
+        }
+
+    }
+
+
+    const handleAddContent = async (id:string,content:string) => {
+        try{
+            await filesService.addFileContent(id,content);
+        }catch(err){
+            console.error('Error uploading file content: ', err);
             throw err;
         }
     }
@@ -288,6 +333,9 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             handleFilter,
             handleClearFilter,
             handleSort,
+            handleGetContent,
+            handleUpdateContent,
+            handleAddContent,
             refreshFiles
         }}>
         {children}

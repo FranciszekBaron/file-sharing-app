@@ -12,6 +12,7 @@ import useGlobalShortcut from "../../hooks/useGlobalShortcut";
 import type { FileItem } from "../../types/FileItem";
 import { useNavigation } from "..//..//services//NavigationContext";
 import GeneralSearch from "../../views/GeneralSearch/GeneralSearch";
+import { useAuth } from "../../services/AuthContext";
 
 interface Props {
   items?: FileItem[]
@@ -24,6 +25,11 @@ const Dashboard = ({items}:Props) => {
       activeView,
       setActiveView
     } = useNavigation()
+
+
+    const {
+      currentUser 
+    } = useAuth()
 
   
     const viewMap = [
@@ -43,7 +49,7 @@ const Dashboard = ({items}:Props) => {
 
   console.log("DASHBOARD: " + activeView);
 
-  
+  console.log("currentUser: " + currentUser);
 
   const handleNewFileKey = (e:KeyboardEvent) =>{
     if (e.ctrlKey && e.key === "c"){

@@ -59,7 +59,7 @@ export const mockFiles: FileItem[] = [
   {
     id: '6',
     name: 'plikusuniety.txt',
-    type: 'doc',
+    type: 'txt',
     size: 3068576,
     modifiedDate: new Date('2024-11-15'),
     owner: 'Ty',
@@ -71,7 +71,7 @@ export const mockFiles: FileItem[] = [
   {
     id: '7',
     name: 'plikWFolderze.txt',
-    type: 'doc',
+    type: 'txt',
     size: 3868576,
     modifiedDate: new Date('2024-03-14'),
     owner: 'Ty',
@@ -81,7 +81,7 @@ export const mockFiles: FileItem[] = [
   {
     id: '8',
     name: 'plik2WFolderze.txt',
-    type: 'doc',
+    type: 'txt',
     size: 3868576,
     modifiedDate: new Date('2024-03-14'),
     owner: 'Ty',
@@ -92,7 +92,7 @@ export const mockFiles: FileItem[] = [
   {
     id: '9',
     name: 'plik2WFolderze2.txt',
-    type: 'doc',
+    type: 'txt',
     size: 3868576,
     modifiedDate: new Date('2024-03-14'),
     owner: 'Ty',
@@ -121,3 +121,13 @@ export const mockFiles: FileItem[] = [
   }
 
 ]
+
+
+export const MOCK_FILES_CONTENTS = new Map<string,string>([
+  ["5","Cześć Hello World i w ogóle \n ide sobie dalej nie przjemuje sie tym"],
+  ["3","data:application/pdf;base64"],
+  ["6","jestem usuniety"],
+  ["9","jestem sobei w folderku"],
+  ["7","jestem sobei w folderku21e12"],
+  ["8","jestem sobei w folderkuasdfaf[ok"],
+]);

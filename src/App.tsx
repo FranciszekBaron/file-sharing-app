@@ -10,15 +10,19 @@ import { ClickToComponent } from 'click-to-react-component'
 import { NavigationProvider } from './services/NavigationContext'
 import { Routes,Route } from 'react-router-dom'
 import { AuthProvider } from './services/AuthContext'
+import Login from './pages/Login/Login'
+import AuthGuard from './components/AuthGuard/AuthGuard'
 
 function App() {
   return (
     <AuthProvider>
-      <NavigationProvider>
+      <AuthGuard>
+        <NavigationProvider>
           <FilesProvider>
             <Dashboard/>
           </FilesProvider>
       </NavigationProvider>
+      </AuthGuard>
     </AuthProvider>
   ) 
 }

@@ -1,38 +1,57 @@
 import { useState, useRef, useEffect, type ReactNode } from "react"
 import styles from "..//Modal//Modal.module.css"
+import { Currency } from "lucide-react"
 
 interface Props{
     children?: React.ReactNode,
+    header?: React.ReactNode,
+    bottom?: React.ReactNode
     open: boolean
-    onClose: () => void
+    onClose: () => void,
+    className?: string,
+    overlay?: string,
+    clickableRef?: React.RefObject<HTMLDivElement | null> 
+    bottomRef?:React.RefObject<HTMLDivElement | null>
 }
 
-const Modal = ({children,open,onClose} : Props) => {
+const Modal = ({children,header,bottom,open,onClose,className,overlay,clickableRef,bottomRef} : Props) => {
 
     const ref = useRef<HTMLDivElement>(null);
 
+
+    
     useEffect(()=>{
         const handlelickOutside = (e: MouseEvent) => {
-            console.log(e.target)
-            if(ref.current && !ref.current.contains(e.target as Node)){
+            
+            const clickedInsindeMain = ref.current && ref.current?.contains(e.target as Node);
+            
+            const clickedInsideSecond = clickableRef?.current?.contains(e.target as Node);
+
+            const clickedInsideBottm = bottomRef?.current?.contains(e.target as Node);
+
+            if(!clickedInsindeMain && !clickedInsideSecond && !clickedInsideBottm){
                 onClose()
             }
         }
 
-    document.addEventListener('mousedown',handlelickOutside);
+    
+        document.addEventListener('mousedown', handlelickOutside);
+    
 
     return () => {
         document.removeEventListener('mousedown',handlelickOutside);
-            }
-    },[open,onClose]);//tylko przy mount
+        }
+    },[open,onClose,clickableRef,bottomRef]);//tylko przy mount
 
     if (!open) return null;
 
     return (
-        <div className={styles.modalOverlay}>
-            <div className={styles.modalContent} ref={ref}>
+        <div className={overlay ? overlay : styles.modalOverlay}>
+            {header}
+            <div className={className ? className : styles.modalContent} ref={ref}>
                 {children}
             </div>
+            {bottom}
         </div>
     )
 }

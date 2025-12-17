@@ -1,5 +1,4 @@
 
-
 export interface FileItem {
     id: string;
     name: string;
@@ -12,6 +11,5 @@ export interface FileItem {
     deleted?:boolean;
     deletedAt?: Date;
     parentId?: string | null;
-    content?: string;
     contentUrl?: string;
 }

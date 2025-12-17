@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styles from "..//MyFiles//MyFiles.module.css"
-import type { FileItem as FileItemType} from "../../types/FileItem";
+import type { FileItem as FileItemtype} from "../../types/FileItem";
 import FileItem from "../../components/FileItem/FileItem";
 import DropDownButton from "../../components/DropDownButton/DropDownButton";
 import MenuItem from "../../components/Common/MenuItem/MenuItem";
@@ -30,9 +30,23 @@ import { sortByItems,sortOrderItems,sortFoldersItem, sortDateItem } from "../../
 import { filterItems } from "..//..//types//FilterOptions.ts";
 
 import { useNavigation, ViewType } from "../../services/NavigationContext.tsx";
+import { FileContentViewer } from "../../components/FileContentViewer/FileContentViewer.tsx";
+import { readFileAsDataURL, readFileAsText } from "../../hooks/useFileReader.ts";
 
+
+
+declare module 'react' {
+  interface InputHTMLAttributes<T> extends HTMLAttributes<T> {
+    webkitdirectory?: string;
+    directory?: string;
+  }
+}
 
 const MyFiles = () => {
+
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const folderInputRef = useRef<HTMLInputElement>(null);
 
   const {
     allFiles,
@@ -51,6 +65,11 @@ const MyFiles = () => {
     handleFilter,
     handleClearFilter,
     handleSort,
+    handleGetContent,
+    handleAddContent,
+    handlePermanentDelete
+    
+    
   
   } = useFiles()
 
@@ -58,7 +77,7 @@ const MyFiles = () => {
     selectedItems,
     handleClickItem,
     clearSelection,
-    hasSelection
+    hasSelection,
   } = useFileSelection();
 
 
@@ -75,6 +94,9 @@ const MyFiles = () => {
   },[])
 
   const [addFileOpen,SetAddFileOpen] = useState(false);
+  const [contentOpen,setContentOpen] = useState(false);
+  const [fileContent,setFileContent] = useState("");
+  const [selectedFileId,setSelectedFileId] = useState<string|null>(null);
   const [isNameFilterActive,SetNameFilterActive] = useState(true);
   const [isDateFilterActive,SetDateFilterActive] = useState(true);
 
@@ -85,6 +107,7 @@ const MyFiles = () => {
   const FileUpIcon = <FileUp size={20}/>
   const alertIcon = <AlertCircle size={20}/>
 
+  
   const handleAddFolderClick = () => {
       SetAddFileOpen(true);
   }
@@ -99,8 +122,76 @@ const MyFiles = () => {
     }
   }
 
-  const handleUploadFile = () => {}; // TODO
-  const handleUploadFolder = () => {}; // TODO
+  
+  
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    
+    if (files) {
+      console.log('Wybrane pliki:', files);
+      for(let i = 0;i<files.length;i++){
+          const file = files[i];
+
+          switch (file.type){
+            
+            case 'text/plain': {
+              let newFile;
+              try {
+                const content = await readFileAsText(file);
+                newFile = await handleAdd(file.name,'txt');
+                await handleAddContent(newFile.id,content);
+              }catch(err){
+                if(newFile?.id){
+                  await handlePermanentDelete(newFile.id); //jeśli content nie pojdzie to usuwamy plik, tak jak ROLLBACK
+                }
+                console.error('Upload failed:', err);
+              }
+              break;
+            }
+            case 'application/pdf': {
+              let newFile;
+              try{
+                const content = await readFileAsDataURL(file);
+                newFile = await handleAdd(file.name,'pdf');
+                await handleAddContent(newFile.id,content);
+              }catch(err){
+                if(newFile?.id){
+                  await handlePermanentDelete(newFile.id); //jeśli content nie pojdzie to usuwamy plik, tak jak ROLLBACK
+                }
+                console.error('Upload failed:', err);
+              }
+              break;
+            }
+            case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
+              let newFile;
+              try{
+                const content = await readFileAsText(file);
+                newFile = await handleAdd(file.name,'doc');
+                await handleAddContent(newFile.id,content);
+              }catch(err){
+                if(newFile?.id){
+                  await handlePermanentDelete(newFile.id); //jeśli content nie pojdzie to usuwamy plik, tak jak ROLLBACK
+                }
+                console.error('Upload failed:', err);
+              }
+              break;
+            }
+            default:
+              alert(`Unsupported format: ${file.name}`);
+              continue; //Pomijamy plik nieobsługiwany
+          }
+      }
+    }
+  };
+
+
+  const handleUploadFile = () => {
+    fileInputRef.current?.click();
+  }; 
+  const handleUploadFolder = () => {
+    folderInputRef.current?.click();
+  }; 
 
   const filterIcons = {
     folder: <Folder size={20}/>,
@@ -116,6 +207,24 @@ const MyFiles = () => {
   
   return (
     <div className={styles.contentWrapper}>
+
+      <input 
+        type="file" 
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+        multiple
+      />
+
+      <input 
+        type="file" 
+        ref={folderInputRef}
+        style = {{display:'none'}}
+        onChange={handleFileChange}
+        webkitdirectory=""
+        directory=""
+        multiple
+      />
       {
       <Modal open={addFileOpen} onClose={()=>SetAddFileOpen(false)}>
         <label className={styles.modalLabel}>Nowy Folder</label>
@@ -130,6 +239,10 @@ const MyFiles = () => {
         </div>
       </Modal>
       }
+
+      {
+        <FileContentViewer contentOpen={contentOpen} fileContent={fileContent} selectedFileId={selectedFileId} onActivate={()=>setContentOpen(false)} onClose={()=>{setContentOpen(false)}} onEditing={(e)=>setFileContent(e.target.value)} ></FileContentViewer>
+      }
       <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
             {/* CZĘŚĆ Z BREADCRUMB PATHEM */}
@@ -139,7 +252,7 @@ const MyFiles = () => {
               <DropDownButton label="Mój Dysk" menuVariant="operations" chevron={true}>
                 <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations" onActivate={()=>{handleAddFolderClick()}} />
                 <MenuDivider/>
-                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations" onActivate={()=>SetAddFileOpen(true)}/>
+                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations" onActivate={()=>handleUploadFile()}/>
                 <MenuItem icon = {FileUpIcon} label= "Prześlij Folder" gap={14} size={14} variant="operations" onActivate={handleUploadFolder}/> 
                 <MenuDivider/>
                 <MenuItem icon = {alertIcon} label= "..." gap={14} size={14} variant="operations" 
@@ -332,11 +445,16 @@ const MyFiles = () => {
                 onActivate={(e)=>{ 
                   e.preventDefault();
                   handleClickItem(item.id,index.toString(), e)}}
-                onDoubleClick={()=>{
+                onDoubleClick={async ()=>{
                   if(item.type==='folder'){
                     navigateTo(ViewType.GENERAL_SEARCH,item.id)
                   }else{
-                    //open TODO 
+                    if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
+                      const content = await handleGetContent(item.id);
+                      setContentOpen(true);
+                      setFileContent(content);
+                      setSelectedFileId(item.id);
+                    }
                   }
                   }}
                 owner={true}
