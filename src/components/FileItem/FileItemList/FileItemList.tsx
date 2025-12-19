@@ -24,6 +24,8 @@ import MenuDivider from "../../Common/MenuDivider/MenuDivider";
 import { useFiles } from "../../../services/FilesContextType";
 import Modal from "../../Modal/Modal";
 import FileItem from "../FileItem";
+import { useFileDownloader } from "../../../hooks/useFileDownloader";
+import { useFileSelection } from "../../../hooks/useFileSelection";
 
 
 
@@ -49,6 +51,14 @@ export const FileItemList = ({file,isActive,onActivate,onDoubleClick,owner,dateM
         handlePermanentDelete
     } = useFiles()
 
+    const {
+        selectedItems
+    } = useFileSelection()
+
+    const {
+        downloadFile
+    } = useFileDownloader(selectedItems)
+
     const optionsIcon = <ThreeDotsIcon size={20}/>
     const [addFileOpen,SetAddFileOpen] = useState(false);
     const [fileName,SetFileName] = useState("");
@@ -67,10 +77,6 @@ export const FileItemList = ({file,isActive,onActivate,onDoubleClick,owner,dateM
         }
     }
     const icon = handleIcon(file);
-
-
-    const handleDownloadItem = () => {} //TODO!!!!
-
 
 
     const handleRenameClick = () => {
@@ -120,7 +126,7 @@ export const FileItemList = ({file,isActive,onActivate,onDoubleClick,owner,dateM
 
 
     const optionsItems = [
-        {icon: <Download/>, label: "Pobierz", action: handleDownloadItem},
+        {icon: <Download/>, label: "Pobierz",action:downloadFile},
         {icon: <Edit/>, label: "Zmień nazwę", action: handleRenameClick},
         null,
         {icon: <Share2/>, label: "Udostępnij", action: handleShare},

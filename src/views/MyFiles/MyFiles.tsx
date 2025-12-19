@@ -34,6 +34,7 @@ import { FileContentViewer } from "../../components/FileContentViewer/FileConten
 import { readFileAsDataURL, readFileAsText } from "../../hooks/useFileReader.ts";
 import useFileUploader from "..//..//hooks//useFileUploader.ts"
 import useFolderUploader from "../../hooks/useFolderUploader.ts";
+import { useFileDownloader } from "../../hooks/useFileDownloader.ts";
 
 
 
@@ -98,6 +99,10 @@ const MyFiles = () => {
     handleFolderChange
   } = useFolderUploader();
 
+  const {
+    downloadSelected
+  } = useFileDownloader(selectedItems);
+
   useEffect(()=>{
     handleClearFilter();
     setCurrentFolderId(null);
@@ -126,8 +131,8 @@ const MyFiles = () => {
     }
   }
 
+  console.log(localStorage.getItem('currentUser.id'))
 
-  
   const handleUploadFile = () => {
     fileInputRef.current?.click();
   }; 
@@ -245,7 +250,7 @@ const MyFiles = () => {
                 <div className={styles.hoverIcon} data-tooltip='Udostępnij'>
                     <Share2 size={14} strokeWidth={2}/>
                 </div>
-                <div className={styles.hoverIcon} data-tooltip='Pobierz'>
+                <div className={styles.hoverIcon} data-tooltip='Pobierz' onClick={downloadSelected}>
                     <Download size={14}strokeWidth={2}/>
                 </div>
                 <div className={styles.hoverIcon} data-tooltip='Zmień nazwę' onClick={()=>{}}>

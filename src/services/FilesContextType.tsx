@@ -29,6 +29,7 @@ interface FilesContextType{
     setSortAscending: (ascending:boolean) => void;
     setSortWithFoldersUp: (sorted:boolean) => void;
     setActiveLayout: (layout: 'list'|'grid') => void;
+    getFileById:(id:string) => Promise<FileItem>;
     handleAdd: (name:string,type:FileItem['type'],parentId:string | null) =>Promise<FileItem>;
     handleSoftDelete: (id:string) => Promise<void>;
     handlePermanentDelete: (id:string) => Promise<void>;
@@ -154,6 +155,19 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             console.error('Error loading files',err)
         }finally{
             setLoading(false);
+        }
+    }
+
+    const getFileById = async (id:string) => {
+        try{
+            const fileItem = await filesService.getById(id);
+            if (!fileItem) {
+                throw new Error(`File with id ${id} not found`);
+            }
+            return fileItem;
+        }catch(err){
+            console.error(`Error loading file:${id}: `, err)
+            throw err;
         }
     }
     
@@ -321,6 +335,7 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             setSortAscending,
             setSortWithFoldersUp,
             setActiveLayout,
+            getFileById,
             handleAdd,
             handleSoftDelete,
             handleRestore,

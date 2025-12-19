@@ -84,7 +84,7 @@ export class MockFilesService implements IFileService {
         await this.delay();
 
         const context = this.filesContents.get(id);
-        if(!context) throw new Error('File not found');
+        if(!context) throw new Error('File content not found');
         return context;
     }
     

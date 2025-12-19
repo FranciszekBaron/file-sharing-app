@@ -22,7 +22,7 @@ export const mockFiles: FileItem[] = [
     type: 'folder',
     modifiedDate: new Date('2025-11-20'),
     owner: 'Ty',
-    starred: true,
+    starred: false,
     parentId:null
   },
   {
@@ -32,7 +32,7 @@ export const mockFiles: FileItem[] = [
     size: 1908576,
     modifiedDate: new Date('2024-11-15'),
     owner: 'Ty',
-    shared: true,
+    shared: false,
     parentId:null
   },
   {
@@ -46,11 +46,11 @@ export const mockFiles: FileItem[] = [
   {
     id: '5',
     name: 'MojaNotatka.txt',
-    type: 'doc',
+    type: 'txt',
     size: 3068576,
     modifiedDate: new Date('2024-11-15'),
     owner: 'Ty',
-    shared: true,
+    shared: false,
     starred:true,
     deleted:false,
     deletedAt:new Date('2024-12-12'),
@@ -63,7 +63,7 @@ export const mockFiles: FileItem[] = [
     size: 3068576,
     modifiedDate: new Date('2024-11-15'),
     owner: 'Ty',
-    shared: true,
+    shared: false,
     deleted:true,
     deletedAt:new Date('2024-12-12'),
     parentId:null
@@ -75,7 +75,7 @@ export const mockFiles: FileItem[] = [
     size: 3868576,
     modifiedDate: new Date('2024-03-14'),
     owner: 'Ty',
-    shared: true,
+    shared: false,
     parentId:'1'
   },
   {
@@ -85,7 +85,7 @@ export const mockFiles: FileItem[] = [
     size: 3868576,
     modifiedDate: new Date('2024-03-14'),
     owner: 'Ty',
-    shared: true,
+    shared: false,
     starred:true,
     parentId:'1'
   },
@@ -96,7 +96,7 @@ export const mockFiles: FileItem[] = [
     size: 3868576,
     modifiedDate: new Date('2024-03-14'),
     owner: 'Ty',
-    shared: true,
+    shared: false,
     parentId:'2'
   },
   {
@@ -106,7 +106,7 @@ export const mockFiles: FileItem[] = [
     size: 3868576,
     modifiedDate: new Date('2021-03-14'),
     owner: 'Ty',
-    shared: true,
+    shared: false,
     parentId:null
   },
   {
@@ -116,7 +116,29 @@ export const mockFiles: FileItem[] = [
     size: 3868576,
     modifiedDate: new Date('2021-03-10'),
     owner: 'Ty',
+    shared: false,
+    parentId:null
+  },
+  {
+    id: '12',
+    name: 'Sharowany1.txt',
+    type: 'txt',
+    size: 3068576,
+    modifiedDate: new Date('2025-11-15'),
+    owner: 'Ty',
     shared: true,
+    starred:false,
+    parentId:null
+  },
+  {
+    id: '13',
+    name: 'Sharowany2.txt',
+    type: 'txt',
+    size: 3068576,
+    modifiedDate: new Date('2025-11-15'),
+    owner: 'Ty',
+    shared: true,
+    starred:false,
     parentId:null
   }
 

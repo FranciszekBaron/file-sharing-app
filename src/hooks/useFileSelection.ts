@@ -2,6 +2,11 @@ import { useEffect, useState } from "react";
 import { useFiles } from "../services/FilesContextType";
 
 
+interface FileSelectionType {
+    selectedItems: Map<string,string>;
+}
+
+
 export const useFileSelection = (containerRefs?: React.RefObject<HTMLElement | null>[]) => {
     const [selectedItems,SetSelectedItems] = useState<Map<string,string>>(new Map());
     const [lastClickedItem,SetLastClickedItem] = useState<string | null>();
@@ -37,10 +42,6 @@ export const useFileSelection = (containerRefs?: React.RefObject<HTMLElement | n
     
             const start = parseInt(lastClickedItem);
             const end = parseInt(index);
-            
-            const startItem = displayedFiles.find(f=>f.id === lastId);
-
-            
     
             if(lastClickedItem < index){
               SetSelectedItems(prev=>{
@@ -97,8 +98,6 @@ export const useFileSelection = (containerRefs?: React.RefObject<HTMLElement | n
       }
 
 
-
-    
     return {
         selectedItems,
         handleClickItem,
