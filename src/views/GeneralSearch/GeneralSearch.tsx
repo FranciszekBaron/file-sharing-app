@@ -31,6 +31,8 @@ import { filterItems } from "..//..//types//FilterOptions.ts";
 import { useNavigate } from "react-router-dom";
 import { useNavigation, ViewType } from "../../services/NavigationContext.tsx";
 import { FileContentViewer } from "../../components/FileContentViewer/FileContentViewer.tsx";
+import useFileUploader from "../../hooks/useFileUploader.ts";
+import useFolderUploader from "../../hooks/useFolderUploader.ts";
 
 
 const MyFiles = () => {
@@ -68,9 +70,18 @@ const MyFiles = () => {
 
   const {
     setActiveView,
+    currentFolderId,
     setCurrentFolderId,
     navigateTo
   } = useNavigation()
+
+  const {
+    handleFileChange
+  } = useFileUploader()
+
+  const {
+    handleFolderChange
+  } = useFolderUploader()
 
 
 
@@ -94,7 +105,7 @@ const MyFiles = () => {
 
   const handleAddFolder = async () => {
     try{
-      await handleAdd(fileName,'folder');
+      await handleAdd(fileName,'folder',currentFolderId);
       SetFileName("")
       SetAddFileOpen(false);
     }catch(err){
@@ -102,17 +113,7 @@ const MyFiles = () => {
     }
   }
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (files) {
-      console.log('Wybrane pliki:', files);
-      for(let i = 0;i<files.length;i++){
-        console.log(files[i].name + " " + files[i].size + " " + files[i].type)
-      }
-      // Tutaj obsłuż upload
-    }
-  };
-
+  
   const handleUploadFile = () => {
     fileInputRef.current?.click();
   }; 
@@ -147,7 +148,7 @@ const MyFiles = () => {
         type="file" 
         ref={folderInputRef}
         style = {{display:'none'}}
-        onChange={handleFileChange}
+        onChange={handleFolderChange}
         webkitdirectory=""
         directory=""
         multiple
@@ -471,13 +472,18 @@ const MyFiles = () => {
                     onActivate={(e)=>{ 
                       e.preventDefault();
                       handleClickItem(item.id,index.toString(), e)}}
-                      onDoubleClick={()=>{
+                      onDoubleClick={async ()=>{
                         if(item.type==='folder'){
                           navigateTo(ViewType.GENERAL_SEARCH,item.id)
                         }else{
-                          //open TODO 
+                          if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
+                            const content = await handleGetContent(item.id);
+                            setContentOpen(true);
+                            setFileContent(content);
+                            setSelectedFileId(item.id);
+                          }
                         }
-                        }}
+                      }}
                       />
                   </div>
                 ))}

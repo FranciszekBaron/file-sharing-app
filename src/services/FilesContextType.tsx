@@ -29,7 +29,7 @@ interface FilesContextType{
     setSortAscending: (ascending:boolean) => void;
     setSortWithFoldersUp: (sorted:boolean) => void;
     setActiveLayout: (layout: 'list'|'grid') => void;
-    handleAdd: (name:string,type:FileItem['type']) =>Promise<FileItem>;
+    handleAdd: (name:string,type:FileItem['type'],parentId:string | null) =>Promise<FileItem>;
     handleSoftDelete: (id:string) => Promise<void>;
     handlePermanentDelete: (id:string) => Promise<void>;
     handleRestore: (id:string) => Promise<void>;
@@ -86,12 +86,11 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             }
         })
         
-        console.log("sortWithFolderUp = " + sortWithFoldersUp + "[FROM FilesContext]")
+        
 
         if(foldersUp){
             const allFolders = sorted.filter(f=>f.type === 'folder');
             const allFilesNoFolders = sorted.filter(f=>f.type !== 'folder');
-            console.log("!!!! robie sie kurde !!!!")
             return [...allFolders,...allFilesNoFolders];
         }
 
@@ -135,14 +134,10 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             path.unshift(current);
             current = allFiles.find(f=>f.id === current?.parentId);
         }
-        
-
-        console.log("ACTUAL PATH: " + JSON.stringify(path,null,2));
         return path;
 
     },[allFiles,currentFolderId])
 
-    console.log("ascending: " + sortAscending);
 
     useEffect(()=>{
         loadFiles();
@@ -163,13 +158,14 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
     }
     
 
-    const handleAdd = async (name:string,type:FileItem['type']) => {
+    const handleAdd = async (name:string,type:FileItem['type'],parentId:string|null) => {
         try {
             const newFile = await filesService.add({
                 name,
                 type,
+                owner: 'Ty',
                 modifiedDate: new Date(),
-                parentId: currentFolderId
+                parentId: parentId
             });
 
             //w tym miejscu juz utworzysz nowy plik w bazie lub w mocku, ale trzeba jeszcze zrobic tak zeby sie poprawnie wyswietlalo

@@ -375,13 +375,18 @@ const Trash = () => {
                     onActivate={(e)=>{ 
                       e.preventDefault();
                       handleClickItem(item.id,index.toString(), e)}} 
-                    onDoubleClick={()=>{
-                      if(item.type==='folder'){
-                        navigateTo(ViewType.GENERAL_SEARCH,item.id)
-                      }else{
-                        //open TODO 
-                      }
-                      }}
+                      onDoubleClick={async ()=>{
+                        if(item.type==='folder'){
+                          navigateTo(ViewType.GENERAL_SEARCH,item.id)
+                        }else{
+                          if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
+                            const content = await handleGetContent(item.id);
+                            setContentOpen(true);
+                            setFileContent(content);
+                            setSelectedFileId(item.id);
+                          }
+                        }
+                        }}
                     />
                   </div>
                 ))}

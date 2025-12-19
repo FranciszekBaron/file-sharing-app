@@ -1,9 +1,35 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useFiles } from "../services/FilesContextType";
 
 
-export const useFileSelection = () => {
-    const [selectedItems,SetSelectedItems] = useState<Set<string>>(new Set());
+export const useFileSelection = (containerRefs?: React.RefObject<HTMLElement | null>[]) => {
+    const [selectedItems,SetSelectedItems] = useState<Map<string,string>>(new Map());
     const [lastClickedItem,SetLastClickedItem] = useState<string | null>();
+    const [lastId,setLastId] = useState<string | null>();
+
+
+    const {
+      displayedFiles 
+    } = useFiles()
+
+    useEffect(()=>{
+      const handleClickOutside = (e:MouseEvent) => {
+          const clickedInside = containerRefs?.some(r=>r.current && r.current?.contains(e.target as Node))
+          
+  
+          if(!clickedInside){
+            clearSelection()
+          }
+      }
+      if(selectedItems.size >0){
+        document.addEventListener('mousedown',handleClickOutside)
+      }
+  
+      return () => {
+        document.removeEventListener('mousedown',handleClickOutside)
+      }
+    },[selectedItems,containerRefs])
+    
 
     const handleClickItem = (itemId:string,index:string, event:React.MouseEvent) => { 
     
@@ -11,13 +37,19 @@ export const useFileSelection = () => {
     
             const start = parseInt(lastClickedItem);
             const end = parseInt(index);
+            
+            const startItem = displayedFiles.find(f=>f.id === lastId);
+
+            
     
             if(lastClickedItem < index){
               SetSelectedItems(prev=>{
-                const newSet = new Set(prev);
+                const newSet = new Map(prev);
                 for(let i = start;i<=end;i++){
-                    newSet.add(i.toString());
+                    newSet.set(i.toString(),displayedFiles[i].id);
                 }
+                console.log("Z shift");
+                console.log(newSet);
                 return newSet;
               });
     
@@ -26,38 +58,47 @@ export const useFileSelection = () => {
               const end = parseInt(lastClickedItem);
     
               SetSelectedItems(prev=>{
-                const newSet = new Set(prev);
+                const newSet = new Map(prev);
                 for(let i = end;i>=start;i--){
-                    newSet.add(i.toString());
+                    newSet.set(i.toString(),displayedFiles[i].id);
                 }
+                console.log("Z shift");
+                console.log(newSet);
                 return newSet;
               });
             }
     
         }else if(event.ctrlKey || event.metaKey){
           SetSelectedItems(prev=>{
-            const newSet = new Set(prev);
+            const newSet = new Map(prev);
             if(newSet.has(index)){
               newSet.delete(index);
             }else{
-              newSet.add(index);
+              newSet.set(index,itemId);
             }
+            console.log("Z ctrl");
+            console.log(newSet);
             return newSet;
           });
         }else {
           SetLastClickedItem(index)
-          SetSelectedItems(new Set([index]));
+          setLastId(itemId);
+          SetSelectedItems(new Map([[index,itemId]]));
+          console.log("Bez ctrl i shift");
+          console.log(new Map([[index,itemId]]));
         }
       }
     
       const clearSelection= () => {
+        console.log("z clear");
         SetLastClickedItem("")
-        SetSelectedItems(new Set());
+        SetSelectedItems(new Map());
+        console.log(selectedItems);
       }
 
 
 
-
+    
     return {
         selectedItems,
         handleClickItem,

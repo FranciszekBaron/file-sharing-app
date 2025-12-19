@@ -3,6 +3,10 @@ import styles from "./Searchbar.module.css";
 import { Search } from 'lucide-react';
 import type { FileItem } from "../../types/FileItem";
 import { SearchIcon } from "..//..//icons//Search";
+import { useFiles } from "../../services/FilesContextType";
+import { useNavigation, ViewType } from "../../services/NavigationContext";
+import { FileContentViewer } from "../FileContentViewer/FileContentViewer";
+
 
 interface Props {
   items: FileItem[];
@@ -10,6 +14,23 @@ interface Props {
 }
 
 export const Searchbar = ({items,style}: Props) => {
+
+  const {
+    handleGetContent
+  } = useFiles()
+
+  const {
+    navigateTo
+  } = useNavigation()
+
+
+  const [addFileOpen,SetAddFileOpen] = useState(false);
+  const [contentOpen,setContentOpen] = useState(false);
+  const [fileContent,setFileContent] = useState("");
+  const [selectedFileId,setSelectedFileId] = useState<string|null>(null);
+
+
+
   const [isActive, setToActive] = useState(false);
   const [query, SetQuery] = useState("");
   const isSearching = query.length > 0;
@@ -42,6 +63,10 @@ export const Searchbar = ({items,style}: Props) => {
 
   return (
     <div className={styles.searchbarWrapper}>
+      {
+        <FileContentViewer contentOpen={contentOpen} fileContent={fileContent} selectedFileId={selectedFileId} onActivate={()=>setContentOpen(false)} onClose={()=>{setContentOpen(false)}} onEditing={(e)=>setFileContent(e.target.value)} ></FileContentViewer>
+      }
+
       {/* Górna część - input */}
       <div className={`
         ${styles.searchbar} 
@@ -73,8 +98,23 @@ export const Searchbar = ({items,style}: Props) => {
         <div className={styles.menu}>
           <div className={styles.menuContent}>
             {foundedItems.map(item => (
-              <div key={item.id}>{item.name}</div>
-            ))}
+              <div key={item.id} 
+              onDoubleClick={async ()=>{
+                if(item.type==='folder'){
+                  navigateTo(ViewType.GENERAL_SEARCH,item.id)
+                }else{
+                  if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
+                    const content = await handleGetContent(item.id);
+                    setContentOpen(true);
+                    setFileContent(content);
+                    setSelectedFileId(item.id);
+                  }
+                }
+                }}
+              >  
+              {item.name} 
+              </div>
+            ))} 
           </div>
         </div>
       )}

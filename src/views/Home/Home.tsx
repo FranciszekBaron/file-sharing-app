@@ -17,6 +17,7 @@ import { useNavigation, ViewType } from "..//..//services//NavigationContext";
 import FileItemList from "../../components/FileItem/FileItemList/FileItemList";
 import FileItemDivider from "../../components/FileItem/FileItemDivider/FileItemDivider";
 import DoubleItemButton from "../../components/Common/DoubleItemButton/DoubleItemButton";
+import { FileContentViewer } from "../../components/FileContentViewer/FileContentViewer";
 
 
 const MyFiles = () => {
@@ -28,7 +29,8 @@ const MyFiles = () => {
     activeLayout,
     setActiveLayout,
     handleClearFilter,
-    handleFilter
+    handleFilter,
+    handleGetContent
   } = useFiles()
 
 
@@ -46,6 +48,11 @@ const MyFiles = () => {
 
   const [active,setToActive] = useState(false);
 
+
+  const [addFileOpen,SetAddFileOpen] = useState(false);
+  const [contentOpen,setContentOpen] = useState(false);
+  const [fileContent,setFileContent] = useState("");
+  const [selectedFileId,setSelectedFileId] = useState<string|null>(null);
   const [isRecommendedFilesActive,SetRecommendedFilesActive] = useState(true);
   const [isRecommendedFoldersActive,SetRecommendedFoldersActive] = useState(true);
 
@@ -65,6 +72,10 @@ const MyFiles = () => {
 
   return (
     <div className={`${styles.contentWrapper} ${active ? styles.active : ''}`}>
+
+      {
+        <FileContentViewer contentOpen={contentOpen} fileContent={fileContent} selectedFileId={selectedFileId} onActivate={()=>setContentOpen(false)} onClose={()=>{setContentOpen(false)}} onEditing={(e)=>setFileContent(e.target.value)} ></FileContentViewer>
+      }
       <div className={styles.contentTitleWrapper}>
         <label className={styles.label}></label>
       </div>
@@ -141,8 +152,6 @@ const MyFiles = () => {
                       onDoubleClick={()=>{
                       if(item.type==='folder'){
                         navigateTo(ViewType.GENERAL_SEARCH,item.id)
-                      }else{
-                        //open TODO 
                       }
                       }}
                       location={true}
@@ -197,13 +206,18 @@ const MyFiles = () => {
                         onActivate={(e)=>{ 
                           e.preventDefault();
                           handleClickItem(item.id, `file-${index}`, e)}}
-                        onDoubleClick={()=>{
-                          if(item.type==='folder'){
-                            navigateTo(ViewType.GENERAL_SEARCH,item.id)
-                          }else{
-                            //open TODO 
-                          }
-                        }}
+                          onDoubleClick={async ()=>{
+                            if(item.type==='folder'){
+                              navigateTo(ViewType.GENERAL_SEARCH,item.id)
+                            }else{
+                              if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
+                                const content = await handleGetContent(item.id);
+                                setContentOpen(true);
+                                setFileContent(content);
+                                setSelectedFileId(item.id);
+                              }
+                            }
+                          }}
                       />
                       <FileItemDivider/>
                     </div>
@@ -220,13 +234,18 @@ const MyFiles = () => {
                       onActivate={(e)=>{ 
                         e.preventDefault();
                         handleClickItem(item.id, `file-${index}`, e)}}
-                      onDoubleClick={()=>{
-                        if(item.type==='folder'){
-                          navigateTo(ViewType.GENERAL_SEARCH,item.id)
-                        }else{
-                          //open TODO 
-                        }
-                      }}
+                        onDoubleClick={async ()=>{
+                          if(item.type==='folder'){
+                            navigateTo(ViewType.GENERAL_SEARCH,item.id)
+                          }else{
+                            if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
+                              const content = await handleGetContent(item.id);
+                              setContentOpen(true);
+                              setFileContent(content);
+                              setSelectedFileId(item.id);
+                            }
+                          }
+                          }}
                     />
                   </div>
                 ))}

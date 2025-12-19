@@ -401,17 +401,17 @@ const Starred = () => {
                       e.preventDefault();
                       handleClickItem(item.id,index.toString(), e)}}
                       onDoubleClick={async ()=>{
-                      if(item.type==='folder'){
-                        navigateTo(ViewType.GENERAL_SEARCH,item.id)
-                      }else{
-                        if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
-                          const content = await handleGetContent(item.id);
-                          setContentOpen(true);
-                          setFileContent(content);
-                          setCurrentFolderId(item.id);
+                        if(item.type==='folder'){
+                          navigateTo(ViewType.GENERAL_SEARCH,item.id)
+                        }else{
+                          if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
+                            const content = await handleGetContent(item.id);
+                            setContentOpen(true);
+                            setFileContent(content);
+                            setSelectedFileId(item.id);
+                          }
                         }
-                      }
-                      }}
+                        }}
                       />
                   </div>
                 ))}

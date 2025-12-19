@@ -47,10 +47,6 @@ const Dashboard = ({items}:Props) => {
 
   let lastClicked = "";
 
-  console.log("DASHBOARD: " + activeView);
-
-  console.log("currentUser: " + currentUser);
-
   const handleNewFileKey = (e:KeyboardEvent) =>{
     if (e.ctrlKey && e.key === "c"){
       lastClicked = "ctrl + c";

@@ -70,15 +70,10 @@ export const NavigationProvider = ({children} : {children: React.ReactNode}) => 
     
 
 
-
-    console.log(currentFolderId);
-
     const navigateTo = (view:number,folderId: string | null = null) => {
         
         const routeName = ROUTE_NAMES[view] || 'home';
-        //tu na odwró† patrzymy names -> url 
-        console.log("routeName:" + routeName);
-        console.log("routeName: " + "folder" + folderId);
+        
 
         if(folderId) {
             navigate(`/drive/${routeName}/${folderId}`);
@@ -95,7 +90,6 @@ export const NavigationProvider = ({children} : {children: React.ReactNode}) => 
     };
 
     const setCurrentFolderId = (folderId:string | null) => {
-        console.log(folderId);
         navigateTo(activeView,folderId);
     }
 

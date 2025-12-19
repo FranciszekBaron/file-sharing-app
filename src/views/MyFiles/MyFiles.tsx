@@ -32,6 +32,8 @@ import { filterItems } from "..//..//types//FilterOptions.ts";
 import { useNavigation, ViewType } from "../../services/NavigationContext.tsx";
 import { FileContentViewer } from "../../components/FileContentViewer/FileContentViewer.tsx";
 import { readFileAsDataURL, readFileAsText } from "../../hooks/useFileReader.ts";
+import useFileUploader from "..//..//hooks//useFileUploader.ts"
+import useFolderUploader from "../../hooks/useFolderUploader.ts";
 
 
 
@@ -44,9 +46,13 @@ declare module 'react' {
 
 const MyFiles = () => {
 
-
   const fileInputRef = useRef<HTMLInputElement>(null);
   const folderInputRef = useRef<HTMLInputElement>(null);
+  //refs for fileItem
+  const contentListRef = useRef<HTMLDivElement>(null);
+  const fileOperationsRef = useRef<HTMLDivElement>(null);
+  const contentTopbarRef = useRef<HTMLDivElement>(null);
+
 
   const {
     allFiles,
@@ -68,25 +74,29 @@ const MyFiles = () => {
     handleGetContent,
     handleAddContent,
     handlePermanentDelete
-    
-    
-  
   } = useFiles()
 
   const {
     selectedItems,
     handleClickItem,
     clearSelection,
-    hasSelection,
-  } = useFileSelection();
-
+    hasSelection
+  } = useFileSelection([contentListRef,fileOperationsRef,contentTopbarRef]);
 
   const {
     setActiveView,
+    currentFolderId,
     setCurrentFolderId,
     navigateTo
   } = useNavigation()
-  
+
+  const {
+    handleFileChange
+  } = useFileUploader();
+
+  const {
+    handleFolderChange
+  } = useFolderUploader();
 
   useEffect(()=>{
     handleClearFilter();
@@ -102,19 +112,13 @@ const MyFiles = () => {
 
   const [fileName,SetFileName] = useState("");
 
-  const addFileIcon = <FolderPlus size={20}/>
-  const uploadFileIcon = <Upload size={20}/>
-  const FileUpIcon = <FileUp size={20}/>
-  const alertIcon = <AlertCircle size={20}/>
-
-  
   const handleAddFolderClick = () => {
-      SetAddFileOpen(true);
+    SetAddFileOpen(true);
   }
-
+  
   const handleAddFolder = async () => {
     try{
-      await handleAdd(fileName,'folder');
+      await handleAdd(fileName,'folder',currentFolderId);
       SetFileName("")
       SetAddFileOpen(false);
     }catch(err){
@@ -122,84 +126,30 @@ const MyFiles = () => {
     }
   }
 
+
   
-  
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    
-    if (files) {
-      console.log('Wybrane pliki:', files);
-      for(let i = 0;i<files.length;i++){
-          const file = files[i];
-
-          switch (file.type){
-            
-            case 'text/plain': {
-              let newFile;
-              try {
-                const content = await readFileAsText(file);
-                newFile = await handleAdd(file.name,'txt');
-                await handleAddContent(newFile.id,content);
-              }catch(err){
-                if(newFile?.id){
-                  await handlePermanentDelete(newFile.id); //jeśli content nie pojdzie to usuwamy plik, tak jak ROLLBACK
-                }
-                console.error('Upload failed:', err);
-              }
-              break;
-            }
-            case 'application/pdf': {
-              let newFile;
-              try{
-                const content = await readFileAsDataURL(file);
-                newFile = await handleAdd(file.name,'pdf');
-                await handleAddContent(newFile.id,content);
-              }catch(err){
-                if(newFile?.id){
-                  await handlePermanentDelete(newFile.id); //jeśli content nie pojdzie to usuwamy plik, tak jak ROLLBACK
-                }
-                console.error('Upload failed:', err);
-              }
-              break;
-            }
-            case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
-              let newFile;
-              try{
-                const content = await readFileAsText(file);
-                newFile = await handleAdd(file.name,'doc');
-                await handleAddContent(newFile.id,content);
-              }catch(err){
-                if(newFile?.id){
-                  await handlePermanentDelete(newFile.id); //jeśli content nie pojdzie to usuwamy plik, tak jak ROLLBACK
-                }
-                console.error('Upload failed:', err);
-              }
-              break;
-            }
-            default:
-              alert(`Unsupported format: ${file.name}`);
-              continue; //Pomijamy plik nieobsługiwany
-          }
-      }
-    }
-  };
-
-
   const handleUploadFile = () => {
     fileInputRef.current?.click();
   }; 
   const handleUploadFolder = () => {
     folderInputRef.current?.click();
   }; 
-
+  
   const filterIcons = {
     folder: <Folder size={20}/>,
     doc: <SquareDocumentIcon size={20}/>,
     pdf: <PdfIcon size={20}/>
   };
-
+  
   const chevRightIcon = <ChevronRight size={16} />;
+  const addFileIcon = <FolderPlus size={20}/>
+  const uploadFileIcon = <Upload size={20}/>
+  const FileUpIcon = <FileUp size={20}/>
+  const alertIcon = <AlertCircle size={20}/>
+  
+
+
+
 
   if (loading) {
     return <div className={styles.contentWrapper}>Ładowanie...</div>;
@@ -220,7 +170,7 @@ const MyFiles = () => {
         type="file" 
         ref={folderInputRef}
         style = {{display:'none'}}
-        onChange={handleFileChange}
+        onChange={handleFolderChange}
         webkitdirectory=""
         directory=""
         multiple
@@ -243,7 +193,7 @@ const MyFiles = () => {
       {
         <FileContentViewer contentOpen={contentOpen} fileContent={fileContent} selectedFileId={selectedFileId} onActivate={()=>setContentOpen(false)} onClose={()=>{setContentOpen(false)}} onEditing={(e)=>setFileContent(e.target.value)} ></FileContentViewer>
       }
-      <div className={styles.topbarWrapper}>
+      <div className={styles.topbarWrapper} ref={contentTopbarRef}>
         <div className={styles.titleButtonWrapper}>
             {/* CZĘŚĆ Z BREADCRUMB PATHEM */}
             {breadcrumbPath.length===0 ? 
@@ -287,7 +237,7 @@ const MyFiles = () => {
         </div>
         {hasSelection ? 
         <div className={styles.filtersWrapper}>
-            <div className={styles.ItemSelected}>
+            <div className={styles.ItemSelected} ref={fileOperationsRef}>
                 <div className={styles.hoverIcon} data-tooltip='Odznacz' onClick={()=>{clearSelection()}}>
                     <X size={20} strokeWidth={1.6}/>
                 </div>
@@ -438,7 +388,7 @@ const MyFiles = () => {
             </div>
           </div>
           <FileItemDivider/>
-          <div className={styles.fileList}>
+          <div className={styles.fileList} ref={contentListRef}>
             {displayedFiles.map((item,index)=>(
               <div key={index}>
                 <FileItemList file={item} isActive={selectedItems.has(index.toString())} 
@@ -459,7 +409,8 @@ const MyFiles = () => {
                   }}
                 owner={true}
                 dateModified={true}
-                fileSize={true}/>
+                fileSize={true}
+                />
                 <FileItemDivider/>
               </div>
             ))}
@@ -491,7 +442,6 @@ const MyFiles = () => {
               textSize={14} 
               menuVariant="sortOptions" 
               style={{fontWeight:400}}
-            
             >
               <MenuHeader>Sortuj według</MenuHeader>
               {sortByItems.map((item,index)=>(
@@ -542,11 +492,16 @@ const MyFiles = () => {
                     onActivate={(e)=>{ 
                       e.preventDefault();
                       handleClickItem(item.id,index.toString(), e)}}
-                      onDoubleClick={()=>{
+                      onDoubleClick={async ()=>{
                       if(item.type==='folder'){
                         navigateTo(ViewType.GENERAL_SEARCH,item.id)
                       }else{
-                        //open TODO 
+                        if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
+                          const content = await handleGetContent(item.id);
+                          setContentOpen(true);
+                          setFileContent(content);
+                          setSelectedFileId(item.id);
+                        }
                       }
                       }}/>
                   </div>

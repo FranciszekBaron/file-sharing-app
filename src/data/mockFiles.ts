@@ -110,7 +110,7 @@ export const mockFiles: FileItem[] = [
     parentId:null
   },
   {
-    id: '10',
+    id: '11',
     name: 'FolderJeszczeStarszy',
     type: 'folder',
     size: 3868576,
