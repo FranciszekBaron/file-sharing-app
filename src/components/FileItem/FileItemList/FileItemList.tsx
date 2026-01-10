@@ -108,7 +108,7 @@ export const FileItemList = ({file,isActive,onActivate,onDoubleClick,owner,dateM
         try{
             await handleSoftDelete(id);
         }catch(err){
-        alert('nie udało się usunąć folderu')
+            alert('nie udało się usunąć folderu')
         }
     }
 
@@ -163,7 +163,7 @@ export const FileItemList = ({file,isActive,onActivate,onDoubleClick,owner,dateM
             }
 
             <div className={`${styles.fileItemListColumn} ${styles.fileItemListName}`}>{icon} {file.name} {file.starred && <Star size={10} fill="black"/>}</div>
-            {owner && <div className={`${styles.fileItemListColumn} ${styles.fileItemListOwner}`}>{file.owner}</div>}
+            {owner && <div className={`${styles.fileItemListColumn} ${styles.fileItemListOwner}`}>{file.ownerId}</div>}
             {deletedAt && file.deleted && file.deletedAt && <div className={`${styles.fileItemListColumn} ${styles.fileItemListDate}`}>{file.deletedAt.toLocaleDateString()}</div>}
             {dateModified && <div className={`${styles.fileItemListColumn} ${styles.fileItemListDate}`}>{file.modifiedDate.toLocaleDateString()}</div>}
             {fileSize && <div className={`${styles.fileItemListColumn} ${styles.fileItemListSize}`}>{formatFilebytes(file.size ?? 0)}</div>}

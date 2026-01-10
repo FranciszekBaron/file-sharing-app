@@ -1,5 +1,5 @@
 
-import { mockFiles } from "../data/mockFiles";
+import { mockFiles, mockSharedFiles } from "../data/mockFiles";
 import type { FileItem } from "../types/FileItem";
 import type { IFileService } from "./IFileService";
 import { MOCK_FILES_CONTENTS } from "../data/mockFiles";
@@ -8,7 +8,7 @@ import { MOCK_FILES_CONTENTS } from "../data/mockFiles";
 export class MockFilesService implements IFileService {
     
 
-    private files: FileItem[] = [...mockFiles]; //kopia nowej tablocy
+    private files: FileItem[] = [...mockFiles,...mockSharedFiles]; //kopia nowej tablocy
     private filesContents = new Map([...MOCK_FILES_CONTENTS]);
     private nextId: number = mockFiles.length+1;
 

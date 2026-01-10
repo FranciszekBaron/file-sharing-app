@@ -14,7 +14,17 @@ export class FileService implements IFileService {
 
 
 
-    private baseUrl = '/api/files'; 
+    private baseUrl = 'http://localhost:5239/api/FileItem'; 
+
+    private parseStringToDate(item:any) : FileItem {
+        if (!item || typeof item !== 'object') {
+            return item;  
+        }
+
+        return {...item,
+            modifiedDate:new Date(item.modifiedDate),
+            deletedAt: item.deletedAt ? new Date(item.deletedAt) : undefined};
+    }
 
 
     private async fetchWrapper<T>(url: string,options?: RequestInit) : Promise<T> {
@@ -25,7 +35,13 @@ export class FileService implements IFileService {
             throw new Error(`API Error: ${response.status} ${response.statusText}`);
         }
 
-        return response.json();
+        const data = await response.json()
+        
+        if (Array.isArray(data)) {
+            return data.map(item => this.parseStringToDate(item)) as T;  // Array
+        }
+
+        return (this.parseStringToDate(data) as T);
     }
 
     async getAll(): Promise<FileItem[]> {
@@ -53,23 +69,28 @@ export class FileService implements IFileService {
 
     async update(id: string, updates: Partial<FileItem>): Promise<FileItem> {
         return this.fetchWrapper<FileItem>(`${this.baseUrl}/${id}`,{
-            method: 'PATCH',
+            method: 'PUT',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(updates)
         })
     }
 
+    
 
     async delete(id: string): Promise<boolean> {
-        try {
-            await this.fetchWrapper(`${this.baseUrl}/${id}`,{
-                method:'DELETE'
-            })
-            return true;
-        }catch(err){
-            return false
-        }
+    try {
+        console.log(`Wołam endpoint DELETE z id ${id}`);
+        await this.fetchWrapper(`${this.baseUrl}/${id}`, {
+            method: 'DELETE',
+            headers: {'Content-Type': 'application/json'}
+            // Bez body!
+        });
+        return true;
+    } catch(err) {
+        console.error('Błąd podczas usuwania:', err);
+        return false;
     }
+}
 
     async search(query:string): Promise<FileItem[]> {
         return this.fetchWrapper<FileItem[]>(

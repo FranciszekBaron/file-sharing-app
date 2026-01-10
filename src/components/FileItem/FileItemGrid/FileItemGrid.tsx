@@ -156,7 +156,7 @@ export const FileItemGrid = ({file,isActive,location,style,onActivate,onDoubleCl
             <div className={`${styles.fileItemGridColumn} ${styles.fileItemGridName}`}>{icon} 
                 <div className={styles.fileItemGridNameLabel}>
                 {file.name} 
-                {location && <span className={styles.fileItemGridNameLoc}>{file.owner === 'Ty' ? 'w: Mój Dysk' : 'w: Udostępnione'}
+                {location && <span className={styles.fileItemGridNameLoc}>{file.ownerId === 'user1' ? 'w: Mój Dysk' : 'w: Udostępnione'}
                 </span>}
                 </div>
             </div>

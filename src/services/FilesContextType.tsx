@@ -15,6 +15,7 @@ interface FilesContextType{
     displayedFiles: FileItem[];
     deletedFiles:FileItem[];
     starredFiles:FileItem[];
+    sharedFiles:FileItem[];
     loading: boolean;
     activeFilter: FilterType;
     activeLayout: 'list' | 'grid';
@@ -124,6 +125,13 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
 
     },[allFiles,sortBy,sortAscending,sortWithFoldersUp,currentFolderId])
 
+
+    const sharedFiles = useMemo(()=>{
+        const filtered = allFiles.filter(f=>!f.deleted && f.parentId === currentFolderId && f.sharedBy);
+        const sortType = sortBy === 'deletedAt' ? 'date' : sortBy;
+        return sortFiles(filtered,sortType,sortAscending,sortWithFoldersUp);
+    },[allFiles,sortBy,sortAscending,sortWithFoldersUp,currentFolderId])
+
     const breadcrumbPath = useMemo(()=> {
         if(!currentFolderId) return [];
 
@@ -177,7 +185,6 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             const newFile = await filesService.add({
                 name,
                 type,
-                owner: 'Ty',
                 modifiedDate: new Date(),
                 parentId: parentId
             });
@@ -194,18 +201,20 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
     const handleSoftDelete = async (id:string) => {
         try{
 
-            await filesService.update(id,{deleted: true, deletedAt: new Date()})
-            //Zapamietaj usuwany
-            setAllFiles(prev=> {
+            await filesService.delete(id);
+            // Zapamietaj usuwany
+            // setAllFiles(prev=> {
             
-            //Usun z bazy/mocka i zaktualizuj AllFiles
-            const updatedFiles = prev.map(f=>f.id === id
-                ? {...f,deleted:true,deletedAt: new Date()}
-                : f
-            );
+            // //Usun z bazy/mocka i zaktualizuj AllFiles
+            // const updatedFiles = prev.map(f=>f.id === id
+            //     ? {...f,deleted:true,deletedAt: new Date()}
+            //     : f
+            // );
             
-            return updatedFiles;
-            }); 
+            // return updatedFiles;
+            // }); 
+
+            await refreshFiles();
         }catch(err){
             console.error('Error deleting file: ',err);
             throw err;
@@ -324,6 +333,7 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             displayedFiles,
             deletedFiles,
             starredFiles,
+            sharedFiles,
             loading,
             activeFilter,
             activeLayout,

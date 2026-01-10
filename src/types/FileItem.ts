@@ -5,8 +5,9 @@ export interface FileItem {
     type: 'folder' | 'pdf' | 'doc' | 'image' | 'other' | 'txt';
     size?: number;
     modifiedDate: Date;
-    owner?: string;
-    shared?: boolean;
+    isOwner?: boolean;
+    ownerId?: string;
+    sharedBy?:string;
     starred?: boolean;
     deleted?:boolean;
     deletedAt?: Date;

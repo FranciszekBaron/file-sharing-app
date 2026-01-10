@@ -1,63 +1,45 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import styles from "..//MyFiles//MyFiles.module.css"
-import type { FileItem as FileItemtype} from "../../types/FileItem";
-import FileItem from "../../components/FileItem/FileItem";
-import DropDownButton from "../../components/DropDownButton/DropDownButton";
-import MenuItem from "../../components/Common/MenuItem/MenuItem";
-import { X,FolderPlus, Upload, FileUp , Folder, FileText , AlertCircle, Key, TrendingUp, Share2, Download, Star, Edit, Trash, ChevronRight} from "lucide-react";
-import MenuDivider from "../../components/Common/MenuDivider/MenuDivider";
-import { Button } from "../../components/Common/Button";
+import type { FileItem as FileItemType } from "../../types/FileItem.ts";
+import FileItem from "../../components/FileItem/FileItem.tsx";
+import DropDownButton from "../../components/DropDownButton/DropDownButton.tsx";
+import MenuItem from "../../components/Common/MenuItem/MenuItem.tsx";
+import { FolderPlus, Upload, FileUp, Folder, FileText, AlertCircle, Key, TrendingUp, X, Download, Share2, Trash, ChevronRight } from "lucide-react";
+import MenuDivider from "../../components/Common/MenuDivider/MenuDivider.tsx";
+import { Button } from "../../components/Common/Button.tsx";
 import buttonStyles from "../../components/Common/Button.module.css";
-import {SortIcon} from "../../icons/SortIcon";
-import FileItemDivider from "../../components/FileItem/FileItemDivider/FileItemDivider";
-import FileItemList from "../../components/FileItem/FileItemList/FileItemList";
+import { SortIcon } from "../../icons/SortIcon.tsx";
+import FileItemDivider from "../../components/FileItem/FileItemDivider/FileItemDivider.tsx";
+import FileItemList from "../../components/FileItem/FileItemList/FileItemList.tsx";
 import React from "react";
 
-import {SquareDocumentIcon} from "..//../icons//SquareDocumentIcon";
-import {PdfIcon} from "..//../icons//PdfIcon";
-import { ArrowCircled } from "..//..//icons//ArrowCircled";
+import { SquareDocumentIcon } from "../../icons/SquareDocumentIcon.tsx";
+import { PdfIcon } from "../../icons/PdfIcon.tsx";
+import { ArrowCircled } from "../../icons/ArrowCircled.tsx";
 
 
-import { filterLabels } from "../../types/FilterType";
-import Modal from "../../components/Modal/Modal";
-import { useFiles } from "../../services/FilesContextType";
-import { useFileSelection } from "../../hooks/useFileSelection";
-import DoubleItemButton from "../../components/Common/DoubleItemButton/DoubleItemButton";
-import FileItemGrid from "../../components/FileItem/FileItemGrid/FileItemGrid";
-import MenuHeader from "../../components/Common/MenuHeader/MenuHeader";
+import { filterLabels } from "../../types/FilterType.ts";
+import Modal from "../../components/Modal/Modal.tsx";
+import { useFiles } from "../../services/FilesContextType.tsx";
+import { useFileSelection } from "../../hooks/useFileSelection.ts";
+import MenuHeader from "../../components/Common/MenuHeader/MenuHeader.tsx";
 
-import { sortByItems,sortOrderItems,sortFoldersItem, sortDateItem } from "../../types/SortOptions";
-import { filterItems } from "..//..//types//FilterOptions.ts";
 
-import { useNavigation, ViewType } from "../../services/NavigationContext.tsx";
+import { sortByItems,sortFoldersItem,sortOrderItems } from "../../types/SortOptions.ts";
+import FileItemGrid from "../../components/FileItem/FileItemGrid/FileItemGrid.tsx";
+import { filterItems } from "../../types/FilterOptions.ts";
+import DoubleItemButton from "../../components/Common/DoubleItemButton/DoubleItemButton.tsx";
+import { useNavigation } from "../../services/NavigationContext.tsx";
+import { ViewType } from '../../services/NavigationContext.tsx';
 import { FileContentViewer } from "../../components/FileContentViewer/FileContentViewer.tsx";
-import { readFileAsDataURL, readFileAsText } from "../../hooks/useFileReader.ts";
-import useFileUploader from "..//..//hooks//useFileUploader.ts"
-import useFolderUploader from "../../hooks/useFolderUploader.ts";
-import { useFileDownloader } from "../../hooks/useFileDownloader.ts";
 
 
 
-declare module 'react' {
-  interface InputHTMLAttributes<T> extends HTMLAttributes<T> {
-    webkitdirectory?: string;
-    directory?: string;
-  }
-}
-
-const MyFiles = () => {
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const folderInputRef = useRef<HTMLInputElement>(null);
-  //refs for fileItem
-  const contentListRef = useRef<HTMLDivElement>(null);
-  const fileOperationsRef = useRef<HTMLDivElement>(null);
-  const contentTopbarRef = useRef<HTMLDivElement>(null);
-
+const Starred = () => {
 
   const {
-    allFiles,
     displayedFiles,
+    sharedFiles,
     loading,
     activeFilter,
     sortBy,
@@ -72,9 +54,7 @@ const MyFiles = () => {
     handleFilter,
     handleClearFilter,
     handleSort,
-    handleGetContent,
-    handleAddContent,
-    handlePermanentDelete
+    handleGetContent
   } = useFiles()
 
   const {
@@ -82,142 +62,63 @@ const MyFiles = () => {
     handleClickItem,
     clearSelection,
     hasSelection
-  } = useFileSelection([contentListRef,fileOperationsRef,contentTopbarRef]);
+  } = useFileSelection();
 
-  const {
+
+  const  {
     setActiveView,
-    currentFolderId,
     setCurrentFolderId,
     navigateTo
   } = useNavigation()
 
-  const {
-    handleFileChange
-  } = useFileUploader();
-
-  const {
-    handleFolderChange
-  } = useFolderUploader();
-
-  const {
-    downloadSelected
-  } = useFileDownloader(selectedItems);
-
-  useEffect(()=>{
-    handleClearFilter();
-    setCurrentFolderId(null);
-  },[])
-
   const [addFileOpen,SetAddFileOpen] = useState(false);
+  const [isNameFilterActive, SetNameFilterActive] = useState(true);
+  const [isDateFilterActive, SetDateFilterActive] = useState(true);
   const [contentOpen,setContentOpen] = useState(false);
   const [fileContent,setFileContent] = useState("");
-  const [selectedFileId,setSelectedFileId] = useState<string|null>(null);
-  const [isNameFilterActive,SetNameFilterActive] = useState(true);
-  const [isDateFilterActive,SetDateFilterActive] = useState(true);
 
-  const [fileName,SetFileName] = useState("");
+  const [selectedFileId,setSelectedFileId] = useState("");
 
-  const handleAddFolderClick = () => {
-    SetAddFileOpen(true);
-  }
-  
-  const handleAddFolder = async () => {
-    try{
-      await handleAdd(fileName,'folder',currentFolderId);
-      SetFileName("")
-      SetAddFileOpen(false);
-    }catch(err){
-      alert('nie udalo sie dodać folderu');
-    }
-  }
-  
+  useEffect(()=>{
+      handleClearFilter();
+      setCurrentFolderId(null);
+  },[])
 
-  console.log(localStorage.getItem('currentUser'))
-
-  const handleUploadFile = () => {
-    fileInputRef.current?.click();
-  }; 
-  const handleUploadFolder = () => {
-    folderInputRef.current?.click();
-  }; 
-  
-  const filterIcons = {
-    folder: <Folder size={20}/>,
-    doc: <SquareDocumentIcon size={20}/>,
-    pdf: <PdfIcon size={20}/>
-  };
-  
-  const chevRightIcon = <ChevronRight size={16} />;
   const addFileIcon = <FolderPlus size={20}/>
   const uploadFileIcon = <Upload size={20}/>
   const FileUpIcon = <FileUp size={20}/>
   const alertIcon = <AlertCircle size={20}/>
-  
 
-
-
+  const filterIcons = {
+    folder: <Folder size={20} />,
+    doc: <SquareDocumentIcon size={20} /> ,
+    pdf: <PdfIcon size={20}/>
+  }
+  const chevRightIcon = <ChevronRight size={16} />;
 
   if (loading) {
     return <div className={styles.contentWrapper}>Ładowanie...</div>;
   }
-  
+
+  const handleAddFolderClick = () => {
+      SetAddFileOpen(true);
+  }
+  const handleUploadFile = () => {}; // TODO
+  const handleUploadFolder = () => {}; // TODO
+
   return (
     <div className={styles.contentWrapper}>
-
-      <input 
-        type="file" 
-        ref={fileInputRef}
-        style={{ display: 'none' }}
-        onChange={handleFileChange}
-        multiple
-      />
-
-      <input 
-        type="file" 
-        ref={folderInputRef}
-        style = {{display:'none'}}
-        onChange={handleFolderChange}
-        webkitdirectory=""
-        directory=""
-        multiple
-      />
-      {
-      <Modal open={addFileOpen} onClose={()=>SetAddFileOpen(false)}>
-        <label className={styles.modalLabel}>Nowy Folder</label>
-        <input value={fileName} placeholder="Folder bez nazwy" className={styles.modalInput} onChange={(e)=> SetFileName(e.target.value)}></input>
-        <div className={styles.modalButtons}>
-          <button className={styles.modalButton} onClick={()=>SetAddFileOpen(false)}>Anuluj</button>
-          <button className={styles.modalButton} onClick={()=>{
-            handleAddFolder()
-            }}>
-            Zapisz
-          </button>
-        </div>
-      </Modal>
-      }
-
       {
         <FileContentViewer contentOpen={contentOpen} fileContent={fileContent} selectedFileId={selectedFileId} onActivate={()=>setContentOpen(false)} onClose={()=>{setContentOpen(false)}} onEditing={(e)=>setFileContent(e.target.value)} ></FileContentViewer>
       }
-      <div className={styles.topbarWrapper} ref={contentTopbarRef}>
+      <div className={styles.topbarWrapper}>
         <div className={styles.titleButtonWrapper}>
-            {/* CZĘŚĆ Z BREADCRUMB PATHEM */}
-            {breadcrumbPath.length===0 ? 
-
-            <div className={styles.breadcrumbWrapper}>
-              <DropDownButton label="Mój Dysk" menuVariant="operations" chevron={true}>
-                <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations" onActivate={()=>{handleAddFolderClick()}} />
-                <MenuDivider/>
-                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations" onActivate={()=>handleUploadFile()}/>
-                <MenuItem icon = {FileUpIcon} label= "Prześlij Folder" gap={14} size={14} variant="operations" onActivate={handleUploadFolder}/> 
-                <MenuDivider/>
-                <MenuItem icon = {alertIcon} label= "..." gap={14} size={14} variant="operations" 
-                style={{color:"lightgray", cursor:"not-allowed",pointerEvents:"none"}}/> 
-            </DropDownButton>
-            </div>
+          <div className={styles.breadcrumbWrapper}>
+            {breadcrumbPath.length === 0 ?
+            <div className={styles.titleOnly}>Udostępnione dla mnie</div>
             :
             <div className={styles.breadcrumbWrapper}>
-              <button className={styles.breadcrumbButton} onClick={()=>{setCurrentFolderId(null)}}>Mój Dysk</button>
+              <button className={styles.breadcrumbButton} onClick={()=>{setCurrentFolderId(null); setActiveView(ViewType.MY_FILES)}}>Mój Dysk</button>
               {chevRightIcon}
               {breadcrumbPath.slice(0,breadcrumbPath.length-1).map((item) => (
                 <React.Fragment key={item.id}>
@@ -237,13 +138,14 @@ const MyFiles = () => {
             </DropDownButton>
             </div>
             }
-            <div className={styles.viewButtonWrapper}>
+          </div>
+          <div className={styles.viewButtonWrapper}>
                 <DoubleItemButton size={32} activeLayout={activeLayout} onActivateLeft={()=>{setActiveLayout('list')}} onActivateRight={()=>{setActiveLayout('grid')}}></DoubleItemButton>
-            </div>
+          </div>
         </div>
         {hasSelection ? 
         <div className={styles.filtersWrapper}>
-            <div className={styles.ItemSelected} ref={fileOperationsRef}>
+            <div className={styles.ItemSelected}>
                 <div className={styles.hoverIcon} data-tooltip='Odznacz' onClick={()=>{clearSelection()}}>
                     <X size={20} strokeWidth={1.6}/>
                 </div>
@@ -251,7 +153,7 @@ const MyFiles = () => {
                 <div className={styles.hoverIcon} data-tooltip='Udostępnij'>
                     <Share2 size={14} strokeWidth={2}/>
                 </div>
-                <div className={styles.hoverIcon} data-tooltip='Pobierz' onClick={downloadSelected}>
+                <div className={styles.hoverIcon} data-tooltip='Pobierz'>
                     <Download size={14}strokeWidth={2}/>
                 </div>
                 <div className={styles.hoverIcon} data-tooltip='Zmień nazwę' onClick={()=>{}}>
@@ -311,7 +213,7 @@ const MyFiles = () => {
               </span>           
             </div>
             <div className={`${styles.mainContentTopbarColumn} ${styles.mainContentTopbarDate}`}
-            data-tooltip= {sortAscending ? 'Sortuj Od nowych do starych' : 'Sortuj Od starych do nowych'}
+            data-tooltip= {sortAscending ? 'Sortuj od Z do A' : 'Sortuj od A do Z'}
             onClick={()=>{handleSort('date',!sortAscending,sortWithFoldersUp)
               SetNameFilterActive(false);
               SetDateFilterActive(true);
@@ -366,13 +268,12 @@ const MyFiles = () => {
                 ))}
               <MenuDivider/>
               <MenuHeader>Kolejność sortowania</MenuHeader>
-                {(sortBy === 'name' ? sortOrderItems : sortDateItem).map((item,index)=>(
+                {sortOrderItems.map((item,index)=>(
                   <React.Fragment key={index}>
                       <MenuItem gap={14} size={14} variant="sortOptions" clicked={sortAscending === item.id} onActivate={()=>{
                         handleSort(sortBy as 'date' | 'name',!sortAscending,sortWithFoldersUp)
                       }}>
-                        <span style={{whiteSpace:"nowrap"}}>
-                          {item.label}
+                        <span style={{whiteSpace:"nowrap"}}>{item.label}
                         </span>
                       </MenuItem>
                   </React.Fragment>
@@ -394,8 +295,8 @@ const MyFiles = () => {
             </div>
           </div>
           <FileItemDivider/>
-          <div className={styles.fileList} ref={contentListRef}>
-            {displayedFiles.map((item,index)=>(
+          <div className={styles.fileList}>
+            {sharedFiles.map((item,index)=>(
               <div key={index}>
                 <FileItemList file={item} isActive={selectedItems.has(index.toString())} 
                 onActivate={(e)=>{ 
@@ -406,17 +307,16 @@ const MyFiles = () => {
                     navigateTo(ViewType.GENERAL_SEARCH,item.id)
                   }else{
                     if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
-                      const content = await handleGetContent(item.id);
-                      setContentOpen(true);
-                      setFileContent(content);
-                      setSelectedFileId(item.id);
+                        const content = await handleGetContent(item.id);
+                        setContentOpen(true);
+                        setFileContent(content);
+                        setSelectedFileId(item.id);
                     }
                   }
-                  }}
+                }}
                 owner={true}
                 dateModified={true}
-                fileSize={true}
-                />
+                fileSize={true}/>
                 <FileItemDivider/>
               </div>
             ))}
@@ -448,6 +348,7 @@ const MyFiles = () => {
               textSize={14} 
               menuVariant="sortOptions" 
               style={{fontWeight:400}}
+            
             >
               <MenuHeader>Sortuj według</MenuHeader>
               {sortByItems.map((item,index)=>(
@@ -489,30 +390,32 @@ const MyFiles = () => {
                     </MenuItem>
                 </React.Fragment>
               ))}
+              
             </DropDownButton>
           </div>
           <div className={styles.fileGrid}>
-                {displayedFiles.map((item,index)=>(
+                {sharedFiles.map((item,index)=>(
                   <div key={index}>
                     <FileItemGrid file={item} isActive={selectedItems.has(index.toString())} 
                     onActivate={(e)=>{ 
                       e.preventDefault();
                       handleClickItem(item.id,index.toString(), e)}}
                       onDoubleClick={async ()=>{
-                      if(item.type==='folder'){
-                        navigateTo(ViewType.GENERAL_SEARCH,item.id)
-                      }else{
-                        if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
-                          const content = await handleGetContent(item.id);
-                          setContentOpen(true);
-                          setFileContent(content);
-                          setSelectedFileId(item.id);
+                        if(item.type==='folder'){
+                          navigateTo(ViewType.GENERAL_SEARCH,item.id)
+                        }else{
+                          if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
+                            const content = await handleGetContent(item.id);
+                            setContentOpen(true);
+                            setFileContent(content);
+                            setSelectedFileId(item.id);
+                          }
                         }
-                      }
-                      }}/>
+                        }}
+                      />
                   </div>
                 ))}
-            </div>
+              </div>
         </div>
       }
 
@@ -520,4 +423,8 @@ const MyFiles = () => {
   );
 };
 
-export default MyFiles;
+export default Starred;
+
+function setCurrentFolderId(arg0: null) {
+  throw new Error("Function not implemented.");
+}
