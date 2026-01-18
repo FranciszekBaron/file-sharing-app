@@ -101,6 +101,10 @@ export const FileItemList = ({file,isActive,onActivate,onDoubleClick,owner,dateM
 
 
     useEffect(()=> {
+        if (!shareFileOpen) {
+            return;
+        }
+        
         const loadUsersWithAccess = async () => {
             try {
                 const users = await handleGetUsersWithAccess(file.id);

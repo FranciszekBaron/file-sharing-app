@@ -61,7 +61,8 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
 
     const { currentFolderId } = useNavigation();
 
-    const { currentUser } = useAuth()
+    const { isLoading
+        ,currentUser } = useAuth()
     
     const [loading,setLoading] = useState(true);// zwraca dane 
     const [activeFilter,setActiveFilter] = useState<FilterType>('none');// zwraca dane 
@@ -164,9 +165,11 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
     },[allFiles,currentFolderId])
 
 
-    useEffect(()=>{
+    useEffect(() => {
+        if (isLoading) return;  
+        if (!currentUser) return; 
         loadFiles();
-    },[])
+    }, [isLoading, currentUser]);
 
 
     const loadFiles = async () => {

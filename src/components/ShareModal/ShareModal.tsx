@@ -52,6 +52,10 @@ export const ModalShare = ({file,shareFileOpen,onShareFileClose} : Props) =>
     
     
     useEffect(()=> {
+        if (!shareFileOpen) {
+            return;
+        }
+
         const loadUsersWithAccess = async () => {
             try {
                 

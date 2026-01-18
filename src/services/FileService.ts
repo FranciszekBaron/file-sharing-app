@@ -3,6 +3,8 @@ import type { FileItem } from "../types/FileItem";
 import type { UserGetDto } from "../types/UserGetDto";
 import type { IFileService } from "./IFileService";
 
+import type { IAuthService } from "./IAuthService";
+
 export class FileService implements IFileService {
    
     
@@ -36,28 +38,55 @@ export class FileService implements IFileService {
 
     private async fetchWrapper<T>(url: string,options?: RequestInit) : Promise<T> {
         
-        const response = await fetch(url,options);
+        
+        const token = localStorage.getItem('accesToken');
+        
+        const headers = new Headers(options?.headers);
+
+        if(token){
+            headers.set('Authorization',`Bearer ${token}`);
+        }
+
+        const fetchOptions: RequestInit = {
+            ...options,
+            headers
+        }
+        
+        
+        
+        const response = await fetch(url,fetchOptions);
 
         if(!response.ok){
-            let errorMessage = `API Error: ${response.status} ${response.statusText}`;
-
-            try {
-                const errorData = await response.json();
-                
-                if (errorData.error) {
-                errorMessage = errorData.error;
-                } else if (typeof errorData === 'string') {
-                    errorMessage = errorData;
-                } else if (errorData.message) {
-                    errorMessage = errorData.message;
-                } else if (errorData.title) {
-                    errorMessage = errorData.title;
-                }
-            } catch {
-                // Jeśli nie ma JSON, zostaw domyślny message
-            }
             
-            throw new Error(errorMessage);
+            if (response.status === 401 ) {
+                console.error('Unauthorized');
+                
+                
+            }
+            else
+            {
+                let errorMessage = `API Error: ${response.status} ${response.statusText}`;
+
+                try {
+                    const errorData = await response.json();
+                    
+                    if (errorData.error) {
+                    errorMessage = errorData.error;
+                    } else if (typeof errorData === 'string') {
+                        errorMessage = errorData;
+                    } else if (errorData.message) {
+                        errorMessage = errorData.message;
+                    } else if (errorData.title) {
+                        errorMessage = errorData.title;
+                    }
+                } catch {
+                    // Jeśli nie ma JSON, zostaw domyślny message
+                }
+                
+                throw new Error(errorMessage);
+            }
+
+            
         }
 
         const data = await response.json()
@@ -93,7 +122,7 @@ export class FileService implements IFileService {
         }
         catch (err)
         {
-            console.error('Błąd podczas usuwania:', err);
+            console.error('Błąd podczas pobierania uzytkownikow:', err);
             throw err;
         }
     }

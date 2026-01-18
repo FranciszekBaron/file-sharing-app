@@ -7,7 +7,7 @@ import type { IAuthService } from "./IAuthService";
 import { MockAuthService } from "./MockAuthService";
 
 const USE_MOCK = false;
-const USE_MOCK_AUTH = true;
+const USE_MOCK_AUTH = false;
 
 export const filesService: IFileService = USE_MOCK ?
 new MockFilesService() : new FileService();

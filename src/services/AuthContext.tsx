@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react"
 import type { User } from "../types/User";
 import { authService } from ".";
+import { getUserFromToken, isTokenExpired } from '..//..//src//utils//JwtHelper';
 
 
 interface AuthContextType {
@@ -25,9 +26,14 @@ export const AuthProvider = ({children} : {children:React.ReactNode}) => {
     useEffect(()=>{
         const loadUser = async () => {
             try{
+                const accessToken = localStorage.getItem('accesToken');
 
-                //ustawiamy domyslnego bo getCurrentUser() daje nam users[0]
-                const user = await authService.getCurrentUser();
+                if (!accessToken) {
+                    setCurrentUser(null);
+                    return;
+                }
+                
+                const user = getUserFromToken(accessToken);
                 setCurrentUser(user);
             }catch (err){
                 console.error('Failed to load user:', err)
@@ -43,13 +49,52 @@ export const AuthProvider = ({children} : {children:React.ReactNode}) => {
     console.log(currentUser);
 
     const login = async (email:string,password:string) => {
-        const user = await authService.login(email,password);
-        setCurrentUser(user);
+
+        try{
+            setIsLoading(true);
+            const authResponse = await authService.login(email,password);
+            localStorage.setItem('accesToken',authResponse.accessToken);
+            localStorage.setItem('refreshToken',authResponse.refreshToken);
+
+            const user = getUserFromToken(authResponse.accessToken);
+
+
+            if (!user) {
+                throw new Error('Failed to decode user from token');
+            }
+
+            setCurrentUser(user);
+
+        }catch (err) {
+            console.error('Login failed:', err);
+            throw err; // Przekaż błąd do LoginForm żeby mógł wyświetlić
+        } finally {
+            setIsLoading(false);
+        }
+
     }
 
     const logout = async () => {
-        await authService.logout();
+        const token = localStorage.getItem('refreshToken');
+
+        if (!token) {
+                throw new Error('Failed to load refreshToken from storage');
+            }
+        await authService.logout(token);
+        
+        localStorage.removeItem('accesToken');
+        localStorage.removeItem('refreshToken');
         setCurrentUser(null);
+    }
+
+    const handleRefreshToken = async () => { 
+        const refreshedToken = await authService.refreshToken();
+
+        if (!refreshedToken) {
+            throw new Error('Failed to load refreshToken from storage');
+        }
+
+        localStorage.setItem('accesToken',refreshedToken.accessToken);
     }
 
     return (

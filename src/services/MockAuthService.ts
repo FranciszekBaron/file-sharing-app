@@ -1,11 +1,18 @@
 import type { User } from "../types/User";
 import type { IAuthService } from "./IAuthService";
 import { MOCK_USERS } from "..//data//mockUsers"
+import type { AuthResponse } from "../dto/AuthResponse";
 
 
 
 
 export class MockAuthService implements IAuthService {
+    refreshToken(): Promise<AuthResponse> {
+        throw new Error("Method not implemented.");
+    }
+    login(email: string, password: string): Promise<AuthResponse> {
+        throw new Error("Method not implemented.");
+    }
 
     private users: User[] = [...MOCK_USERS];
     private currentUser: User | null = null;
@@ -15,13 +22,12 @@ export class MockAuthService implements IAuthService {
         return new Promise(resolve => setTimeout(resolve,ms));
     }
 
-    async login(email: string, password: string): Promise<User> {
+    async loginMock(email: string, password: string): Promise<User> {
         await this.delay();
         const user = this.users.find(u=>u.email===email && u.password === password);
         if(!user){
             throw new Error("Nieprawidłowy email lub hasło");
         }
-
 
         const {password: _, ...userWithoutPassword} = user;
 
