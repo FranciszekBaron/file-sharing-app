@@ -35,6 +35,9 @@ import { readFileAsDataURL, readFileAsText } from "../../hooks/useFileReader.ts"
 import useFileUploader from "..//..//hooks//useFileUploader.ts"
 import useFolderUploader from "../../hooks/useFolderUploader.ts";
 import { useFileDownloader } from "../../hooks/useFileDownloader.ts";
+import DropDownSearch from "../../components/DropDownSearch/DropDownSearch.tsx";
+import { useAuth } from "../../services/AuthContext.tsx";
+import { ModalShare } from "../../components/ShareModal/ShareModal.tsx";
 
 
 
@@ -56,6 +59,11 @@ const MyFiles = () => {
 
 
   const {
+    currentUser
+  } = useAuth()
+
+
+  const {
     allFiles,
     displayedFiles,
     loading,
@@ -74,7 +82,8 @@ const MyFiles = () => {
     handleSort,
     handleGetContent,
     handleAddContent,
-    handlePermanentDelete
+    handlePermanentDelete,
+    handleShare
   } = useFiles()
 
   const {
@@ -115,6 +124,12 @@ const MyFiles = () => {
   const [isNameFilterActive,SetNameFilterActive] = useState(true);
   const [isDateFilterActive,SetDateFilterActive] = useState(true);
 
+
+
+  const [activeFile,SetActiveFile] = useState<FileItemtype | null>(null);
+  const [shareFileOpen,SetShareFileOpen] = useState(false);
+  
+
   const [fileName,SetFileName] = useState("");
 
   const handleAddFolderClick = () => {
@@ -154,8 +169,8 @@ const MyFiles = () => {
   const alertIcon = <AlertCircle size={20}/>
   
 
-
-
+  
+  console.log("Active File: " + activeFile);
 
   if (loading) {
     return <div className={styles.contentWrapper}>Ładowanie...</div>;
@@ -181,6 +196,11 @@ const MyFiles = () => {
         directory=""
         multiple
       />
+      { activeFile &&
+        <ModalShare file={activeFile} shareFileOpen={shareFileOpen} onShareFileClose={()=>SetShareFileOpen(false)}></ModalShare>
+      }
+      
+
       {
       <Modal open={addFileOpen} onClose={()=>SetAddFileOpen(false)}>
         <label className={styles.modalLabel}>Nowy Folder</label>
@@ -248,7 +268,7 @@ const MyFiles = () => {
                     <X size={20} strokeWidth={1.6}/>
                 </div>
                 <span className={styles.ItemSelectedLabel}>wybrano {selectedItems.size}</span>
-                <div className={styles.hoverIcon} data-tooltip='Udostępnij'>
+                <div className={styles.hoverIcon} data-tooltip='Udostępnij' onClick={()=>SetShareFileOpen(true)}>
                     <Share2 size={14} strokeWidth={2}/>
                 </div>
                 <div className={styles.hoverIcon} data-tooltip='Pobierz' onClick={downloadSelected}>
@@ -400,7 +420,9 @@ const MyFiles = () => {
                 <FileItemList file={item} isActive={selectedItems.has(index.toString())} 
                 onActivate={(e)=>{ 
                   e.preventDefault();
-                  handleClickItem(item.id,index.toString(), e)}}
+                  handleClickItem(item.id,index.toString(), e);
+                  SetActiveFile(item);
+                }}
                 onDoubleClick={async ()=>{
                   if(item.type==='folder'){
                     navigateTo(ViewType.GENERAL_SEARCH,item.id)
@@ -408,7 +430,7 @@ const MyFiles = () => {
                     if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
                       const content = await handleGetContent(item.id);
                       setContentOpen(true);
-                      setFileContent(content);
+                      
                       setSelectedFileId(item.id);
                     }
                   }
@@ -502,10 +524,11 @@ const MyFiles = () => {
                       if(item.type==='folder'){
                         navigateTo(ViewType.GENERAL_SEARCH,item.id)
                       }else{
+                        //Klikanie w plik 
                         if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
                           const content = await handleGetContent(item.id);
                           setContentOpen(true);
-                          setFileContent(content);
+                          
                           setSelectedFileId(item.id);
                         }
                       }

@@ -142,7 +142,15 @@ const MyFiles = () => {
             {isRecommendedFoldersActive && 
             <div className={styles.fileGrid}>
                 {displayedFiles.filter(f=>f.type === "folder")
-                .sort((a, b) =>  new Date(b.modifiedDate).getTime() - new Date(a.modifiedDate).getTime())
+                .sort((a, b) => {
+                  if(b.modifiedDate && a.modifiedDate) {
+                    const diff =  new Date(b.modifiedDate).getTime() - new Date(a.modifiedDate).getTime();
+                    return diff;
+                    }
+                    else{
+                      return a.name.localeCompare(b.name);
+                    }
+                })
                 .slice(0,4).map((item,index)=>(
                   <div key={index}>
                     <FileItemGrid file={item} isActive={selectedItems.has(`folder-${index}`)} 
@@ -199,7 +207,15 @@ const MyFiles = () => {
               <FileItemDivider/>
               <div className={styles.fileList}>
                 {displayedFiles.filter(f=>f.type !== "folder")
-                  .sort((a, b) =>  new Date(b.modifiedDate).getTime() - new Date(a.modifiedDate).getTime())
+                  .sort((a, b) => {
+                  if(b.modifiedDate && a.modifiedDate) {
+                    const diff =  new Date(b.modifiedDate).getTime() - new Date(a.modifiedDate).getTime();
+                    return diff;
+                    }
+                    else{
+                      return a.name.localeCompare(b.name);
+                    }
+                  })
                   .slice(0,10).map((item,index)=>(
                     <div key={index}>
                       <FileItemList file={item} isActive={selectedItems.has(`file-${index}`)} 
@@ -213,7 +229,6 @@ const MyFiles = () => {
                               if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
                                 const content = await handleGetContent(item.id);
                                 setContentOpen(true);
-                                setFileContent(content);
                                 setSelectedFileId(item.id);
                               }
                             }
@@ -227,7 +242,15 @@ const MyFiles = () => {
             :
             <div className={styles.fileGrid}>
               {displayedFiles.filter(f=>f.type !== "folder")
-                .sort((a, b) =>  new Date(b.modifiedDate).getTime() - new Date(a.modifiedDate).getTime())
+                .sort((a, b) => {
+                  if(b.modifiedDate && a.modifiedDate) {
+                    const diff =  new Date(b.modifiedDate).getTime() - new Date(a.modifiedDate).getTime();
+                    return diff;
+                    }
+                    else{
+                      return a.name.localeCompare(b.name);
+                    }
+                })
                 .slice(0,10).map((item,index)=>(
                   <div key={index}>
                     <FileItemGrid file={item} isActive={selectedItems.has(`file-${index}`)} 
@@ -241,7 +264,6 @@ const MyFiles = () => {
                             if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
                               const content = await handleGetContent(item.id);
                               setContentOpen(true);
-                              setFileContent(content);
                               setSelectedFileId(item.id);
                             }
                           }

@@ -3,13 +3,14 @@ import { Profile } from "../Common/Profile";
 import {Searchbar} from "../Searchbar/Searchbar";
 import styles from "./Topbar.module.css";
 import buttonStyles from "../Common/Button.module.css"
-import { mockFiles } from "../../data/mockFiles";
+
 import { SettingsIcon } from "../../icons/SettingsIcon";
 import { HelpCircleIcon } from "../../icons/HelpCircleIcon";
 import { Settings,Sliders, HelpCircle} from "lucide-react";
 import { AppsIcon } from "../../icons/AppsIcon";
 import { useNavigation } from "../../services/NavigationContext";
 import { useAuth } from "../../services/AuthContext";
+import { useFiles } from "../../services/FilesContextType";
 
 
 const Topbar = () => {
@@ -23,6 +24,10 @@ const Topbar = () => {
   } = useNavigation()
 
   const {
+    allFiles
+  } = useFiles()
+
+  const {
     currentUser,
     logout
   } = useAuth()
@@ -33,7 +38,7 @@ const Topbar = () => {
         
         {/* Lewa strona - Searchbar */}
         <div className={styles.leftSection}>
-          {activeView === 1 && <Searchbar items={mockFiles}/>}
+          {activeView === 1 && <Searchbar items={allFiles}/>}
         </div>
         
         {/* Prawa strona - Buttony (zawsze przyklejone do prawej) */}

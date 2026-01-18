@@ -33,6 +33,8 @@
 }
 
 
+
+
 .menu {
   display: flex;
   flex-direction: column;
@@ -52,8 +54,40 @@
   transform-origin: top;
 }
 
+.menuInfo {
+  display: flex;
+  flex-direction: row;
+  position: absolute;
+  top: 0;
+  left: calc(100% + 8px);
+  background: #eaeef5;
+  border-radius: 8px;
+  box-shadow: 1px 2px 4px rgba(0, 0, 0, 0.35);
+  min-height: 70px; /* ✅ min-height zamiast fixed */
+  width: 220px; /* ✅ Szerokość */
+  z-index: 20;
+  padding: 12px;
+  animation: slideRight 0.2s ease-out;
+  transform-origin: left;
+}
+
+.profileInfoOnlyInfo {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 12px;
+  width: 100%; /* ✅ Pełna szerokość */
+}
+
+.profileInfoOnlyInfo .profile {
+  flex-shrink: 0; /* ✅ Zdjęcie nie kurczy się */
+  width: 40px;
+  height: 40px;
+}
+
+
+
 .profileInfo {
-  
   display: flex ;
   flex-direction: column;
   align-items: center;
@@ -61,6 +95,31 @@
   padding:8px;
   gap: 12px;
 }
+
+.profileInfoOnlyInfo label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow: hidden; 
+  flex: 1; /* ✅ Zajmij resztę miejsca */
+}
+
+.profileInfoOnlyInfo .userName {
+  font-weight: 600;
+  font-size: 14px;
+  white-space: nowrap; /* ✅ Nie łam */
+  overflow: hidden;
+  text-overflow: ellipsis; /* ✅ Dodaj ... */
+}
+
+.profileInfoOnlyInfo .userEmail {
+  font-size: 12px;
+  color: #666;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 
 
 
@@ -89,4 +148,16 @@
 
 .logoutButton:hover{
   background-color:rgba(0, 0, 0, 0.07) ;
+}
+
+
+@keyframes slideRight {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }

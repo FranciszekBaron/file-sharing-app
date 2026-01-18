@@ -309,7 +309,7 @@ const Starred = () => {
                     if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
                         const content = await handleGetContent(item.id);
                         setContentOpen(true);
-                        setFileContent(content);
+                        
                         setSelectedFileId(item.id);
                     }
                   }
@@ -407,7 +407,7 @@ const Starred = () => {
                           if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
                             const content = await handleGetContent(item.id);
                             setContentOpen(true);
-                            setFileContent(content);
+                            
                             setSelectedFileId(item.id);
                           }
                         }

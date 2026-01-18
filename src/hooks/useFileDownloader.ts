@@ -18,22 +18,13 @@ export const useFileDownloader = (selectedItems: Map<string,string>) => {
             const fileItem = await getFileById(id);
             const fileContent = await handleGetContent(id)
 
-            console.log("Type z funkcji download: " + fileItem.type)
-            if(fileItem.type === 'txt'){
-                downloadTextFile(fileContent,fileItem.name);
-            }else if(fileItem.type === 'pdf' || fileItem.type ==='doc'){
-                if (!fileContent || fileContent.trim() === '' || fileContent === 'data:application/pdf;base64') {
-                    alert(`Plik "${fileItem.name}" jest pusty i nie może być pobrany`);
-                    return;
-                }
-                downloadPDF(fileContent,fileItem.name);
-            }else if(fileItem.type === 'folder'){
-                alert('Pobieranie folderów będzie dostępne po uruchomieniu serwera');
-                return;
-            }else{
-                alert("Unsuported type for downloading")
+            if (fileContent.size === 0) {
+                alert(`Plik "${fileItem.name}" jest pusty`);
                 return;
             }
+
+            console.log("Type z funkcji download: " + fileItem.type)
+            downloadBlob(fileContent,fileItem.name);
         }catch(err){
             console.error('Error downloading file,',err); 
         }
@@ -47,24 +38,16 @@ export const useFileDownloader = (selectedItems: Map<string,string>) => {
     }
 
 
-    const downloadTextFile = (content:string, filename:string) => {
-        const blob = new Blob([content],{type: 'text/plain'}); //obiekt w przegladarce, tworzy obiekt danym content - tablica z danymi , type - MIME
-        const url = URL.createObjectURL(blob); //tymczasowy url do bloba, tylko w tej sesji przegladarki 
-        const link = document.createElement('a'); //tworzy elememt w pamieci niewidoczny 
-
-        link.href = url; //gdzie link prowadzi 
-        link.download = filename; //to ma byc download, bez tego probowala by otwierac w nowej karcie
-        link.click(); // klikniecie w niewidzialny przycisk 
-
-        URL.revokeObjectURL(url); //memory leak zeby nie bylo, trzeba usunąć z pamięci
-    }
-
-    const downloadPDF = (content:string,filename:string) => {
+    const downloadBlob = (blob: Blob, filename: string) => {
+        const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
-        link.href = content;
-        link.download = filename;
+        link.href = url;
+        link.download = filename;  // ✅ Nazwa z backendu (raport.pdf, dokument.txt...)
+        document.body.appendChild(link);
         link.click();
-    }
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
 
 
     return {downloadFile,downloadSelected};

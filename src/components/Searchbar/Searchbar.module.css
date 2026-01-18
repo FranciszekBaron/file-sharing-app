@@ -102,3 +102,9 @@
 .menuContent > div:hover {
   background-color: #f1f3f4; /* Opcjonalnie: hover effect */
 }
+
+.searchResult {
+  display: flex;
+  flex-direction: row;
+  gap:12px;
+}

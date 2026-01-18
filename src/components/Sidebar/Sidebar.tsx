@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 import { PlusIcon } from "..//..//icons//Plus";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {Button} from "../Common/Button";
 import DropDownButton from "../DropDownButton/DropDownButton";
 import IconText from "../Common/MenuItem/MenuItem";
@@ -28,6 +28,8 @@ import MenuItem from "../Common/MenuItem/MenuItem";
 import { useFiles } from "../../services/FilesContextType";
 import Modal from "../Modal/Modal";
 import { useNavigation, ViewType } from "../../services/NavigationContext";
+import useFileUploader from "../../hooks/useFileUploader";
+import useFolderUploader from "../../hooks/useFolderUploader";
 
 
 const Sidebar = ({ 
@@ -36,24 +38,36 @@ const Sidebar = ({
   children?: React.ReactNode,
 }) => {
 
+
+    const folderInputRef = useRef<HTMLInputElement>(null);
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
     const {
-      handleAdd
+      handleAdd,
     } = useFiles()
 
     const {
       activeView,
       setActiveView,
-      setCurrentFolderId
+      setCurrentFolderId,
+      currentFolderId
     } = useNavigation()
 
+    const {
+      handleFileChange
+    } = useFileUploader();
 
-  
+    const {
+      handleFolderChange
+    } = useFolderUploader();
+
 
     const [hoveredIndex,setHoveredIndex] = useState<number | null>(null);
     const [activeIndex,setActiveIndex] = useState<number | null>(null);
 
     const [addFileOpen,SetAddFileOpen] = useState(false);
     const [fileName,SetFileName] = useState("");
+    
 
     const items = [
     { icon: <Home strokeWidth={1}/>, label: "Strona główna"  },
@@ -75,7 +89,7 @@ const Sidebar = ({
 
   const handleAddFolder = async () => {
     try{
-      await handleAdd(fileName,'folder');
+      await handleAdd(fileName,'folder',currentFolderId);
       SetFileName("")
       SetAddFileOpen(false);
     }catch(err){
@@ -90,9 +104,34 @@ const Sidebar = ({
 
   const addItem = <PlusIcon strokeWidth={2.7} size={25}/>;
 
+
+  const handleUploadFile = () => {
+    fileInputRef.current?.click();
+  }; 
+  const handleUploadFolder = () => {
+    folderInputRef.current?.click();
+  }; 
+
   return (
     
     <div className={styles.sidebarContent}>
+      <input 
+        type="file" 
+        ref={fileInputRef}
+        style={{ display: 'none' }}
+        onChange={handleFileChange}
+        multiple
+      />
+
+      <input 
+        type="file" 
+        ref={folderInputRef}
+        style = {{display:'none'}}
+        onChange={handleFolderChange}
+        webkitdirectory=""
+        directory=""
+        multiple
+      />
       {
       <Modal open={addFileOpen} onClose={()=>SetAddFileOpen(false)}>
         <label className={styles.modalLabel}>Nowy Folder</label>
@@ -111,8 +150,8 @@ const Sidebar = ({
           <DropDownButton icon={addItem} label="Nowy" variant="icon" position="on" >
             <MenuItem icon = {addFileIcon} label="Nowy Folder" gap={14} size={14} variant="operations" onActivate={()=>handleAddFolderClick()}/>
                 <MenuDivider/>
-                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations"/>
-                <MenuItem icon = {FileUpIcon} label= "Prześlij Folder" gap={14} size={14} variant="operations"/> 
+                <MenuItem icon = {uploadFileIcon} label= "Prześlij Plik" gap={14} size={14} variant="operations" onActivate={()=>handleUploadFile()}/>
+                <MenuItem icon = {FileUpIcon} label= "Prześlij Folder" gap={14} size={14} variant="operations" onActivate={()=>handleUploadFolder()}/> 
                 <MenuDivider/>
                 <MenuItem icon = {alertIcon} label= "..."gap={20} variant="operations"
                 style={{color:"lightgray",cursor:"not-allowed",pointerEvents: "none"}}/>

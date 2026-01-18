@@ -187,7 +187,7 @@
 }
 
 .hoverIcon:hover {
-  background-color: rgba(0,0,0,0.1);;
+  background-color: rgba(0,0,0,0.1);
 }
 
 .hoverIcon:hover::after{
@@ -195,20 +195,132 @@
 }
 
 
+/*--------MODAL UDOSTEPNIJ----------*/
+.modalContentShare {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 6px;
+    width: 430px;
+    height: 400px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    gap:16px;
+}
+
+.modalLabelShare{
+  font-size: 18px;
+  font-weight: 300;
+  color: black;
+  padding: 20px;
+  padding-bottom: 0px;
+}
+
+.modalDropDown{
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.modalLabelsShare {
+   padding-left: 20px;
+  padding-right: 20px;
+}
+
+.modalButtonsShare{
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+  height: 50px;
+  margin-top: auto; /* wypycha na dół */
+  padding-right: 20px;
+}
+
+.modalButtonShare {
+  font-size: 12px;
+  width: 84px;
+  height: 36px;
+  border-radius:24px ;
+  background-color: #215bec;
+  border: none;
+  color:#ffff;
+}
+
+
 /*--------MODAL ZMIEN NAZWE---------*/
 .modalLabel{
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 300;
   color: black;
 }
 
 .modalInput {
-  border-radius: 2px;
+  border-radius: 6px;
   border: 1px solid rgba(17, 17, 17, 0.865);
   font-size: 16px;
   height: 50px;
   color: #000000;
   padding: 12px;
+}
+
+.modalInput:focus {
+  outline: none;
+  border: 1px solid #215bec; /* np. #4A90E2 */
+}
+
+
+.modalOwnerInfo{
+  font-size: 14px;
+  font-weight: 200px;
+  color: #000000;
+  display: flex;
+  flex-direction: column;
+  gap:10px;
+}
+
+.modalAccessType{
+  font-size: 14px;
+  font-weight: 200px;
+  color: #000000;
+  display: flex;
+  flex-direction: column;
+  gap:10px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+
+.modalOneUserWithAccess{
+  display: flex;
+  flex-direction: row;
+  padding: 6px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.modalOneUserWithAccess:hover {
+  background-color: rgba(0,0,0,0.05);
+}
+
+.modalUsersWithAccess {
+  display: flex;
+  flex-direction: row;
+  padding: 6px;
+  padding-left: 20px;
+  padding-right: 20px;
+}
+
+.modalOneUserInfoWrapper {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  flex: 1;
+  align-items: center;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.userInfo {
 }
 
 .modalInput::placeholder{
@@ -221,18 +333,89 @@
   justify-content: flex-end;
   gap: 20px;
   height: 50px;
-  padding-right: 10px;
+  margin-top: auto; /* wypycha na dół */
 }
 
 .modalButton {
-  font-size: 12px;
-  width: 60px;
-  border-radius:16px ;
-  background-color: transparent;
+  font-size: 14px;
+  width: 100px;
+  height: 40px;
+  border-radius:24px ;
+  background-color: #215bec;
   border: none;
-  color:blue;
+  color:#ffff;
 }
 
+
+
 .modalButton:hover {
-  background-color: var(--background);
+  background-color: #3769ea;
+  box-shadow: 0 2px 3px rgba(0, 0, 0, 0.3);
+}
+
+
+
+/*-----------DROP DOWN ACCESS-----------*/
+
+.accessTypeDropdown {
+  position: relative;
+  width: 100%;
+}
+
+.accessTypeButton {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 12px 16px;
+  background: white;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: border-color 0.2s;
+}
+
+.accessTypeButton:hover {
+  border-color: #215bec;
+}
+
+.accessTypeMenu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid #d0d0d0;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10;
+  overflow: hidden;
+}
+
+.accessTypeOption {
+  padding: 12px 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.accessTypeOption:hover {
+  background-color: #f5f5f5;
+}
+
+.accessTypeOption.active {
+  background-color: #e3f2fd;
+}
+
+.accessTypeTitle {
+  font-size: 14px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 2px;
+}
+
+.accessTypeDesc {
+  font-size: 12px;
+  font-weight: 300;
+  color: #666;
 }

@@ -2,8 +2,8 @@ import { act, createContext, useContext, useEffect, useMemo, useState } from "re
 import type { FileItem } from "../types/FileItem";
 import { filesService } from ".";
 import { useNavigation } from "./NavigationContext";
-
-
+import { useAuth } from "./AuthContext";
+import type { UserGetDto } from "../types/UserGetDto";
 
 
 type FilterType = 'folder' | 'doc' | 'pdf' | 'none';
@@ -39,9 +39,15 @@ interface FilesContextType{
     handleFilter: (filter: Exclude<FilterType,'none'>) => void;
     handleClearFilter: () => void;
     handleSort: (type:'name'|'date'|'deletedAt',ascending:boolean,foldersUp:boolean) => void;
-    handleGetContent: (id:string) => Promise<string>;
+    handleGetContent: (id:string) => Promise<Blob>;
     handleUpdateContent: (id:string,content:string) => Promise<void>;
     handleAddContent: (id:string,content:string) => Promise<void>;
+    handleToggleStarred: (id:string) => Promise<void>;
+    handleRename: (id:string,newName:string) => Promise<void>;
+    handleShare: (id:string,userEmail:string[], permissionType:string) => Promise<void>;
+    handleUploadFile: (file:File,paretnId:string | null) => Promise<void>;
+    handleGetSharingUsers: () => Promise<UserGetDto[]>;
+    handleGetUsersWithAccess: (id:string) => Promise<UserGetDto[]>;
     refreshFiles: () => Promise<void>;
 }
 
@@ -54,6 +60,8 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
     const [allFiles,setAllFiles] = useState<FileItem[]>([]); // zwraca dane 
 
     const { currentFolderId } = useNavigation();
+
+    const { currentUser } = useAuth()
     
     const [loading,setLoading] = useState(true);// zwraca dane 
     const [activeFilter,setActiveFilter] = useState<FilterType>('none');// zwraca dane 
@@ -72,7 +80,6 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
                 a.name.localeCompare(b.name) : 
                 b.name.localeCompare(a.name);
             }else if(type === 'deletedAt'){
-                const deleted = files.filter(f=>f.deleted);
                 if(a.deletedAt && b.deletedAt){
                     const diff = a.deletedAt.getTime() - b.deletedAt.getTime();
                     return ascending ? diff : -diff;
@@ -83,8 +90,15 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
                     b.name.localeCompare(a.name);
                 }   
             }else{
-                const diff = a.modifiedDate.getTime() - b.modifiedDate.getTime();
-                return ascending ? diff : -diff;
+                if(a.modifiedDate && b.modifiedDate){
+                    const diff = a.modifiedDate.getTime() - b.modifiedDate.getTime();
+                    return ascending ? diff : -diff;
+                }
+                else{
+                    return ascending ? 
+                    a.name.localeCompare(b.name) : 
+                    b.name.localeCompare(a.name);
+                }
             }
         })
         
@@ -102,18 +116,20 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
     //AUTOMATYCZNE PRZELICZANIE KIEDY KTORAS Z WARTOSCI W [] SIE ZMIENI
     //SWIETNA RZECZ 
     const displayedFiles = useMemo(()=>{
-        let filtered = allFiles.filter(f=>!f.deleted && f.parentId === currentFolderId);
+        let filtered = allFiles.filter(f=>!f.deleted && f.parentId === currentFolderId && f.ownerId === currentUser?.id);
 
         if(activeFilter!=='none'){
             filtered = filtered.filter(f=>f.type===activeFilter);
         }
-
+    
         const sortType = sortBy === 'deletedAt' ? 'date' : sortBy;
         return sortFiles(filtered,sortType,sortAscending,sortWithFoldersUp)
     },[allFiles,sortBy,sortAscending,activeFilter,currentFolderId]);
 
     const deletedFiles = useMemo(() => {
-        const filtered = allFiles.filter(f=>f.deleted && f.parentId === currentFolderId);
+        const filtered = allFiles.filter(f=>f.deleted && f.ownerId === currentUser?.id);
+
+        console.log(filtered);
         return sortFiles(filtered,sortBy,sortAscending,false);
     },[allFiles,sortBy,sortAscending,currentFolderId]);
     
@@ -127,7 +143,7 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
 
 
     const sharedFiles = useMemo(()=>{
-        const filtered = allFiles.filter(f=>!f.deleted && f.parentId === currentFolderId && f.sharedBy);
+        const filtered = allFiles.filter(f=>!f.deleted && f.parentId === currentFolderId && f.ownerId !== currentUser?.id);
         const sortType = sortBy === 'deletedAt' ? 'date' : sortBy;
         return sortFiles(filtered,sortType,sortAscending,sortWithFoldersUp);
     },[allFiles,sortBy,sortAscending,sortWithFoldersUp,currentFolderId])
@@ -157,7 +173,8 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
         try{
             setLoading(true);
             const data = await filesService.getAll();
-
+            console.log("data");
+            console.log(data);
             setAllFiles(data);
         }catch(err){
             console.error('Error loading files',err)
@@ -178,24 +195,60 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             throw err;
         }
     }
+
     
 
     const handleAdd = async (name:string,type:FileItem['type'],parentId:string|null) => {
         try {
-            const newFile = await filesService.add({
-                name,
-                type,
-                modifiedDate: new Date(),
-                parentId: parentId
-            });
 
-            //w tym miejscu juz utworzysz nowy plik w bazie lub w mocku, ale trzeba jeszcze zrobic tak zeby sie poprawnie wyswietlalo
-            setAllFiles(prev=> [...prev,newFile]);
-            return newFile;
+            if(type === 'folder'){
+                const newFolder = await filesService.addFolder(name, parentId);
+            
+                // Optymistyczny update
+                setAllFiles(prev => [...prev, newFolder]);
+                return newFolder;
+            }
+
+            throw new Error('File upload not implemented yet');
         }catch(err){
             console.error('Error adding file: ',err);
             throw err;
         }
+    }
+
+    const handleToggleStarred = async (id:string) => {
+        try {
+            await filesService.toggleStarred(id);
+
+            setAllFiles(prev => {
+                
+                const updatedFiles = prev.map(f=>f.id === id
+                    ? {...f,starred:!f.starred} 
+                    : f
+                );
+
+                return updatedFiles;
+            });
+
+        }catch(err){
+            console.error('Error toggling starred on file: ',err);
+            throw err;
+        }
+    }
+    
+    const handleShare = async (id:string,userEmail:string[], permissionType:string) => {
+        try{
+            await filesService.share(id,userEmail,permissionType);
+        }catch(err){
+            console.error('Error sharing file: ',err);
+            throw err;
+        }
+
+    }
+
+    const handleGetSharingUsers = async ()  => {
+        const allSharedUsers = await filesService.getAllShared();
+        return allSharedUsers; 
     }
 
     const handleSoftDelete = async (id:string) => {
@@ -203,18 +256,16 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
 
             await filesService.delete(id);
             // Zapamietaj usuwany
-            // setAllFiles(prev=> {
+            setAllFiles(prev=> {
             
-            // //Usun z bazy/mocka i zaktualizuj AllFiles
-            // const updatedFiles = prev.map(f=>f.id === id
-            //     ? {...f,deleted:true,deletedAt: new Date()}
-            //     : f
-            // );
+            //Usun z bazy/mocka i zaktualizuj AllFiles
+            const updatedFiles = prev.map(f=>f.id === id
+                ? {...f,deleted:true,deletedAt: new Date()}
+                : f
+            );
             
-            // return updatedFiles;
-            // }); 
-
-            await refreshFiles();
+            return updatedFiles;
+            });            
         }catch(err){
             console.error('Error deleting file: ',err);
             throw err;
@@ -223,11 +274,10 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
 
     const handleRestore = async (id:string) => {
         try{
-            await filesService.update(id,{deleted:undefined,deletedAt:undefined});
-
+            await filesService.restore(id);
             setAllFiles(prev=>{
                 const updatedFiles = prev.map(f=>f.id === id
-                    ?  {...f,deleted:undefined,deletedAt:undefined}
+                    ?  {...f,deleted:undefined,deletedAt:undefined,modifiedDate:new Date()}
                     : f
                 )
                 return updatedFiles
@@ -238,10 +288,26 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
         }
     }
 
+    const handleRename = async (id:string,newName:string) => {
+        try {
+            const updatedFile = await filesService.rename(id,newName);
+            setAllFiles(prev=>{
+                const updatedFiles = prev.map(f=>f.id === id
+                    ?  updatedFile
+                    : f
+                );
+                return updatedFiles;
+            });
+        }catch(err){
+
+        }
+    }
+
     const handlePermanentDelete = async (id:string) => {
         try{
-            await filesService.delete(id);
-
+            await filesService.permanentDelete(id);
+        
+            //dla mocka, ale tez optymistyczny update
             setAllFiles(prev=>{
                 const updatedFiles = prev.filter(f=>f.id !== id);
                 return updatedFiles;
@@ -255,10 +321,8 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
 
 
     const handleGetContent = async  (id:string) => {
-        try{
-            const content = await filesService.getFileContent(id);
-            console.log(content);
-            return content;
+        try{    
+            return await filesService.getFileContent(id);
         }catch(err){
             console.error('Error getting file contnet:', err);
             throw err;
@@ -284,6 +348,14 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
 
     }
 
+    const handleUploadFile = async (file:File,parentId:string|null) => {
+        try{
+            await filesService.upload(file,parentId);
+        }catch(err){
+            console.error('Error uploading file content: ', err);
+            throw err;
+        }
+    }
 
     const handleAddContent = async (id:string,content:string) => {
         try{
@@ -293,6 +365,8 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             throw err;
         }
     }
+
+    
 
     const handleUpdate = async (id:string,updates: Partial<FileItem>) => {
         try{
@@ -305,6 +379,11 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
         }catch(err){
             console.log('Error updating file:',err)
         }
+    }
+
+    const handleGetUsersWithAccess = async (id:string) => { 
+        const usersWithAccess = await filesService.getUsersWithAcces(id);
+        return usersWithAccess;
     }
 
 
@@ -355,8 +434,14 @@ export const FilesProvider = ({children} : {children:React.ReactNode}) => {
             handleClearFilter,
             handleSort,
             handleGetContent,
+            handleGetSharingUsers,
             handleUpdateContent,
             handleAddContent,
+            handleToggleStarred,
+            handleRename,
+            handleShare,
+            handleUploadFile,
+            handleGetUsersWithAccess,
             refreshFiles
         }}>
         {children}

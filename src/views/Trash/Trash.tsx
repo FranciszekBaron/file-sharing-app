@@ -97,17 +97,18 @@ const Trash = () => {
   //Defaultowo zmien na sortowanie po dacie usunięcia 
   useEffect(()=>{
     setSortBy("deletedAt");
-    
   },[])
 
   if (loading) {
     return <div className={styles.contentWrapper}>Ładowanie...</div>;
   }
+
+  
   
 
-  deletedFiles.forEach(element => {
-      console.log(element.name + " " + element.deletedAt)  
-  });
+
+
+
   return (
     <div className={styles.contentWrapper}>
       {
@@ -287,12 +288,15 @@ const Trash = () => {
                       if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
                         const content = await handleGetContent(item.id);
                         setContentOpen(true);
-                        setFileContent(content);
+                        
                         setSelectedFileId(item.id)
                       }
                     }
                     }}
+                    deletedAt={!!item.deletedAt}
+                    fileSize={true}
                     />
+                    <FileItemDivider/>
                 </div>
               ))}
           </div>
@@ -382,7 +386,7 @@ const Trash = () => {
                           if(item.type==='txt' || item.type==='doc' || item.type==='pdf'){
                             const content = await handleGetContent(item.id);
                             setContentOpen(true);
-                            setFileContent(content);
+                            
                             setSelectedFileId(item.id);
                           }
                         }

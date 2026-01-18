@@ -8,7 +8,9 @@ const useFolderUploader = () => {
     const {
         handleAdd,
         handleAddContent,
-        handlePermanentDelete
+        handlePermanentDelete,
+        handleUploadFile,
+        refreshFiles
     } = useFiles()
 
 
@@ -74,58 +76,25 @@ const useFolderUploader = () => {
               //==============================================
               //==============================================
               //==============================================
-    
-              switch (file.type){
-                case 'text/plain': {
-                  let newFile;
-                  try {
-                    const content = await readFileAsText(file);
-                    newFile = await handleAdd(file.name,'txt',nextParent);
-                    await handleAddContent(newFile.id,content);
-                  }catch(err){
-                    if(newFile?.id){
-                      await handlePermanentDelete(newFile.id); //jeśli content nie pojdzie to usuwamy plik, tak jak ROLLBACK
-                    }
-                    console.error('Upload failed:', err);
-                  }
-                  break;
-                }
-                case 'application/pdf': {
-                  let newFile;
-                  try{
-                    const content = await readFileAsDataURL(file);
-                    newFile = await handleAdd(file.name,'pdf',nextParent);
-                    await handleAddContent(newFile.id,content);
-                  }catch(err){
-                    if(newFile?.id){
-                      await handlePermanentDelete(newFile.id); //jeśli content nie pojdzie to usuwamy plik, tak jak ROLLBACK
-                    }
-                    console.error('Upload failed:', err);
-                  }
-                  break;
-                }
-                case 'application/vnd.openxmlformats-officedocument.wordprocessingml.document': {
-                  let newFile;
-                  try{
-                    const content = await readFileAsText(file);
-                    newFile = await handleAdd(file.name,'doc',nextParent);
-                    await handleAddContent(newFile.id,content);
-                  }catch(err){
-                    if(newFile?.id){
-                      await handlePermanentDelete(newFile.id); //jeśli content nie pojdzie to usuwamy plik, tak jak ROLLBACK
-                    }
-                    console.error('Upload failed:', err);
-                  }
-                  break;
-                }
-                default:
-                  alert(`Unsupported format: ${file.name}`);
-                  continue; //Pomijamy plik nieobsługiwany
+            try {
+                await handleUploadFile(file,nextParent);
+                console.log(`✅ Uploaded: ${file.name}`);
+              }catch(err){
+                console.error(`❌ Upload failed for ${file.name}:`, err);
+                
+                // ✅ err.message teraz zawiera message z backendu!
+                const errorMessage = err instanceof Error 
+                    ? err.message 
+                    : 'Nieznany błąd';
+                
+                alert(`Nie udało się przesłać pliku: ${file.name}\n\nPowód: ${errorMessage}`);
               }
-    
+          
+            
             console.log(folderMap);
         }
-      }
+        await refreshFiles();
+      };
 
       return {handleFolderChange};
 }

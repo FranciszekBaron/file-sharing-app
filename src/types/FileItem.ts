@@ -4,7 +4,7 @@ export interface FileItem {
     name: string;
     type: 'folder' | 'pdf' | 'doc' | 'image' | 'other' | 'txt';
     size?: number;
-    modifiedDate: Date;
+    modifiedDate?: Date;
     isOwner?: boolean;
     ownerId?: string;
     sharedBy?:string;

@@ -3,9 +3,41 @@ import { mockFiles, mockSharedFiles } from "../data/mockFiles";
 import type { FileItem } from "../types/FileItem";
 import type { IFileService } from "./IFileService";
 import { MOCK_FILES_CONTENTS } from "../data/mockFiles";
+import type { UserGetDto } from "../types/UserGetDto";
 
 
 export class MockFilesService implements IFileService {
+    getUsersWithAcces(id: string): Promise<UserGetDto[]> {
+        throw new Error("Method not implemented.");
+    }
+    getAllShared(): Promise<UserGetDto[]> {
+        throw new Error("Method not implemented.");
+    }
+    permanentDelete(id: string): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+    getFileContent(id: string): Promise<Blob> {
+        throw new Error("Method not implemented.");
+    }
+    upload(file: File, parentId: string | null): Promise<FileItem> {
+        throw new Error("Method not implemented.");
+    }
+    share(id: string, userEmail: string[], permissionType: string): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+    rename(id: string, newName: string): Promise<FileItem> {
+        throw new Error("Method not implemented.");
+    }
+    toggleStarred(id: string): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
+    addFolder(name: string, parentId: string | null): Promise<FileItem> {
+        throw new Error("Method not implemented.");
+    }
+    
+    restore(id: string): Promise<boolean> {
+        throw new Error("Method not implemented.");
+    }
     
 
     private files: FileItem[] = [...mockFiles,...mockSharedFiles]; //kopia nowej tablocy
@@ -80,13 +112,7 @@ export class MockFilesService implements IFileService {
     }
     
     //symulacja działania z baza, w bazie dzwonimy do uplouds na serwerze
-    async getFileContent(id: string): Promise<string> {
-        await this.delay();
-
-        const context = this.filesContents.get(id);
-        if(!context) throw new Error('File content not found');
-        return context;
-    }
+    
     
 
     async updateFileContent(id: string, newContent: string): Promise<void> {

@@ -40,6 +40,7 @@ export const FileItemGrid = ({file,isActive,location,style,onActivate,onDoubleCl
     const  {
         handleSoftDelete,
         handleUpdate,
+        handleRename
     } = useFiles()
 
     const optionsIcon = <EllipsisVertical size={14} strokeWidth={2.5}/>
@@ -70,17 +71,6 @@ export const FileItemGrid = ({file,isActive,location,style,onActivate,onDoubleCl
         SetFileName(file.name);
     } //TODO!!!!
     
-    const handleRename = async (id:string,newName:string) => {
-
-
-        try {
-            await handleUpdate(id,{name:newName})
-            SetAddFileOpen(false);
-            SetFileName("");
-        }catch(err){
-
-        }
-    }
     
     
     const handleShare = () => {} //TODO!!!!
@@ -146,7 +136,7 @@ export const FileItemGrid = ({file,isActive,location,style,onActivate,onDoubleCl
                 <input value={fileName} className={styles.modalInput} onChange={(e)=> SetFileName(e.target.value)}></input>
                 <div className={styles.modalButtons}>
                 <button className={styles.modalButton} onClick={()=>SetAddFileOpen(false)}>Anuluj</button>
-                <button className={styles.modalButton} onClick={()=>handleRename(file.id,fileName)}>
+                <button className={styles.modalButton} onClick={()=>{handleRename(file.id,fileName);SetAddFileOpen(false)}}>
                     Ok
                 </button>
                 </div>

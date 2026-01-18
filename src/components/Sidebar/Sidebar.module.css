@@ -118,6 +118,11 @@
   padding: 12px;
 }
 
+.modalInput:focus {
+  outline: none;
+  border: 1px solid #215bec; /* np. #4A90E2 */
+}
+
 .modalInput::placeholder{
   font-weight: 300;
   color: #000000;

@@ -3,13 +3,17 @@ import styles from "../Common/Profile.module.css"
 import MenuItem from "./MenuItem/MenuItem";
 import { useAuth } from "../../services/AuthContext";
 import { LogOutIcon } from "..//..//icons//LogOutIcon"
+import type { User } from "../../types/User";
+import type { UserGetDto } from "../../types/UserGetDto";
 
 interface Props {
     image?: string,
     children?: React.ReactNode
+    onlyInfo?: boolean
+    user?: UserGetDto
 }
 
-export const Profile = ({image,children}: Props) => {
+export const Profile = ({image,children,onlyInfo,user}: Props) => {
     const [open, setOpen] = useState(false);
     const ref = useRef<HTMLDivElement>(null);
 
@@ -44,7 +48,21 @@ export const Profile = ({image,children}: Props) => {
                 <img src={image} alt="Profile" className={styles.profileImage}></img>}
             </button>
 
-            {open && (
+            {onlyInfo && open && (
+                <div className={styles.menuInfo}>
+                    <div className={styles.profileInfoOnlyInfo}>
+                        <div className={styles.profile}>
+                            <img src={image} alt="Profile" className={styles.profileImage} />
+                        </div>
+                        <label>
+                            <div className={styles.userName}>{user?.userName} {currentUser?.email === user?.email ? '(You)' : ''}</div>
+                            <div className={styles.userEmail}>{user?.email}</div>
+                        </label>
+                    </div>
+                </div>
+            )}
+
+            {!onlyInfo && open && (
                 <div className={styles.menu}>
                     <div className={styles.profileInfo}>
                         <label>{currentUser?.email}</label>

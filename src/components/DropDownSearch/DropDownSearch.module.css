@@ -1,0 +1,59 @@
+.dropdownContainer{
+    display: flex;
+    flex-direction: column;
+}
+
+.selectedUsers {
+    background-color: aqua;
+}
+
+.modalInput {
+  border-radius: 4px;
+  border: 1px solid rgba(17, 17, 17, 0.865);
+  font-size: 12px;
+  font-weight:200;
+  height: 40px;
+  color: #000000;
+  padding: 14px;
+}
+
+.modalInput:focus {
+  outline: none;
+  border: 1px solid #215bec; /* np. #4A90E2 */
+}
+
+.modalInput::placeholder {
+  color: #000000;
+  opacity: 1; /* ważne! domyślnie placeholder ma opacity < 1 */
+}
+
+
+
+
+.dropdown {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 10px;
+    background-color: #eaeef5;  /* ten sam kolor co searching */
+    border-radius: 0 0 20px 20px;  /* zaokrąglony tylko dół */
+    box-shadow: 0 4px 12px rgba(147, 125, 96, 0.3);
+    z-index: 9;  /* pod searchbarem */
+    max-height: 400px;
+    overflow-y: auto;
+    animation: slideDown 0.2s ease-out;
+    color: #000000;
+}
+
+
+.dropdownItem{
+    display: flex;
+    flex-direction: row;
+    gap:14px;
+    padding: 12px;
+}
+
+.dropdownItemEmail {
+    display: flex;
+    flex-direction: column;
+}

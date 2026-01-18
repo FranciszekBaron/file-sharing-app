@@ -15,6 +15,8 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+
+
 export const AuthProvider = ({children} : {children:React.ReactNode}) => {
     const [currentUser,setCurrentUser] = useState<User|null>(null);
     const [isLoading,setIsLoading] = useState(true);
@@ -38,6 +40,7 @@ export const AuthProvider = ({children} : {children:React.ReactNode}) => {
     },[])
 
     console.log("AuthProvider mounted");
+    console.log(currentUser);
 
     const login = async (email:string,password:string) => {
         const user = await authService.login(email,password);
