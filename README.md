@@ -2,9 +2,6 @@
 
 **File Sharing App** — a frontend web application inspired by Google Drive for managing files and folders in the browser. Users can **browse, upload, download, delete, and share files** using a modern React + TypeScript UI. It focuses on providing a responsive and intuitive experience for users to interact with files, managing folder structure and sharing them. 
 
-## Description
-This project is a **React + TypeScript + Vite frontend application** that .
-
 
 ## Technologies Used
 - **React** — UI library for building interactive interfaces  
